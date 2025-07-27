@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "text": "Porque eu sei que o meu Redentor vive, e por fim se levantará sobre a terra.",
+    "reference": "Jó 19:25",
+    "book": "Jó",
+    "chapter": "19",
+    "verse": "25"
+  },
+  {
+    "id": "2",
+    "text": "Tudo posso naquele que me fortalece.",
+    "reference": "Filipenses 4:13",
+    "book": "Filipenses",
+    "chapter": "4",
+    "verse": "13"
+  },
+  {
+    "id": "3",
+    "text": "O Senhor é meu pastor; nada me faltará.",
+    "reference": "Salmos 23:1",
+    "book": "Salmos",
+    "chapter": "23",
+    "verse": "1"
+  },
+  {
+    "id": "4",
+    "text": "E sabemos que todas as coisas contribuem juntamente para o bem daqueles que amam a Deus.",
+    "reference": "Romanos 8:28",
+    "book": "Romanos",
+    "chapter": "8",
+    "verse": "28"
+  },
+  {
+    "id": "5",
+    "text": "Não andeis ansiosos por coisa alguma; antes, em tudo, pela oração e súplicas, com ação de graças, sejam as vossas petições conhecidas diante de Deus.",
+    "reference": "Filipenses 4:6",
+    "book": "Filipenses",
+    "chapter": "4",
+    "verse": "6"
+  }
+]

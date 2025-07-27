@@ -1,0 +1,718 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+
+  /* Custom Christian theme colors - Divine Blue Palette */
+  --divine-50: hsl(214, 100%, 97%);
+  --divine-100: hsl(214, 95%, 93%);
+  --divine-200: hsl(213, 97%, 87%);
+  --divine-300: hsl(212, 96%, 78%);
+  --divine-400: hsl(213, 94%, 68%);
+  --divine-500: hsl(207, 90%, 54%);
+  --divine-600: hsl(208, 93%, 47%);
+  --divine-700: hsl(210, 98%, 42%);
+  --divine-800: hsl(212, 97%, 36%);
+  --divine-900: hsl(214, 98%, 27%);
+  
+  /* Golden Accent Colors */
+  --golden-50: hsl(54, 91%, 95%);
+  --golden-100: hsl(54, 91%, 88%);
+  --golden-200: hsl(53, 98%, 77%);
+  --golden-300: hsl(50, 97%, 63%);
+  --golden-400: hsl(45, 93%, 47%);
+  --golden-500: hsl(48, 96%, 53%);
+  --golden-600: hsl(32, 95%, 44%);
+  --golden-700: hsl(26, 90%, 37%);
+  --golden-800: hsl(23, 83%, 31%);
+  --golden-900: hsl(22, 78%, 26%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+
+  /* Dark mode divine colors */
+  --divine-50: hsl(214, 100%, 8%);
+  --divine-100: hsl(214, 95%, 12%);
+  --divine-500: hsl(207, 90%, 54%);
+  --divine-600: hsl(208, 93%, 47%);
+  --divine-700: hsl(210, 98%, 42%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  }
+
+  /* Serif font for scripture quotes */
+  .font-serif {
+    font-family: 'Crimson Text', 'Georgia', 'Times New Roman', serif;
+  }
+}
+
+@layer utilities {
+  /* Divine color utilities */
+  .bg-divine-50 { background-color: var(--divine-50); }
+  .bg-divine-100 { background-color: var(--divine-100); }
+  .bg-divine-200 { background-color: var(--divine-200); }
+  .bg-divine-300 { background-color: var(--divine-300); }
+  .bg-divine-400 { background-color: var(--divine-400); }
+  .bg-divine-500 { background-color: var(--divine-500); }
+  .bg-divine-600 { background-color: var(--divine-600); }
+  .bg-divine-700 { background-color: var(--divine-700); }
+  .bg-divine-800 { background-color: var(--divine-800); }
+  .bg-divine-900 { background-color: var(--divine-900); }
+
+  .text-divine-50 { color: var(--divine-50); }
+  .text-divine-100 { color: var(--divine-100); }
+  .text-divine-200 { color: var(--divine-200); }
+  .text-divine-300 { color: var(--divine-300); }
+  .text-divine-400 { color: var(--divine-400); }
+  .text-divine-500 { color: var(--divine-500); }
+  .text-divine-600 { color: var(--divine-600); }
+  .text-divine-700 { color: var(--divine-700); }
+  .text-divine-800 { color: var(--divine-800); }
+  .text-divine-900 { color: var(--divine-900); }
+
+  .border-divine-50 { border-color: var(--divine-50); }
+  .border-divine-100 { border-color: var(--divine-100); }
+  .border-divine-200 { border-color: var(--divine-200); }
+  .border-divine-300 { border-color: var(--divine-300); }
+  .border-divine-400 { border-color: var(--divine-400); }
+  .border-divine-500 { border-color: var(--divine-500); }
+  .border-divine-600 { border-color: var(--divine-600); }
+  .border-divine-700 { border-color: var(--divine-700); }
+
+  /* Golden color utilities */
+  .bg-golden-50 { background-color: var(--golden-50); }
+  .bg-golden-100 { background-color: var(--golden-100); }
+  .bg-golden-200 { background-color: var(--golden-200); }
+  .bg-golden-300 { background-color: var(--golden-300); }
+  .bg-golden-400 { background-color: var(--golden-400); }
+  .bg-golden-500 { background-color: var(--golden-500); }
+  .bg-golden-600 { background-color: var(--golden-600); }
+  .bg-golden-700 { background-color: var(--golden-700); }
+  .bg-golden-800 { background-color: var(--golden-800); }
+  .bg-golden-900 { background-color: var(--golden-900); }
+
+  .text-golden-50 { color: var(--golden-50); }
+  .text-golden-100 { color: var(--golden-100); }
+  .text-golden-200 { color: var(--golden-200); }
+  .text-golden-300 { color: var(--golden-300); }
+  .text-golden-400 { color: var(--golden-400); }
+  .text-golden-500 { color: var(--golden-500); }
+  .text-golden-600 { color: var(--golden-600); }
+  .text-golden-700 { color: var(--golden-700); }
+  .text-golden-800 { color: var(--golden-800); }
+  .text-golden-900 { color: var(--golden-900); }
+
+  .border-golden-400 { border-color: var(--golden-400); }
+  .border-golden-500 { border-color: var(--golden-500); }
+  .border-golden-600 { border-color: var(--golden-600); }
+
+  /* Gradient utilities */
+  .from-divine-500 {
+    --tw-gradient-from: var(--divine-500);
+    --tw-gradient-to: rgba(37, 99, 235, 0);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+  
+  .to-divine-600 {
+    --tw-gradient-to: var(--divine-600);
+  }
+
+  .from-divine-600 {
+    --tw-gradient-from: var(--divine-600);
+    --tw-gradient-to: rgba(30, 64, 175, 0);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+  
+  .to-divine-700 {
+    --tw-gradient-to: var(--divine-700);
+  }
+
+  .from-golden-400 {
+    --tw-gradient-from: var(--golden-400);
+    --tw-gradient-to: rgba(245, 158, 11, 0);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+  
+  .to-golden-500 {
+    --tw-gradient-to: var(--golden-500);
+  }
+
+  .from-golden-500 {
+    --tw-gradient-from: var(--golden-500);
+    --tw-gradient-to: rgba(217, 119, 6, 0);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+  
+  .to-golden-600 {
+    --tw-gradient-to: var(--golden-600);
+  }
+
+  /* Hover utilities for divine colors */
+  .hover\:bg-divine-600:hover { background-color: var(--divine-600); }
+  .hover\:bg-divine-700:hover { background-color: var(--divine-700); }
+  .hover\:text-divine-600:hover { color: var(--divine-600); }
+  .hover\:text-divine-700:hover { color: var(--divine-700); }
+
+  /* Hover utilities for golden colors */
+  .hover\:bg-golden-600:hover { background-color: var(--golden-600); }
+  .hover\:bg-golden-700:hover { background-color: var(--golden-700); }
+
+  /* Focus ring utilities */
+  .focus\:ring-divine-500:focus {
+    --tw-ring-color: var(--divine-500);
+  }
+  
+  .focus\:border-divine-500:focus {
+    border-color: var(--divine-500);
+  }
+
+  .focus\:ring-golden-500:focus {
+    --tw-ring-color: var(--golden-500);
+  }
+  
+  .focus\:border-golden-500:focus {
+    border-color: var(--golden-500);
+  }
+
+  /* Hover gradient utilities */
+  .hover\:from-divine-600:hover {
+    --tw-gradient-from: var(--divine-600);
+    --tw-gradient-to: rgba(30, 64, 175, 0);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+
+  .hover\:to-divine-700:hover {
+    --tw-gradient-to: var(--divine-700);
+  }
+
+  .hover\:from-golden-500:hover {
+    --tw-gradient-from: var(--golden-500);
+    --tw-gradient-to: rgba(217, 119, 6, 0);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+
+  .hover\:to-golden-600:hover {
+    --tw-gradient-to: var(--golden-600);
+  }
+}
+
+/* PWA specific styles */
+@media (display-mode: standalone) {
+  body {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Remove browser UI on PWA */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top);
+    background: var(--divine-500);
+    z-index: 9999;
+  }
+}
+
+/* Safe area support for PWA */
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-left {
+  padding-left: env(safe-area-inset-left);
+}
+
+.safe-right {
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+  }
+  to { 
+    opacity: 1; 
+  }
+}
+
+@keyframes slideUp {
+  from { 
+    transform: translateY(20px); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+}
+
+@keyframes slideDown {
+  from { 
+    transform: translateY(-20px); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+}
+
+@keyframes pulseGentle {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.05); 
+    opacity: 0.9;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, -30px, 0);
+  }
+  70% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, -15px, 0);
+  }
+  90% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px var(--divine-500);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--divine-500), 0 0 30px var(--divine-500);
+  }
+  100% {
+    box-shadow: 0 0 5px var(--divine-500);
+  }
+}
+
+/* Animation utility classes */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.4s ease-out;
+}
+
+.animate-pulse-gentle {
+  animation: pulseGentle 2s ease-in-out infinite;
+}
+
+.animate-bounce-gentle {
+  animation: bounce 2s infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--divine-50);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--divine-300);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--divine-500);
+}
+
+/* Selection styling */
+::selection {
+  background-color: var(--divine-200);
+  color: var(--divine-800);
+}
+
+::-moz-selection {
+  background-color: var(--divine-200);
+  color: var(--divine-800);
+}
+
+/* Focus visible styling for accessibility */
+.focus-visible\:ring-divine-500:focus-visible {
+  --tw-ring-color: var(--divine-500);
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --divine-500: hsl(207, 100%, 40%);
+    --divine-600: hsl(208, 100%, 35%);
+    --divine-700: hsl(210, 100%, 30%);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-slide-down,
+  .animate-pulse-gentle,
+  .animate-bounce-gentle,
+  .animate-glow {
+    animation: none;
+  }
+  
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Typography utilities for Christian content */
+.scripture-text {
+  font-family: 'Crimson Text', 'Georgia', 'Times New Roman', serif;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--divine-700);
+}
+
+.devotional-content {
+  line-height: 1.7;
+  color: hsl(20, 14.3%, 25%);
+}
+
+.prayer-text {
+  font-family: 'Crimson Text', 'Georgia', 'Times New Roman', serif;
+  line-height: 1.6;
+  color: hsl(142, 76%, 36%);
+}
+
+/* Button enhancements */
+.btn-divine {
+  background: linear-gradient(135deg, var(--divine-500), var(--divine-600));
+  border: none;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.btn-divine:hover {
+  background: linear-gradient(135deg, var(--divine-600), var(--divine-700));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-golden {
+  background: linear-gradient(135deg, var(--golden-400), var(--golden-500));
+  border: none;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.btn-golden:hover {
+  background: linear-gradient(135deg, var(--golden-500), var(--golden-600));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+/* Card enhancements */
+.card-divine {
+  border: 1px solid var(--divine-100);
+  background: linear-gradient(145deg, white, var(--divine-50));
+}
+
+.card-divine:hover {
+  border-color: var(--divine-200);
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.1);
+}
+
+/* Mobile responsive enhancements */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .mobile-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .mobile-text-sm {
+    font-size: 0.875rem;
+  }
+}
+
+/* Dark mode refinements */
+@media (prefers-color-scheme: dark) {
+  .dark-auto {
+    --background: hsl(240, 10%, 3.9%);
+    --foreground: hsl(0, 0%, 98%);
+    --divine-50: hsl(214, 100%, 8%);
+    --divine-100: hsl(214, 95%, 12%);
+  }
+}
+
+/* Transform scale utilities for button hover effects */
+.hover\:scale-\[1\.02\]:hover {
+  transform: scale(1.02);
+}
+
+/* Focus ring size utilities */
+.focus\:ring-2:focus {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+/* Additional custom utilities for PWA optimization */
+.touch-manipulation {
+  touch-action: manipulation;
+}
+
+.select-none {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Improved button transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.duration-200 {
+  transition-duration: 200ms;
+}
+
+/* Christian themed background patterns */
+.bg-pattern-cross {
+  background-image: radial-gradient(circle at 1px 1px, var(--divine-200) 1px, transparent 0);
+  background-size: 20px 20px;
+}
+
+/* Utility for rounded corners matching design */
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+
+.rounded-2xl {
+  border-radius: 1rem;
+}
+
+/* Shadow utilities for depth */
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Hover shadow effects */
+.hover\:shadow-lg:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Text size utilities */
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+/* Font weight utilities */
+.font-medium {
+  font-weight: 500;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+/* Spacing utilities for consistent margins and padding */
+.space-y-1 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
+}
+
+.space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+}
+
+.space-y-3 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
+}
+
+.space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+
+.space-y-6 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
+}
+
+.space-x-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+.space-x-3 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0.75rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.75rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+.space-x-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(1rem * var(--tw-space-x-reverse));
+  margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+/* Z-index utilities */
+.z-40 {
+  z-index: 40;
+}
+
+.z-50 {
+  z-index: 50;
+}
