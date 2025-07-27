@@ -1,0 +1,219 @@
+import OpenAI from "openai";
+
+// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+export async function generateEmotionDevotional(emotion: string): Promise<{
+  title: string;
+  content: string;
+  verse: string;
+  reference: string;
+  prayer: string;
+}> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "Você é um pastor cristão experiente que cria devocionais personalizados. Responda sempre em português brasileiro com uma abordagem bíblica sólida e carinhosa."
+        },
+        {
+          role: "user",
+          content: `Crie um devocional completo para uma pessoa que está se sentindo ${emotion}. O devocional deve incluir:
+          - Um título inspirador
+          - Um conteúdo devocional de 2-3 parágrafos com reflexão bíblica
+          - Um versículo bíblico relevante
+          - A referência bíblica do versículo
+          - Uma oração pessoal relacionada ao sentimento
+          
+          Responda em formato JSON com as chaves: title, content, verse, reference, prayer`
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.7,
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error("Error generating emotion devotional:", error);
+    throw new Error("Falha ao gerar devocional. Tente novamente.");
+  }
+}
+
+export async function generatePrayerResponse(userMessage: string): Promise<{
+  prayer: string;
+  verse: string;
+  reference: string;
+}> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "Você é um conselheiro cristão amoroso que responde a pedidos de oração. Sempre responda em português brasileiro com compaixão e base bíblica."
+        },
+        {
+          role: "user",
+          content: `A pessoa está compartilhando: "${userMessage}"
+          
+          Por favor, responda com:
+          - Uma oração personalizada e carinhosa para a situação
+          - Um versículo bíblico de encorajamento
+          - A referência bíblica do versículo
+          
+          Responda em formato JSON com as chaves: prayer, verse, reference`
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.8,
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error("Error generating prayer response:", error);
+    throw new Error("Falha ao gerar resposta de oração. Tente novamente.");
+  }
+}
+
+export async function generatePrayerRequestResponse(subject: string, content: string): Promise<string> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "Você é um pastor que responde a pedidos de oração com amor e sabedoria bíblica. Sempre responda em português brasileiro."
+        },
+        {
+          role: "user",
+          content: `Alguém enviou este pedido de oração:
+          Assunto: ${subject}
+          Conteúdo: ${content}
+          
+          Escreva uma resposta pastoral carinhosa e encorajadora, incluindo uma oração específica para a situação e um versículo bíblico relevante.`
+        }
+      ],
+      temperature: 0.8,
+    });
+
+    return response.choices[0].message.content || "Que Deus abençoe e console seu coração neste momento.";
+  } catch (error) {
+    console.error("Error generating prayer request response:", error);
+    throw new Error("Falha ao gerar resposta. Tente novamente.");
+  }
+}
+
+export async function generateSponsorCertificate(sponsorName: string): Promise<{
+  message: string;
+  verse: string;
+  reference: string;
+  prayer: string;
+}> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "Você cria certificados cristãos de agradecimento para patrocinadores. Sempre responda em português brasileiro com gratidão e bênçãos."
+        },
+        {
+          role: "user",
+          content: `Crie um certificado de agradecimento para o patrocinador "${sponsorName}" que apoia o aplicativo cristão "Fé em Jesus BR". Inclua:
+          - Uma mensagem de agradecimento inspiradora
+          - Um versículo sobre generosidade ou bênçãos
+          - A referência bíblica
+          - Uma oração de bênção para o patrocinador
+          
+          Responda em formato JSON com as chaves: message, verse, reference, prayer`
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.7,
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error("Error generating sponsor certificate:", error);
+    throw new Error("Falha ao gerar certificado. Tente novamente.");
+  }
+}
+
+export async function generateChallengeCertificate(userName: string, challengeTitle: string): Promise<{
+  message: string;
+  verse: string;
+  reference: string;
+}> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "Você cria certificados cristãos de conclusão de desafios espirituais. Sempre responda em português brasileiro com encorajamento."
+        },
+        {
+          role: "user",
+          content: `Crie um certificado de conclusão para ${userName} que completou o desafio "${challengeTitle}". Inclua:
+          - Uma mensagem parabenizando pela dedicação espiritual
+          - Um versículo sobre perseverança na fé
+          - A referência bíblica
+          
+          Responda em formato JSON com as chaves: message, verse, reference`
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.7,
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error("Error generating challenge certificate:", error);
+    throw new Error("Falha ao gerar certificado. Tente novamente.");
+  }
+}
+
+export async function generateNightDevotional(): Promise<{
+  title: string;
+  content: string;
+  verse: string;
+  reference: string;
+  prayer: string;
+}> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "Você cria devocionais noturnos especiais para o 'Modo Noite com Deus'. Foque em paz, descanso e entrega a Deus. Sempre responda em português brasileiro."
+        },
+        {
+          role: "user",
+          content: `Crie um devocional noturno especial para o final do dia. Deve transmitir paz, gratidão e confiança em Deus. Inclua:
+          - Um título suave e reconfortante
+          - Conteúdo devocional focado em descanso e entrega a Deus
+          - Um versículo sobre paz ou proteção divina
+          - A referência bíblica
+          - Uma oração noturna de gratidão e entrega
+          
+          Responda em formato JSON com as chaves: title, content, verse, reference, prayer`
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.6,
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error("Error generating night devotional:", error);
+    throw new Error("Falha ao gerar devocional noturno. Tente novamente.");
+  }
+}

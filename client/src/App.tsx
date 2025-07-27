@@ -9,6 +9,13 @@ import Login from "@/pages/login";
 import Register from "@/pages/register";
 import Home from "@/pages/home";
 import Admin from "@/pages/admin";
+import Emotions from "@/pages/emotions";
+import Challenges from "@/pages/challenges";
+import AIPrayer from "@/pages/ai-prayer";
+import LoveCards from "@/pages/love-cards";
+import PrayerRequests from "@/pages/prayer-requests";
+import Library from "@/pages/library";
+import DevotionalAudios from "@/pages/devotional-audios";
 import { useEffect } from "react";
 
 function Router() {
@@ -41,6 +48,13 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/admin" component={Admin} />
+      <Route path="/emotions" component={Emotions} />
+      <Route path="/challenges" component={Challenges} />
+      <Route path="/ai-prayer" component={AIPrayer} />
+      <Route path="/love-cards" component={LoveCards} />
+      <Route path="/prayer-requests" component={PrayerRequests} />
+      <Route path="/library" component={Library} />
+      <Route path="/devotional-audios" component={DevotionalAudios} />
       <Route component={NotFound} />
     </Switch>
   );
