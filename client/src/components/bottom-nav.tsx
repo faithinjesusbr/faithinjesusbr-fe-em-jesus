@@ -1,12 +1,13 @@
-import { Home, BookOpen, HandHeart, User } from "lucide-react";
+import { Home, BookOpen, HandHeart, User, Gift, Users } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/", icon: Home, label: "Início" },
-  { href: "/verses", icon: BookOpen, label: "Versículos" },
-  { href: "/prayer", icon: HandHeart, label: "Oração" },
-  { href: "/profile", icon: User, label: "Perfil" },
+  { href: "/library", icon: BookOpen, label: "Biblioteca" },
+  { href: "/sponsors", icon: Gift, label: "Parceiros" },
+  { href: "/contributors", icon: Users, label: "Colaboradores" },
+  { href: "/prayer-requests", icon: HandHeart, label: "Oração" },
 ];
 
 export default function BottomNav() {
@@ -14,7 +15,7 @@ export default function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden z-40">
-      <div className="grid grid-cols-4 h-16">
+      <div className="grid grid-cols-5 h-16">
         {navItems.map(({ href, icon: Icon, label }) => {
           const isActive = location === href;
           

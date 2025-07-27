@@ -144,6 +144,93 @@ export async function generateSponsorCertificate(sponsorName: string): Promise<{
   }
 }
 
+export async function generateContributorCertificate(contributorName: string, contributionType: string, amount?: string): Promise<{
+  prayer: string;
+  verse: string;
+  reference: string;
+  title: string;
+  certificateText: string;
+}> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "Você é um especialista em criar certificados de agradecimento cristãos personalizados para colaboradores de ministérios. Crie conteúdo exclusivo, carinhoso e bíblico em português brasileiro."
+        },
+        {
+          role: "user",
+          content: `Crie um certificado de agradecimento para o colaborador:
+          Nome: ${contributorName}
+          Tipo de contribuição: ${contributionType}
+          ${amount ? `Valor: ${amount}` : ''}
+          
+          O certificado deve incluir:
+          - Uma oração exclusiva de agradecimento e bênção para a pessoa
+          - Um versículo bíblico apropriado sobre generosidade/servir ao próximo
+          - Um título elegante para o certificado
+          - Um texto principal do certificado expressando gratidão pela contribuição
+          
+          Responda em formato JSON com as chaves: prayer, verse, reference, title, certificateText`
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.8,
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error("Error generating contributor certificate:", error);
+    throw new Error("Falha ao gerar certificado de colaborador.");
+  }
+}
+
+export async function generateExclusivePrayerAndVerse(recipientName: string, recipientType: 'sponsor' | 'contributor', context?: string): Promise<{
+  prayer: string;
+  verse: string;
+  reference: string;
+}> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "Você é um pastor experiente que cria orações exclusivas e seleciona versículos bíblicos personalizados para pessoas que apoiam ministérios cristãos. Sempre em português brasileiro."
+        },
+        {
+          role: "user",
+          content: `Crie uma oração exclusiva e selecione um versículo bíblico para:
+          Nome: ${recipientName}
+          Tipo: ${recipientType === 'sponsor' ? 'Patrocinador/Empresa' : 'Colaborador/Contribuinte'}
+          ${context ? `Contexto adicional: ${context}` : ''}
+          
+          A oração deve ser:
+          - Pessoal e exclusiva para esta pessoa/empresa
+          - Cheia de bênçãos e gratidão
+          - Apropriada para quem apoia o trabalho de Deus
+          
+          O versículo deve ser:
+          - Relevante para generosidade, parceria no evangelho ou bênçãos
+          - Encorajador e edificante
+          
+          Responda em formato JSON com as chaves: prayer, verse, reference`
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.9,
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error("Error generating exclusive prayer and verse:", error);
+    throw new Error("Falha ao gerar oração e versículo exclusivos.");
+  }
+}
+
 export async function generateChallengeCertificate(userName: string, challengeTitle: string): Promise<{
   message: string;
   verse: string;

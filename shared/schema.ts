@@ -170,6 +170,95 @@ export const sponsorAds = pgTable("sponsor_ads", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Tabela para colaboradores/contribuintes
+export const contributors = pgTable("contributors", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  description: text("description"),
+  profileImageUrl: text("profile_image_url"),
+  contribution: text("contribution").notNull(), // donation, volunteer, prayer, tech
+  amount: text("amount"), // Para doações monetárias
+  isActive: boolean("is_active").default(true),
+  certificate: text("certificate"), // Certificado gerado por IA
+  exclusivePrayer: text("exclusive_prayer"), // Oração exclusiva gerada por IA
+  exclusiveVerse: text("exclusive_verse"), // Versículo exclusivo
+  verseReference: text("verse_reference"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Sistema de notificações
+export const notifications = pgTable("notifications", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  type: text("type").notNull(), // devotional, prayer, challenge, sponsor, system
+  isRead: boolean("is_read").default(false),
+  actionUrl: text("action_url"), // URL para ação específica
+  scheduledFor: timestamp("scheduled_for"), // Para notificações agendadas
+  sentAt: timestamp("sent_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Configurações de notificação do usuário
+export const userNotificationSettings = pgTable("user_notification_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().unique(),
+  dailyDevotional: boolean("daily_devotional").default(true),
+  prayerReminders: boolean("prayer_reminders").default(true),
+  challengeUpdates: boolean("challenge_updates").default(true),
+  sponsorContent: boolean("sponsor_content").default(true),
+  weeklyDigest: boolean("weekly_digest").default(true),
+  emailNotifications: boolean("email_notifications").default(true),
+  pushNotifications: boolean("push_notifications").default(true),
+  preferredTime: text("preferred_time").default("09:00"), // Horário preferido para notificações
+  timezone: text("timezone").default("America/Sao_Paulo"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Analytics e interações para o painel admin
+export const userInteractions = pgTable("user_interactions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  action: text("action").notNull(), // view, like, share, complete, pray
+  entityType: text("entity_type").notNull(), // devotional, verse, prayer, challenge
+  entityId: varchar("entity_id").notNull(),
+  sessionId: varchar("session_id"),
+  deviceType: text("device_type"), // mobile, desktop, tablet
+  userAgent: text("user_agent"),
+  ipAddress: text("ip_address"),
+  metadata: text("metadata"), // JSON adicional
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Sistema de certificados
+export const certificates = pgTable("certificates", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  recipientType: text("recipient_type").notNull(), // sponsor, contributor
+  recipientId: varchar("recipient_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  aiGeneratedPrayer: text("ai_generated_prayer").notNull(),
+  aiGeneratedVerse: text("ai_generated_verse").notNull(),
+  verseReference: text("verse_reference").notNull(),
+  templateStyle: text("template_style").default("elegant"), // elegant, modern, classic
+  backgroundColor: text("background_color").default("#ffffff"),
+  textColor: text("text_color").default("#333333"),
+  issuedAt: timestamp("issued_at").defaultNow(),
+});
+
+// Configurações gerais do app
+export const appSettings = pgTable("app_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  key: text("key").notNull().unique(),
+  value: text("value").notNull(),
+  description: text("description"),
+  category: text("category").default("general"), // general, notifications, appearance, sponsor
+  isPublic: boolean("is_public").default(false), // Se pode ser acessado pelo frontend
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   name: true,
   email: true,
@@ -310,6 +399,71 @@ export const insertSponsorAdSchema = createInsertSchema(sponsorAds).pick({
   priority: true,
 });
 
+export const insertContributorSchema = createInsertSchema(contributors).pick({
+  name: true,
+  email: true,
+  description: true,
+  profileImageUrl: true,
+  contribution: true,
+  amount: true,
+  isActive: true,
+});
+
+export const insertNotificationSchema = createInsertSchema(notifications).pick({
+  userId: true,
+  title: true,
+  message: true,
+  type: true,
+  actionUrl: true,
+  scheduledFor: true,
+});
+
+export const insertUserNotificationSettingsSchema = createInsertSchema(userNotificationSettings).pick({
+  userId: true,
+  dailyDevotional: true,
+  prayerReminders: true,
+  challengeUpdates: true,
+  sponsorContent: true,
+  weeklyDigest: true,
+  emailNotifications: true,
+  pushNotifications: true,
+  preferredTime: true,
+  timezone: true,
+});
+
+export const insertUserInteractionSchema = createInsertSchema(userInteractions).pick({
+  userId: true,
+  action: true,
+  entityType: true,
+  entityId: true,
+  sessionId: true,
+  deviceType: true,
+  userAgent: true,
+  ipAddress: true,
+  metadata: true,
+});
+
+export const insertCertificateSchema = createInsertSchema(certificates).pick({
+  recipientType: true,
+  recipientId: true,
+  title: true,
+  description: true,
+  aiGeneratedPrayer: true,
+  aiGeneratedVerse: true,
+  verseReference: true,
+  templateStyle: true,
+  backgroundColor: true,
+  textColor: true,
+});
+
+export const insertAppSettingsSchema = createInsertSchema(appSettings).pick({
+  key: true,
+  value: true,
+  description: true,
+  category: true,
+  isPublic: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type LoginUser = z.infer<typeof loginSchema>;
 export type User = typeof users.$inferSelect;
@@ -346,5 +500,18 @@ export type InsertSponsor = z.infer<typeof insertSponsorSchema>;
 export type Sponsor = typeof sponsors.$inferSelect;
 export type InsertSponsorAd = z.infer<typeof insertSponsorAdSchema>;
 export type SponsorAd = typeof sponsorAds.$inferSelect;
+
+export type InsertContributor = z.infer<typeof insertContributorSchema>;
+export type Contributor = typeof contributors.$inferSelect;
+export type InsertNotification = z.infer<typeof insertNotificationSchema>;
+export type Notification = typeof notifications.$inferSelect;
+export type InsertUserNotificationSettings = z.infer<typeof insertUserNotificationSettingsSchema>;
+export type UserNotificationSettings = typeof userNotificationSettings.$inferSelect;
+export type InsertUserInteraction = z.infer<typeof insertUserInteractionSchema>;
+export type UserInteraction = typeof userInteractions.$inferSelect;
+export type InsertCertificate = z.infer<typeof insertCertificateSchema>;
+export type Certificate = typeof certificates.$inferSelect;
+export type InsertAppSettings = z.infer<typeof insertAppSettingsSchema>;
+export type AppSettings = typeof appSettings.$inferSelect;
 
 

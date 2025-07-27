@@ -9,6 +9,9 @@ import Login from "@/pages/login";
 import Register from "@/pages/register";
 import Home from "@/pages/home";
 import Admin from "@/pages/admin";
+import AdminDashboard from "@/pages/admin-dashboard";
+import Sponsors from "@/pages/sponsors";
+import Contributors from "@/pages/contributors";
 import Emotions from "@/pages/emotions";
 import Challenges from "@/pages/challenges";
 import AIPrayer from "@/pages/ai-prayer";
@@ -48,6 +51,9 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/admin" component={Admin} />
+      <Route path="/admin-dashboard" component={AdminDashboard} />
+      <Route path="/sponsors" component={Sponsors} />
+      <Route path="/contributors" component={Contributors} />
       <Route path="/emotions" component={Emotions} />
       <Route path="/challenges" component={Challenges} />
       <Route path="/ai-prayer" component={AIPrayer} />

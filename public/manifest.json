@@ -1,0 +1,76 @@
+{
+  "name": "Fé em Jesus BR - Aplicativo Cristão",
+  "short_name": "Fé em Jesus BR",
+  "description": "Aplicativo cristão com devocionais diários, orações personalizadas e versículos bíblicos",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e40af",
+  "theme_color": "#1e40af",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "pt-BR",
+  "categories": ["lifestyle", "education", "productivity"],
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1280x800", 
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Devoção Diária",
+      "short_name": "Devoção",
+      "description": "Acesse rapidamente a devoção do dia",
+      "url": "/",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Oração IA",
+      "short_name": "Oração",
+      "description": "Gere uma oração personalizada com IA",
+      "url": "/ai-prayer",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Patrocinadores",
+      "short_name": "Parceiros",
+      "description": "Veja nossos parceiros que mantêm o app gratuito",
+      "url": "/sponsors", 
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "share_target": {
+    "action": "/prayer-requests",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "description",
+      "url": "url"
+    }
+  }
+}

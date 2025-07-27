@@ -57,14 +57,23 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  // Fetch sponsor ads
+  const { data: sponsorAdsData = [] } = useQuery({
+    queryKey: ["/api/sponsor-ads"],
+  });
+
+  const sponsorAds = Array.isArray(sponsorAdsData) ? sponsorAdsData : [];
+
   // Rotate sponsor ads every 5 minutes
   useEffect(() => {
-    const adInterval = setInterval(() => {
-      setCurrentAdIndex(prev => (prev + 1) % 3); // Assuming 3 ads for demo
-    }, 5 * 60 * 1000); // 5 minutes
+    if (sponsorAds.length > 0) {
+      const adInterval = setInterval(() => {
+        setCurrentAdIndex(prev => (prev + 1) % sponsorAds.length);
+      }, 5 * 60 * 1000); // 5 minutes
 
-    return () => clearInterval(adInterval);
-  }, []);
+      return () => clearInterval(adInterval);
+    }
+  }, [sponsorAds.length]);
 
   const { data: devotional, isLoading: devotionalLoading } = useQuery<any>({
     queryKey: isNightMode ? ["/api/night-devotional"] : ["/api/devotionals/daily"],
@@ -75,15 +84,12 @@ export default function Home() {
     select: (data) => data.slice(0, 3),
   });
 
-  const { data: sponsorAds = [] } = useQuery({
-    queryKey: ["/api/sponsor-ads"],
-  });
-
   const randomVerseMutation = useMutation({
-    mutationFn: async (): Promise<Verse> => {
-      return apiRequest("/api/verses/random");
+    mutationFn: async () => {
+      const response = await apiRequest("/api/verses/random");
+      return response;
     },
-    onSuccess: (verse: Verse) => {
+    onSuccess: (verse: any) => {
       setCurrentVerse(verse);
       setShowVerseModal(true);
     },
@@ -210,6 +216,11 @@ export default function Home() {
               <p className="text-gray-500">Nenhuma devoção disponível para hoje.</p>
             </CardContent>
           </Card>
+        )}
+
+        {/* Rotating Sponsor Ad */}
+        {sponsorAds.length > 0 && sponsorAds[currentAdIndex] && (
+          <SponsorAd ad={sponsorAds[currentAdIndex]} />
         )}
 
         {/* Main Features Grid */}

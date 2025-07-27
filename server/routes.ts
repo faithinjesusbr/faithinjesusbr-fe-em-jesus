@@ -5,12 +5,15 @@ import {
   insertUserSchema, loginSchema, insertDevotionalSchema, insertVerseSchema, insertPrayerSchema,
   insertEmotionDevotionalSchema, insertUserChallengeProgressSchema, insertAIPrayerRequestSchema,
   insertLoveCardSchema, insertPrayerRequestSchema, insertLibraryContentSchema, insertDevotionalAudioSchema,
-  insertSponsorSchema, insertSponsorAdSchema
+  insertSponsorSchema, insertSponsorAdSchema, insertContributorSchema, insertNotificationSchema,
+  insertUserNotificationSettingsSchema, insertUserInteractionSchema, insertCertificateSchema,
+  insertAppSettingsSchema
 } from "@shared/schema";
 import { z } from "zod";
 import { 
   generateEmotionDevotional, generatePrayerResponse, generatePrayerRequestResponse,
-  generateSponsorCertificate, generateChallengeCertificate, generateNightDevotional
+  generateSponsorCertificate, generateChallengeCertificate, generateNightDevotional,
+  generateContributorCertificate, generateExclusivePrayerAndVerse
 } from "./openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -427,18 +430,304 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/sponsors/:sponsorId/certificate", async (req, res) => {
     try {
       const { sponsorId } = req.params;
-      const sponsors = await storage.getAllActiveSponsors();
+      const sponsors = await storage.getAllSponsors();
       const sponsor = sponsors.find(s => s.id === sponsorId);
       
       if (!sponsor) {
         return res.status(404).json({ message: "Patrocinador não encontrado" });
       }
 
-      const certificate = await generateSponsorCertificate(sponsor.name);
-      res.json(certificate);
+      const certificate = await generateSponsorCertificate(sponsor.name, sponsor.description);
+      
+      // Criar certificado no banco de dados
+      const certificateData = await storage.createCertificate({
+        recipientType: "sponsor",
+        recipientId: sponsorId,
+        title: certificate.title,
+        description: certificate.certificateText,
+        aiGeneratedPrayer: certificate.prayer,
+        aiGeneratedVerse: certificate.verse,
+        verseReference: certificate.reference,
+      });
+      
+      res.json(certificateData);
     } catch (error) {
       console.error("Error generating sponsor certificate:", error);
       res.status(500).json({ message: "Erro ao gerar certificado" });
+    }
+  });
+
+  // Contributor routes (Novas funcionalidades)
+  app.get("/api/contributors", async (req, res) => {
+    try {
+      const contributors = await storage.getAllContributors();
+      res.json(contributors);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/contributors", async (req, res) => {
+    try {
+      const contributorData = insertContributorSchema.parse(req.body);
+      const contributor = await storage.createContributor(contributorData);
+      
+      // Gerar oração e versículo exclusivos
+      try {
+        const exclusive = await generateExclusivePrayerAndVerse(
+          contributor.name, 
+          'contributor', 
+          contributorData.contribution
+        );
+        
+        await storage.updateContributor(contributor.id, {
+          exclusivePrayer: exclusive.prayer,
+          exclusiveVerse: exclusive.verse,
+          verseReference: exclusive.reference
+        });
+      } catch (aiError) {
+        console.error("Error generating exclusive content:", aiError);
+      }
+      
+      res.status(201).json(contributor);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/contributors/:contributorId/certificate", async (req, res) => {
+    try {
+      const { contributorId } = req.params;
+      const contributors = await storage.getAllContributors();
+      const contributor = contributors.find(c => c.id === contributorId);
+      
+      if (!contributor) {
+        return res.status(404).json({ message: "Colaborador não encontrado" });
+      }
+
+      const certificate = await generateContributorCertificate(
+        contributor.name, 
+        contributor.contribution, 
+        contributor.amount
+      );
+      
+      // Criar certificado no banco de dados
+      const certificateData = await storage.createCertificate({
+        recipientType: "contributor",
+        recipientId: contributorId,
+        title: certificate.title,
+        description: certificate.certificateText,
+        aiGeneratedPrayer: certificate.prayer,
+        aiGeneratedVerse: certificate.verse,
+        verseReference: certificate.reference,
+      });
+      
+      res.json(certificateData);
+    } catch (error) {
+      console.error("Error generating contributor certificate:", error);
+      res.status(500).json({ message: "Erro ao gerar certificado" });
+    }
+  });
+
+  // Notification routes (Sistema de notificações)
+  app.get("/api/notifications/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const notifications = await storage.getUserNotifications(userId, limit);
+      res.json(notifications);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/notifications", async (req, res) => {
+    try {
+      const notificationData = insertNotificationSchema.parse(req.body);
+      const notification = await storage.createNotification(notificationData);
+      res.status(201).json(notification);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.patch("/api/notifications/:notificationId/read", async (req, res) => {
+    try {
+      const { notificationId } = req.params;
+      const success = await storage.markNotificationAsRead(notificationId);
+      if (!success) {
+        return res.status(404).json({ message: "Notificação não encontrada" });
+      }
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.get("/api/notifications/:userId/unread-count", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const count = await storage.getUnreadNotificationCount(userId);
+      res.json({ count });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // User Notification Settings routes
+  app.get("/api/users/:userId/notification-settings", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const settings = await storage.getUserNotificationSettings(userId);
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.put("/api/users/:userId/notification-settings", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const settingsData = insertUserNotificationSettingsSchema.parse(req.body);
+      const settings = await storage.updateUserNotificationSettings(userId, settingsData);
+      res.json(settings);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // User Interaction tracking (Analytics)
+  app.post("/api/interactions", async (req, res) => {
+    try {
+      const interactionData = insertUserInteractionSchema.parse(req.body);
+      const interaction = await storage.trackUserInteraction(interactionData);
+      res.status(201).json(interaction);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.get("/api/admin/interaction-stats", async (req, res) => {
+    try {
+      const { entityType, startDate, endDate } = req.query;
+      const stats = await storage.getInteractionStats(
+        entityType as string,
+        startDate ? new Date(startDate as string) : undefined,
+        endDate ? new Date(endDate as string) : undefined
+      );
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Certificate routes
+  app.get("/api/certificates/:recipientType/:recipientId", async (req, res) => {
+    try {
+      const { recipientType, recipientId } = req.params;
+      const certificates = await storage.getCertificatesForRecipient(recipientType, recipientId);
+      res.json(certificates);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // App Settings routes
+  app.get("/api/settings", async (req, res) => {
+    try {
+      const settings = await storage.getPublicSettings();
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.get("/api/admin/settings/:key", async (req, res) => {
+    try {
+      const { key } = req.params;
+      const setting = await storage.getSetting(key);
+      if (!setting) {
+        return res.status(404).json({ message: "Configuração não encontrada" });
+      }
+      res.json(setting);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.put("/api/admin/settings/:key", async (req, res) => {
+    try {
+      const { key } = req.params;
+      const { value } = req.body;
+      const setting = await storage.updateSetting(key, value);
+      res.json(setting);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Admin Dashboard routes
+  app.get("/api/admin/dashboard", async (req, res) => {
+    try {
+      const dashboardData = await storage.getAdminDashboardData();
+      res.json(dashboardData);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Criar sponsor route (admin)
+  app.post("/api/admin/sponsors", async (req, res) => {
+    try {
+      const sponsorData = insertSponsorSchema.parse(req.body);
+      const sponsor = await storage.createSponsor(sponsorData);
+      
+      // Gerar oração e versículo exclusivos para o patrocinador
+      try {
+        const exclusive = await generateExclusivePrayerAndVerse(
+          sponsor.name, 
+          'sponsor', 
+          sponsor.description
+        );
+        
+        // Aqui você poderia salvar na tabela do sponsor se tiver esses campos
+        // await storage.updateSponsor(sponsor.id, { exclusivePrayer: exclusive.prayer, ... });
+      } catch (aiError) {
+        console.error("Error generating exclusive content for sponsor:", aiError);
+      }
+      
+      res.status(201).json(sponsor);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Criar sponsor ad route (admin)
+  app.post("/api/admin/sponsor-ads", async (req, res) => {
+    try {
+      const adData = insertSponsorAdSchema.parse(req.body);
+      const ad = await storage.createSponsorAd(adData);
+      res.status(201).json(ad);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
     }
   });
 
