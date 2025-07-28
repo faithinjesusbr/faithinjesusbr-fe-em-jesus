@@ -316,6 +316,18 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(sponsorAds.createdAt));
   }
 
+  async getActiveSponsorAds(): Promise<SponsorAd[]> {
+    return await db.select().from(sponsorAds)
+      .where(eq(sponsorAds.isActive, true))
+      .orderBy(desc(sponsorAds.createdAt));
+  }
+
+  async getRecentPrayerRequests(limit: number = 10): Promise<PrayerRequest[]> {
+    return await db.select().from(prayerRequests)
+      .orderBy(desc(prayerRequests.createdAt))
+      .limit(limit);
+  }
+
   // Store
   async getStoreProducts(category?: string, featured?: boolean): Promise<StoreProduct[]> {
     const conditions = [eq(storeProducts.isActive, true)];

@@ -815,9 +815,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/sponsor-ads", async (req, res) => {
     try {
       const ads = await storage.getActiveSponsorAds();
-      res.json(ads);
+      res.json(ads || []);
     } catch (error) {
-      res.status(500).json({ message: "Erro interno do servidor" });
+      console.error("Error fetching sponsor ads:", error);
+      res.json([]); // Return empty array instead of error for UI stability
+    }
+  });
+
+  app.get("/api/prayer-requests/recent", async (req, res) => {
+    try {
+      const requests = await storage.getRecentPrayerRequests(5);
+      res.json(requests || []);
+    } catch (error) {
+      console.error("Error fetching recent prayer requests:", error);
+      res.json([]); // Return empty array instead of error for UI stability
     }
   });
 
@@ -1450,6 +1461,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(devotional);
     } catch (error) {
       console.error('Erro ao gerar devocional:', error);
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Digital Assistant route
+  app.post("/api/digital-assistant", async (req, res) => {
+    try {
+      const { userId, message } = req.body;
+      
+      if (!message) {
+        return res.status(400).json({ message: "Mensagem é obrigatória" });
+      }
+
+      const { generateAssistantResponse } = await import('./ai-service');
+      const response = await generateAssistantResponse(message);
+      
+      // Save interaction for analytics
+      if (userId) {
+        try {
+          await storage.createUserInteraction({
+            userId,
+            interactionType: "digital_assistant",
+            entityId: "assistant",
+            details: JSON.stringify({ userMessage: message, aiResponse: response.response })
+          });
+        } catch (interactionError) {
+          console.error('Error saving interaction:', interactionError);
+        }
+      }
+      
+      res.json(response);
+    } catch (error) {
+      console.error('Erro no assistente digital:', error);
       res.status(500).json({ message: "Erro interno do servidor" });
     }
   });

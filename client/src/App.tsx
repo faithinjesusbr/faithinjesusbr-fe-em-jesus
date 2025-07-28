@@ -16,6 +16,7 @@ import PrayerRequests from "@/pages/prayer-requests";
 import AIPrayer from "@/pages/ai-prayer";
 import SharePage from "@/pages/share";
 import AdminDashboard from "@/pages/admin-dashboard";
+import DigitalAssistant from "@/components/digital-assistant";
 import { useEffect } from "react";
 
 function Router() {
@@ -47,22 +48,27 @@ function Router() {
   }
 
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/store" component={Store} />
-      <Route path="/videos" component={Videos} />
-      <Route path="/library" component={Library} />
-      <Route path="/library-ebooks" component={() => import("@/pages/library-ebooks").then(m => m.default)} />
-      <Route path="/emotion-today-improved" component={() => import("@/pages/emotion-today-improved").then(m => m.default)} />
-      <Route path="/youtube-videos-improved" component={() => import("@/pages/youtube-videos-improved").then(m => m.default)} />
-      <Route path="/pix-contributors" component={() => import("@/pages/pix-contributors").then(m => m.default)} />
-      <Route path="/sponsors" component={Sponsors} />
-      <Route path="/prayer-requests" component={PrayerRequests} />
-      <Route path="/ai-prayer" component={AIPrayer} />
-      <Route path="/share" component={SharePage} />
-      <Route path="/admin" component={AdminDashboard} />
-      <Route component={NotFound} />
-    </Switch>
+    <>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/store" component={Store} />
+        <Route path="/videos" component={Videos} />
+        <Route path="/library" component={Library} />
+        <Route path="/library-ebooks" component={() => import("@/pages/library-ebooks").then(m => m.default)} />
+        <Route path="/emotion-today-improved" component={() => import("@/pages/emotion-today-improved").then(m => m.default)} />
+        <Route path="/youtube-videos-improved" component={() => import("@/pages/youtube-videos-improved").then(m => m.default)} />
+        <Route path="/pix-contributors" component={() => import("@/pages/pix-contributors").then(m => m.default)} />
+        <Route path="/sponsors" component={Sponsors} />
+        <Route path="/prayer-requests" component={PrayerRequests} />
+        <Route path="/ai-prayer" component={AIPrayer} />
+        <Route path="/share" component={SharePage} />
+        <Route path="/admin" component={AdminDashboard} />
+        <Route component={NotFound} />
+      </Switch>
+      
+      {/* Assistente Digital Flutuante */}
+      <DigitalAssistant />
+    </>
   );
 }
 

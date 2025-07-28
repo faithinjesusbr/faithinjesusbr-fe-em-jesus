@@ -165,3 +165,54 @@ export async function generateDevotional(emotion: string): Promise<{
     };
   }
 }
+
+export async function generateAssistantResponse(message: string) {
+  if (!openai) {
+    // Fallback response without OpenAI
+    return {
+      response: "Deus conhece seu coração e suas necessidades. Ele está sempre pronto a te ouvir e te abençoar. Continue buscando-O em oração e confiando em Sua bondade.",
+      verse: "Porque eu bem sei os pensamentos que tenho a vosso respeito, diz o Senhor; pensamentos de paz e não de mal, para vos dar o fim que esperais.",
+      reference: "Jeremias 29:11"
+    };
+  }
+
+  try {
+    const prompt = `Você é "IA Cristo", um assistente espiritual cristão brasileiro. Responda à seguinte mensagem/pergunta de forma amorosa, pastoral e bíblica: "${message}"
+
+Forneça:
+1. Uma resposta encorajadora e pastoral (2-4 frases)
+2. Um versículo bíblico relevante 
+3. A referência correta do versículo
+
+Mantenha o tom caloroso, encorajador e cheio de fé. Use linguagem simples e acessível.
+
+Responda em formato JSON:
+{
+  "response": "sua resposta pastoral e encorajadora",
+  "verse": "texto do versículo bíblico relevante", 
+  "reference": "referência bíblica (ex: João 3:16)"
+}`;
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.8,
+    });
+
+    const content = completion.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('Resposta vazia da OpenAI');
+    }
+
+    return JSON.parse(content);
+  } catch (error) {
+    console.error('Erro ao gerar resposta do assistente:', error);
+    
+    // Fallback response if OpenAI fails
+    return {
+      response: "Deus conhece seu coração e suas necessidades. Ele está sempre pronto a te ouvir e te abençoar. Continue buscando-O em oração e confiando em Sua bondade.",
+      verse: "Porque eu bem sei os pensamentos que tenho a vosso respeito, diz o Senhor; pensamentos de paz e não de mal, para vos dar o fim que esperais.",
+      reference: "Jeremias 29:11"
+    };
+  }
+}
