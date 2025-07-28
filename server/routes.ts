@@ -170,6 +170,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/verses/new", async (req, res) => {
+    try {
+      const newVerse = await bibleService.getNewVerse();
+      res.json(newVerse);
+    } catch (error) {
+      console.error("Erro ao buscar novo versículo:", error);
+      res.status(500).json({ message: "Erro ao buscar novo versículo" });
+    }
+  });
+
   app.get("/api/verses/emotion/:emotion", async (req, res) => {
     try {
       const { emotion } = req.params;

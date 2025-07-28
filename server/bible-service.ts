@@ -131,8 +131,21 @@ class BibleService {
     }
   }
 
+  // Gerar novo versículo (diferente do aleatório e do diário)
+  async getNewVerse(): Promise<BibleVerse> {
+    try {
+      // Usar uma abordagem similar ao aleatório mas com diferentes IDs
+      return await this.tryMultipleSources(true);
+    } catch (error) {
+      console.error('Erro ao buscar novo versículo:', error);
+      // Fallback final: versículo fixo aleatório
+      const randomIndex = Math.floor(Math.random() * FALLBACK_VERSES.length);
+      return FALLBACK_VERSES[randomIndex];
+    }
+  }
+
   // Tentar múltiplas fontes de API
-  private async tryMultipleSources(): Promise<BibleVerse> {
+  private async tryMultipleSources(forceNew: boolean = false): Promise<BibleVerse> {
     const errors: Error[] = [];
 
     // 1. Tentar labs.bible.org com versículo aleatório popular
@@ -150,7 +163,14 @@ class BibleService {
       errors.push(error as Error);
     }
 
-    // 3. Tentar OpenAI como backup (se disponível)
+    // 3. Tentar API bíblica alternativa (bible-api.com)
+    try {
+      return await this.getVerseFromBibleApi();
+    } catch (error) {
+      errors.push(error as Error);
+    }
+
+    // 4. Tentar OpenAI como backup (se disponível)
     try {
       return await this.getVerseFromOpenAI();
     } catch (error) {
@@ -224,6 +244,45 @@ class BibleService {
       book: verse.bookname,
       chapter: parseInt(verse.chapter),
       verse: parseInt(verse.verse)
+    };
+  }
+
+  // API alternativa: bible-api.com
+  private async getVerseFromBibleApi(): Promise<BibleVerse> {
+    const randomBook = [
+      'john', 'psalms', 'proverbs', 'matthew', 'romans', 'philippians', 
+      'ephesians', 'colossians', 'thessalonians', 'timothy', 'peter', 'james'
+    ];
+    const book = randomBook[Math.floor(Math.random() * randomBook.length)];
+    const chapter = Math.floor(Math.random() * 10) + 1;
+    const verse = Math.floor(Math.random() * 20) + 1;
+    
+    const url = `https://bible-api.com/${book}${chapter}:${verse}`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Fe-em-Jesus-BR/1.0',
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Bible API error: ${response.status}`);
+    }
+
+    const data = await response.json() as any;
+    
+    if (!data || !data.text) {
+      throw new Error('Resposta inválida da Bible API');
+    }
+
+    return {
+      text: data.text,
+      reference: data.reference,
+      book: data.reference.split(' ')[0],
+      chapter: parseInt(data.reference.match(/(\d+):/)?.[1] || '1'),
+      verse: parseInt(data.reference.match(/:(\d+)/)?.[1] || '1')
     };
   }
 
