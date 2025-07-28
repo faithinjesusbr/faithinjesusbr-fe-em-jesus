@@ -210,19 +210,45 @@ export default function Home() {
 
         {/* Quick Actions */}
         <div className="mb-6">
-          <div className="flex gap-3">
+          <div className="flex gap-3 mb-3">
+            <Link href="/verse-of-day" className="flex-1">
+              <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700">
+                <BookOpen className="h-4 w-4 mr-2" />
+                Versículo do Dia
+              </Button>
+            </Link>
             <Link href="/emotion-today-improved" className="flex-1">
               <Button className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700">
                 <Heart className="h-4 w-4 mr-2" />
                 Como me sinto hoje?
               </Button>
             </Link>
+          </div>
+          <div className="flex gap-3">
             <Link href="/youtube-videos-improved" className="flex-1">
               <Button variant="outline" className="w-full border-red-300 text-red-600 hover:bg-red-50">
                 <Video className="h-4 w-4 mr-2" />
                 Vídeos Cristãos
               </Button>
             </Link>
+            <Button
+              onClick={() => randomVerseMutation.mutate()}
+              disabled={randomVerseMutation.isPending}
+              variant="outline"
+              className="flex-1 border-purple-300 text-purple-600 hover:bg-purple-50"
+            >
+              {randomVerseMutation.isPending ? (
+                <>
+                  <Sun className="h-4 w-4 mr-2 animate-spin" />
+                  Carregando...
+                </>
+              ) : (
+                <>
+                  <Sun className="h-4 w-4 mr-2" />
+                  Versículo Aleatório
+                </>
+              )}
+            </Button>
           </div>
         </div>
 
