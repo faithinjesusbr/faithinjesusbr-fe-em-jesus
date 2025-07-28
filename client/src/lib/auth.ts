@@ -7,13 +7,13 @@ export interface AuthResponse {
 
 export const authApi = {
   login: async (credentials: LoginUser): Promise<AuthResponse> => {
-    const res = await apiRequest("POST", "/api/auth/login", credentials);
-    return res.json();
+    const response = await apiRequest("POST", "/api/auth/login", credentials);
+    return await response.json();
   },
 
   register: async (userData: InsertUser): Promise<AuthResponse> => {
-    const res = await apiRequest("POST", "/api/auth/register", userData);
-    return res.json();
+    const response = await apiRequest("POST", "/api/auth/register", userData);
+    return await response.json();
   },
 };
 
