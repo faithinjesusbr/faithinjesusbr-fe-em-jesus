@@ -104,24 +104,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Agente Digital IA Cristo
   app.post("/api/ai-prayer", async (req, res) => {
     try {
-      const data = insertAIPrayerRequestSchema.parse(req.body);
+      const { userId, userMessage } = req.body;
+      
+      if (!userId || !userMessage) {
+        return res.status(400).json({ message: "UserId e userMessage são obrigatórios" });
+      }
       
       // Gerar resposta da IA
-      const aiResponse = await generatePrayerResponse(data.userMessage);
+      const aiResponse = await generatePrayerResponse(userMessage);
       
       const prayerRequest = await storage.createAIPrayerRequest({
-        ...data,
+        userId,
+        userMessage,
         aiResponse: aiResponse.response,
         verse: aiResponse.verse,
         reference: aiResponse.reference,
       });
       
       // Adicionar pontos ao usuário
-      await storage.createUserPoints({
-        userId: data.userId,
-        points: "3",
-        reason: "ai_prayer_request",
-      });
+      try {
+        await storage.createUserPoints({
+          userId,
+          points: "3",
+          reason: "ai_prayer_request",
+        });
+      } catch (pointsError) {
+        console.log("Error adding points:", pointsError);
+      }
       
       res.json(prayerRequest);
     } catch (error) {
@@ -678,42 +687,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI Prayer Agent routes
-  app.post("/api/ai-prayer", async (req, res) => {
-    try {
-      const { userId, userMessage } = req.body;
-      
-      if (!userId || !userMessage) {
-        return res.status(400).json({ message: "UserId e mensagem são obrigatórios" });
-      }
-
-      const aiResponse = await generatePrayerResponse(userMessage);
-      
-      const requestData = {
-        userId,
-        userMessage,
-        aiResponse: aiResponse.prayer,
-        verse: aiResponse.verse,
-        reference: aiResponse.reference
-      };
-      
-      const request = await storage.createAIPrayerRequest(requestData);
-      res.status(201).json(request);
-    } catch (error) {
-      console.error("Error in AI prayer route:", error);
-      res.status(500).json({ message: "Erro ao processar pedido de oração" });
-    }
-  });
-
-  app.get("/api/ai-prayer/:userId", async (req, res) => {
-    try {
-      const { userId } = req.params;
-      const requests = await storage.getUserAIPrayerRequests(userId);
-      res.json(requests);
-    } catch (error) {
-      res.status(500).json({ message: "Erro interno do servidor" });
-    }
-  });
+  // AI Prayer Agent routes - REMOVED DUPLICATE
 
   // Love Cards routes
   app.get("/api/love-cards", async (req, res) => {
@@ -1363,33 +1337,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI Prayer routes with OpenAI integration
-  app.post("/api/ai-prayer", async (req, res) => {
-    try {
-      const { userId, userMessage } = req.body;
-      
-      if (!userId || !userMessage) {
-        return res.status(400).json({ message: "UserId e userMessage são obrigatórios" });
-      }
-
-      // Import AI service
-      const { generateAIResponse } = await import('./ai-service');
-      const aiResponse = await generateAIResponse(userMessage);
-      
-      const prayerRequest = await storage.createAIPrayerRequest({
-        userId,
-        userMessage,
-        aiResponse: aiResponse.response,
-        verse: aiResponse.verse,
-        reference: aiResponse.reference,
-      });
-      
-      res.json(prayerRequest);
-    } catch (error) {
-      console.error('Erro ao processar oração IA:', error);
-      res.status(500).json({ message: "Erro interno do servidor" });
-    }
-  });
+  // AI Prayer routes with OpenAI integration - REMOVED DUPLICATE
 
   // Contributors routes with AI certificate generation
   app.post("/api/contributors", async (req, res) => {
