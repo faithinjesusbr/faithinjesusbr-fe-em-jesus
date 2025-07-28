@@ -1,275 +1,197 @@
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { Send, MessageCircle, Lightbulb, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, ArrowLeft, MessageCircle, Heart, BookOpen, Send } from "lucide-react";
-import { Link } from "wouter";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
+import Header from "@/components/header";
+import BottomNav from "@/components/bottom-nav";
+import { apiRequest } from "@/lib/queryClient";
 
-interface AIPrayerRequest {
-  id: string;
-  userId: string;
-  userMessage: string;
-  aiResponse: string;
-  verse?: string;
-  reference?: string;
-  createdAt: string;
-}
-
-export default function AIPrayerPage() {
-  const [message, setMessage] = useState("");
-  const [currentResponse, setCurrentResponse] = useState<AIPrayerRequest | null>(null);
+export default function AIPrayer() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const [userMessage, setUserMessage] = useState("");
+  const [conversation, setConversation] = useState<Array<{id: string, type: 'user' | 'ai', content: string, timestamp: Date}>>([]);
 
-  const { data: prayerHistory } = useQuery({
-    queryKey: ["/api/ai-prayer", user?.id],
-    enabled: !!user,
-  });
-
-  const sendPrayerMutation = useMutation({
-    mutationFn: async (userMessage: string) => {
-      return apiRequest("/api/ai-prayer", {
-        method: "POST",
-        body: {
-          userId: user?.id,
-          userMessage,
-        },
+  const sendMessageMutation = useMutation({
+    mutationFn: async (message: string) => {
+      const response = await apiRequest("/api/ai-prayer/chat", "POST", {
+        userId: user?.id,
+        message: message
       });
+      return response;
     },
     onSuccess: (data) => {
-      setCurrentResponse(data);
-      setMessage("");
-      queryClient.invalidateQueries({
-        queryKey: ["/api/ai-prayer", user?.id],
-      });
-      toast({
-        title: "Oração recebida!",
-        description: "Sua oração personalizada foi gerada com amor.",
-      });
+      // Add AI response to conversation
+      setConversation(prev => [...prev, {
+        id: Date.now().toString() + '_ai',
+        type: 'ai',
+        content: data.response || "Que Deus te abençoe! Como posso te ajudar hoje?",
+        timestamp: new Date()
+      }]);
     },
     onError: () => {
       toast({
         title: "Erro",
-        description: "Não foi possível processar sua solicitação. Tente novamente.",
+        description: "Não foi possível enviar a mensagem. Tente novamente.",
         variant: "destructive",
       });
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!message.trim()) return;
-    if (!user) {
-      toast({
-        title: "Login necessário",
-        description: "Faça login para usar o Agente de Oração.",
-        variant: "destructive",
-      });
-      return;
-    }
-    sendPrayerMutation.mutate(message.trim());
+  const handleSendMessage = () => {
+    if (!userMessage.trim()) return;
+
+    // Add user message to conversation
+    const userMsg = {
+      id: Date.now().toString() + '_user',
+      type: 'user' as const,
+      content: userMessage,
+      timestamp: new Date()
+    };
+    
+    setConversation(prev => [...prev, userMsg]);
+    sendMessageMutation.mutate(userMessage);
+    setUserMessage("");
   };
 
-  if (currentResponse) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-pink-100 dark:from-rose-950 dark:to-pink-950 p-4">
-        <div className="max-w-2xl mx-auto">
-          <div className="flex items-center gap-4 mb-6">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setCurrentResponse(null)}
-              className="text-rose-600 hover:text-rose-700"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Nova Conversa
-            </Button>
-          </div>
-
-          <Card className="mb-6">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl text-rose-800 dark:text-rose-200 flex items-center justify-center gap-2">
-                <Heart className="h-6 w-6" />
-                Sua Oração Personalizada
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2 flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5" />
-                  Você compartilhou:
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300 italic">
-                  "{currentResponse.userMessage}"
-                </p>
-              </div>
-
-              <div>
-                <h3 className="font-semibold text-lg text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2">
-                  <Heart className="h-5 w-5" />
-                  Oração para Você
-                </h3>
-                <div className="bg-rose-50 dark:bg-rose-900/30 p-4 rounded-lg">
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-                    {currentResponse.aiResponse}
-                  </p>
-                </div>
-              </div>
-
-              {currentResponse.verse && (
-                <div className="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg border-l-4 border-blue-500">
-                  <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2 flex items-center gap-2">
-                    <BookOpen className="h-5 w-5" />
-                    Versículo de Encorajamento
-                  </h3>
-                  <p className="text-blue-800 dark:text-blue-200 font-medium mb-2">
-                    "{currentResponse.verse}"
-                  </p>
-                  {currentResponse.reference && (
-                    <p className="text-blue-600 dark:text-blue-400 text-sm font-medium">
-                      {currentResponse.reference}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-                Gerado em {new Date(currentResponse.createdAt).toLocaleString("pt-BR")}
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="text-center space-y-4">
-            <Button
-              onClick={() => setCurrentResponse(null)}
-              className="bg-rose-600 hover:bg-rose-700 text-white mr-4"
-            >
-              Fazer Novo Pedido
-            </Button>
-            <Link href="/">
-              <Button variant="outline">
-                Voltar ao Início
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const quickQuestions = [
+    "Como posso ter mais fé hoje?",
+    "Preciso de oração para decidir algo",
+    "Preciso de uma palavra de ânimo",
+    "Como posso perdoar alguém?",
+    "Estou passando por dificuldades",
+    "Que seja desencorajado",
+    "Preciso de uma palaver de ânimo",
+    "Como posso perdoar alguém?"
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-pink-100 dark:from-rose-950 dark:to-pink-950 p-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-rose-800 dark:text-rose-200 mb-2">
-            Agente de Oração com IA
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Compartilhe seus sentimentos e receba uma oração personalizada
-          </p>
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      
+      <div className="max-w-4xl mx-auto px-4 py-6 pb-20">
+        <div className="text-center mb-6">
+          <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <MessageCircle className="w-10 h-10 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">IA Cristo</h1>
+          <p className="text-gray-600">Compartilhe seus sentimentos e receba palavras de fé</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Prayer Input */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-rose-800 dark:text-rose-200 flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5" />
-                  Como você está se sentindo?
-                </CardTitle>
-                <CardDescription>
-                  Compartilhe seus pensamentos, preocupações ou alegrias. Nosso agente de IA criará uma oração especial para você.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <Textarea
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Digite aqui o que está em seu coração... Por exemplo: 'Estou ansioso com meu trabalho' ou 'Grato pelas bênçãos da semana'"
-                    className="min-h-32 resize-none"
-                    disabled={sendPrayerMutation.isPending}
-                  />
-                  <Button
-                    type="submit"
-                    disabled={!message.trim() || sendPrayerMutation.isPending}
-                    className="w-full bg-rose-600 hover:bg-rose-700 text-white"
-                  >
-                    {sendPrayerMutation.isPending ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        Gerando oração...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="h-4 w-4 mr-2" />
-                        Solicitar Oração
-                      </>
-                    )}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
+        {/* Quick Questions */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Lightbulb className="w-5 h-5" />
+              Perguntas Rápidas
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {quickQuestions.map((question, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  className="text-left justify-start h-auto py-3 px-4 text-sm"
+                  onClick={() => setUserMessage(question)}
+                >
+                  {question}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Prayer History */}
-          <div>
-            <Card className="h-fit">
-              <CardHeader>
-                <CardTitle className="text-lg text-gray-800 dark:text-gray-200">
-                  Suas Orações Anteriores
-                </CardTitle>
-                <CardDescription>
-                  Reveja suas conversas com o agente de oração
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {!user ? (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
-                    Faça login para ver seu histórico de orações
-                  </p>
-                ) : !prayerHistory || prayerHistory.length === 0 ? (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
-                    Ainda não há orações. Faça sua primeira solicitação!
-                  </p>
-                ) : (
-                  <div className="space-y-3 max-h-96 overflow-y-auto">
-                    {prayerHistory.slice(0, 5).map((prayer: AIPrayerRequest) => (
-                      <div
-                        key={prayer.id}
-                        className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                        onClick={() => setCurrentResponse(prayer)}
-                      >
-                        <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 mb-1">
-                          "{prayer.userMessage}"
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {new Date(prayer.createdAt).toLocaleDateString("pt-BR")}
-                        </p>
-                      </div>
-                    ))}
+        {/* Chat Interface */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Como posso te abençoar hoje?</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4 max-h-96 overflow-y-auto mb-4">
+              {conversation.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Sparkles className="w-8 h-8 text-blue-600" />
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+                  <p className="text-gray-600">Compartilhe seus sentimentos, dúvidas ou pedidos de oração</p>
+                </div>
+              ) : (
+                conversation.map((msg) => (
+                  <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[80%] rounded-lg p-3 ${
+                      msg.type === 'user' 
+                        ? 'bg-purple-600 text-white' 
+                        : 'bg-gray-100 text-gray-900'
+                    }`}>
+                      <p className="text-sm">{msg.content}</p>
+                      <span className={`text-xs ${
+                        msg.type === 'user' ? 'text-purple-200' : 'text-gray-500'
+                      }`}>
+                        {msg.timestamp.toLocaleTimeString('pt-BR', { 
+                          hour: '2-digit', 
+                          minute: '2-digit' 
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
 
-        <div className="text-center mt-8">
-          <Link href="/">
-            <Button variant="outline" className="text-rose-600 border-rose-300 hover:bg-rose-50">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar ao Início
-            </Button>
-          </Link>
-        </div>
+            <div className="flex gap-2">
+              <Textarea
+                value={userMessage}
+                onChange={(e) => setUserMessage(e.target.value)}
+                placeholder="Compartilhe seus sentimentos, dúvidas ou pedidos de oração..."
+                className="flex-1 min-h-[60px] resize-none"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
+              />
+              <Button
+                onClick={handleSendMessage}
+                disabled={!userMessage.trim() || sendMessageMutation.isPending}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                {sendMessageMutation.isPending ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Information Card */}
+        <Card className="bg-blue-50 border-blue-200">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <MessageCircle className="w-4 h-4 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm text-blue-800 mb-1">Como você está se sentindo espiritualmente?</p>
+                <p className="text-xs text-blue-600">
+                  O Cristo e te escuta sempre. Conte que a oração exigente que você está.
+                  Conte um momento que você precisou de auxílio espiritual.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      <BottomNav />
     </div>
   );
 }

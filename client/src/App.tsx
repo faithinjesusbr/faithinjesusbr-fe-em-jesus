@@ -8,12 +8,14 @@ import NotFound from "@/pages/not-found";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
 import Home from "@/pages/home";
-import DailyDevotional from "@/pages/daily-devotional";
-import VerseOfDay from "@/pages/verse-of-day";
-import SpiritualPlanner from "@/pages/spiritual-planner";
-import MoodToday from "@/pages/mood-today";
-import JesusChallenge from "@/pages/jesus-challenge";
-import AIPrayerAgent from "@/pages/ai-prayer-agent";
+import Store from "@/pages/store-new";
+import Videos from "@/pages/videos-new";
+import Library from "@/pages/library-new";
+import Sponsors from "@/pages/sponsors";
+import PrayerRequests from "@/pages/prayer-requests";
+import AIPrayer from "@/pages/ai-prayer";
+import SharePage from "@/pages/share";
+import AdminDashboard from "@/pages/admin-dashboard";
 import { useEffect } from "react";
 
 function Router() {
@@ -47,12 +49,14 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/daily-devotional" component={DailyDevotional} />
-      <Route path="/verse-of-day" component={VerseOfDay} />
-      <Route path="/spiritual-planner" component={SpiritualPlanner} />
-      <Route path="/mood-today" component={MoodToday} />
-      <Route path="/jesus-challenge" component={JesusChallenge} />
-      <Route path="/ai-prayer-agent" component={AIPrayerAgent} />
+      <Route path="/store" component={Store} />
+      <Route path="/videos" component={Videos} />
+      <Route path="/library" component={Library} />
+      <Route path="/sponsors" component={Sponsors} />
+      <Route path="/prayer-requests" component={PrayerRequests} />
+      <Route path="/ai-prayer" component={AIPrayer} />
+      <Route path="/share" component={SharePage} />
+      <Route path="/admin" component={AdminDashboard} />
       <Route component={NotFound} />
     </Switch>
   );

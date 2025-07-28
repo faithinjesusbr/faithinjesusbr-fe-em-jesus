@@ -1,20 +1,20 @@
 import { Link, useLocation } from "wouter";
-import { BookOpen, Calendar, Heart, Trophy, MessageCircle, Home } from "lucide-react";
+import { Home, ShoppingBag, Video, BookOpen, Users, MessageCircle } from "lucide-react";
 
 const navItems = [
-  { path: "/daily-devotional", icon: BookOpen, label: "Devocional" },
-  { path: "/verse-of-day", icon: Home, label: "Versículo" },
-  { path: "/mood-today", icon: Heart, label: "Humor" },
-  { path: "/spiritual-planner", icon: Calendar, label: "Planner" },
-  { path: "/jesus-challenge", icon: Trophy, label: "Desafio" },
-  { path: "/ai-prayer-agent", icon: MessageCircle, label: "Oração IA" },
+  { path: "/", icon: Home, label: "Início" },
+  { path: "/store", icon: ShoppingBag, label: "Loja" },
+  { path: "/videos", icon: Video, label: "Vídeos" },
+  { path: "/library", icon: BookOpen, label: "Biblioteca" },
+  { path: "/sponsors", icon: Users, label: "Patrocinadores" },
+  { path: "/prayer-requests", icon: MessageCircle, label: "Oração" },
 ];
 
 export default function BottomNav() {
   const [location] = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur border-t border-gray-200 px-2 py-2">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 px-2 py-2 z-50 shadow-lg">
       <div className="flex justify-around items-center max-w-screen-xl mx-auto">
         {navItems.map((item) => {
           const IconComponent = item.icon;
@@ -24,14 +24,14 @@ export default function BottomNav() {
             <Link
               key={item.path}
               href={item.path}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${
+              className={`flex flex-col items-center gap-1 px-2 py-2 rounded-xl transition-all duration-200 ${
                 isActive 
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
+                  ? 'text-purple-600 bg-purple-50 scale-110' 
+                  : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
               }`}
             >
               <IconComponent className={`h-5 w-5 ${isActive ? 'scale-110' : ''}`} />
-              <span className="text-xs font-medium">{item.label}</span>
+              <span className="text-xs font-medium truncate">{item.label}</span>
             </Link>
           );
         })}
