@@ -66,6 +66,7 @@ export const emotionalStates = pgTable("emotional_states", {
 export const emotionDevotionals = pgTable("emotion_devotionals", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   emotionId: varchar("emotion_id").notNull(),
+  emotion: text("emotion").notNull(),
   title: text("title").notNull(),
   content: text("content").notNull(),
   verse: text("verse").notNull(),
@@ -81,6 +82,7 @@ export const challenges = pgTable("challenges", {
   duration: text("duration").notNull(), // "7" or "21"
   imageUrl: text("image_url"),
   pointsReward: text("points_reward").default("10"),
+  order: text("order").default("0"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -88,6 +90,7 @@ export const challengeDays = pgTable("challenge_days", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   challengeId: varchar("challenge_id").notNull(),
   day: text("day").notNull(),
+  dayNumber: text("day_number").notNull(),
   title: text("title").notNull(),
   content: text("content").notNull(),
   verse: text("verse").notNull(),
@@ -180,6 +183,7 @@ export const libraryCategories = pgTable("library_categories", {
   description: text("description").notNull(),
   icon: text("icon").notNull(),
   color: text("color").notNull(),
+  order: text("order").default("0"),
 });
 
 export const libraryContent = pgTable("library_content", {
@@ -191,6 +195,7 @@ export const libraryContent = pgTable("library_content", {
   reference: text("reference"),
   externalLink: text("external_link"),
   contentType: text("content_type").notNull(), // reflection, verse, link
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const devotionalAudios = pgTable("devotional_audios", {
@@ -257,6 +262,8 @@ export const youtubeVideos = pgTable("youtube_videos", {
   tags: text("tags"), // JSON array
   category: text("category"), // sermon, devotional, music, testimony
   isFeatured: boolean("is_featured").default(false),
+  featured: boolean("featured").default(false),
+  isActive: boolean("is_active").default(true),
   syncedAt: timestamp("synced_at").defaultNow(),
 });
 
@@ -308,6 +315,45 @@ export const userInteractions = pgTable("user_interactions", {
   entityId: varchar("entity_id").notNull(),
   sessionId: varchar("session_id"),
   deviceType: text("device_type"), // mobile, desktop, tablet
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Sistema de transações de pontos
+export const pointsTransactions = pgTable("points_transactions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  points: text("points").notNull(),
+  description: text("description").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Sistema de planejamento espiritual
+export const spiritualPlannerEntries = pgTable("spiritual_planner_entries", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  date: text("date").notNull(),
+  type: text("type").notNull(), // prayer, reading, reflection, gratitude
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Devocionais do usuário
+export const userDevotionals = pgTable("user_devotionals", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  devotionalId: varchar("devotional_id").notNull(),
+  date: text("date").notNull(),
+  completed: boolean("completed").default(false),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Reações aos versículos
+export const verseReactions = pgTable("verse_reactions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  verseId: varchar("verse_id").notNull(),
+  reaction: text("reaction").notNull(), // like, love, amen, bookmark
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -364,6 +410,14 @@ export type Certificate = typeof certificates.$inferSelect;
 export type InsertCertificate = typeof certificates.$inferInsert;
 export type UserInteraction = typeof userInteractions.$inferSelect;
 export type InsertUserInteraction = typeof userInteractions.$inferInsert;
+export type PointsTransaction = typeof pointsTransactions.$inferSelect;
+export type InsertPointsTransaction = typeof pointsTransactions.$inferInsert;
+export type SpiritualPlannerEntry = typeof spiritualPlannerEntries.$inferSelect;
+export type InsertSpiritualPlannerEntry = typeof spiritualPlannerEntries.$inferInsert;
+export type UserDevotional = typeof userDevotionals.$inferSelect;
+export type InsertUserDevotional = typeof userDevotionals.$inferInsert;
+export type VerseReaction = typeof verseReactions.$inferSelect;
+export type InsertVerseReaction = typeof verseReactions.$inferInsert;
 
 // Validation Schemas
 export const insertUserSchema = createInsertSchema(users).pick({

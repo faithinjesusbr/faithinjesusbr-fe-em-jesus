@@ -99,6 +99,16 @@ The application uses twelve main entities:
 
 ## Recent Changes (January 2025)
 
+### Database Schema and Storage Bug Fixes (Latest Update - January 28, 2025)
+- ✅ **Schema Synchronization**: Fixed missing exports in shared/schema.ts including pointsTransactions, spiritualPlannerEntries, userDevotionals, and verseReactions tables
+- ✅ **Storage Interface Updates**: Corrected column references in storage.ts to match actual database schema (emotion vs emotionId, dayNumber, order columns, etc.)
+- ✅ **Query Builder Fixes**: Fixed complex WHERE clause queries for YouTube videos and store products using proper and() conditions
+- ✅ **Points System**: Corrected points calculation and transaction handling with proper string-to-number conversion
+- ✅ **Type Safety**: Added all missing TypeScript types and interfaces for new database tables
+- ✅ **Application Startup**: Resolved all 23 LSP diagnostics and startup errors - app now runs successfully on port 5000
+
+## Recent Changes (January 2025)
+
 ### Complete UI/UX Modernization Based on Base44 (Latest Update)
 - ✅ **Modern Dashboard**: Redesigned homepage with colorful cards, gradient backgrounds, and modern Layout inspired by Base44 app
 - ✅ **IA Cristo Chat**: Modern AI prayer interface with quick questions, conversation history, and chat-style interaction

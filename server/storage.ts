@@ -310,32 +310,36 @@ export class DatabaseStorage implements IStorage {
 
   // Store
   async getStoreProducts(category?: string, featured?: boolean): Promise<StoreProduct[]> {
-    let query = db.select().from(storeProducts).where(eq(storeProducts.isActive, true));
+    const conditions = [eq(storeProducts.isActive, true)];
     
     if (category) {
-      query = query.where(eq(storeProducts.category, category));
+      conditions.push(eq(storeProducts.category, category));
     }
     
     if (featured) {
-      query = query.where(eq(storeProducts.featured, true));
+      conditions.push(eq(storeProducts.featured, true));
     }
     
-    return await query.orderBy(desc(storeProducts.createdAt));
+    return await db.select().from(storeProducts)
+      .where(and(...conditions))
+      .orderBy(desc(storeProducts.createdAt));
   }
 
   // YouTube
   async getYoutubeVideos(category?: string, featured?: boolean): Promise<YoutubeVideo[]> {
-    let query = db.select().from(youtubeVideos).where(eq(youtubeVideos.isActive, true));
+    const conditions = [eq(youtubeVideos.isActive, true)];
     
     if (category) {
-      query = query.where(eq(youtubeVideos.category, category));
+      conditions.push(eq(youtubeVideos.category, category));
     }
     
     if (featured) {
-      query = query.where(eq(youtubeVideos.featured, true));
+      conditions.push(eq(youtubeVideos.featured, true));
     }
     
-    return await query.orderBy(desc(youtubeVideos.publishedAt));
+    return await db.select().from(youtubeVideos)
+      .where(and(...conditions))
+      .orderBy(desc(youtubeVideos.publishedAt));
   }
 
   // Notifications
@@ -378,7 +382,7 @@ export class DatabaseStorage implements IStorage {
       .where(eq(pointsTransactions.userId, userId))
       .orderBy(desc(pointsTransactions.createdAt));
     
-    const total = transactions.reduce((sum, transaction) => sum + transaction.points, 0);
+    const total = transactions.reduce((sum, transaction) => sum + parseInt(transaction.points), 0);
     
     return { total, transactions };
   }
@@ -387,9 +391,8 @@ export class DatabaseStorage implements IStorage {
     const [transaction] = await db.insert(pointsTransactions)
       .values({
         userId,
-        points,
+        points: points.toString(),
         description,
-        createdAt: new Date().toISOString(),
       })
       .returning();
     
@@ -412,8 +415,6 @@ export class DatabaseStorage implements IStorage {
         target: [spiritualPlannerEntries.userId, spiritualPlannerEntries.date, spiritualPlannerEntries.type],
         set: {
           content: entry.content,
-          completed: entry.completed,
-          updatedAt: new Date().toISOString(),
         }
       })
       .returning();
