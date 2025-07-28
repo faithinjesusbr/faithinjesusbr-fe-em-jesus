@@ -1349,6 +1349,111 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI Prayer routes with OpenAI integration
+  app.post("/api/ai-prayer", async (req, res) => {
+    try {
+      const { userId, userMessage } = req.body;
+      
+      if (!userId || !userMessage) {
+        return res.status(400).json({ message: "UserId e userMessage são obrigatórios" });
+      }
+
+      // Import AI service
+      const { generateAIResponse } = await import('./ai-service');
+      const aiResponse = await generateAIResponse(userMessage);
+      
+      const prayerRequest = await storage.createAIPrayerRequest({
+        userId,
+        userMessage,
+        aiResponse: aiResponse.response,
+        verse: aiResponse.verse,
+        reference: aiResponse.reference,
+      });
+      
+      res.json(prayerRequest);
+    } catch (error) {
+      console.error('Erro ao processar oração IA:', error);
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Contributors routes with AI certificate generation
+  app.post("/api/contributors", async (req, res) => {
+    try {
+      const contributorData = req.body;
+      
+      if (!contributorData.name || !contributorData.email) {
+        return res.status(400).json({ message: "Nome e email são obrigatórios" });
+      }
+
+      // Create contributor with proper schema
+      const contributor = await storage.createContributor({
+        name: contributorData.name,
+        email: contributorData.email,
+        description: contributorData.message,
+        contributionType: contributorData.contributionType || 'donation',
+        donationAmount: contributorData.amount,
+        isActive: true,
+      });
+
+      // Generate AI certificate
+      const { generateCertificateContent } = await import('./ai-service');
+      const certificate = await generateCertificateContent(
+        contributorData.name, 
+        contributorData.contributionType || 'donation'
+      );
+
+      res.json({
+        contributor,
+        certificate
+      });
+    } catch (error) {
+      console.error('Erro ao criar colaborador:', error);
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.get("/api/contributors/:id/certificate", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const contributor = await storage.getContributorById(id);
+      
+      if (!contributor) {
+        return res.status(404).json({ message: "Colaborador não encontrado" });
+      }
+
+      const { generateCertificateContent } = await import('./ai-service');
+      const certificate = await generateCertificateContent(
+        contributor.name, 
+        contributor.contributionType || 'donation'
+      );
+
+      res.json(certificate);
+    } catch (error) {
+      console.error('Erro ao gerar certificado:', error);
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Emotion-based devotionals with AI
+  app.post("/api/emotion-devotionals", async (req, res) => {
+    try {
+      const { emotion } = req.body;
+      
+      if (!emotion) {
+        return res.status(400).json({ message: "Emoção é obrigatória" });
+      }
+
+      const { generateDevotional } = await import('./ai-service');
+      const devotional = await generateDevotional(emotion);
+      
+      res.json(devotional);
+    } catch (error) {
+      console.error('Erro ao gerar devocional:', error);
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
   // Spiritual Planner routes
   app.get("/api/spiritual-planner/:userId/:date", async (req, res) => {
     try {

@@ -13,7 +13,7 @@ import {
   HandHeart,
   DollarSign,
   Code,
-  PrayingHands
+  Heart as PrayingHands
 } from "lucide-react";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
@@ -45,14 +45,14 @@ export default function ContributorsPage() {
     queryKey: ["/api/contributors"],
   });
 
-  const filteredContributors = contributors?.filter((contributor: Contributor) => {
+  const filteredContributors = (contributors || []).filter((contributor: Contributor) => {
     const matchesSearch = contributor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contributor.contribution.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesFilter = filterType === "all" || contributor.contribution === filterType;
     
     return matchesSearch && matchesFilter;
-  }) || [];
+  });
 
   const contributionTypes = [
     { value: "donation", label: "Doação", icon: DollarSign, color: "bg-green-100 text-green-800" },
@@ -187,7 +187,7 @@ function ContributorCard({ contributor }: { contributor: Contributor }) {
   const contributionTypes = {
     donation: { label: "Doação", icon: DollarSign, color: "bg-green-100 text-green-800" },
     volunteer: { label: "Voluntário", icon: HandHeart, color: "bg-blue-100 text-blue-800" },
-    prayer: { label: "Oração", icon: Pray, color: "bg-purple-100 text-purple-800" },
+    prayer: { label: "Oração", icon: PrayingHands, color: "bg-purple-100 text-purple-800" },
     tech: { label: "Técnico", icon: Code, color: "bg-orange-100 text-orange-800" },
   };
 
@@ -317,18 +317,18 @@ function ContributorCertificate({ contributor }: { contributor: Contributor }) {
             Contribuição: {contributor.contribution}
           </Badge>
 
-          {certificate?.description && (
+          {certificate && certificate.description && (
             <p className="text-gray-700 leading-relaxed max-w-lg mx-auto">
               {certificate.description}
             </p>
           )}
 
-          {certificate?.aiGeneratedVerse && (
+          {certificate && certificate.aiGeneratedVerse && (
             <div className="bg-white p-4 rounded-lg border border-purple-200">
               <p className="text-lg italic text-gray-800 mb-2">
                 "{certificate.aiGeneratedVerse}"
               </p>
-              {certificate?.verseReference && (
+              {certificate.verseReference && (
                 <p className="text-sm font-semibold text-divine-600">
                   {certificate.verseReference}
                 </p>
@@ -336,7 +336,7 @@ function ContributorCertificate({ contributor }: { contributor: Contributor }) {
             </div>
           )}
 
-          {certificate?.aiGeneratedPrayer && (
+          {certificate && certificate.aiGeneratedPrayer && (
             <div className="bg-divine-50 p-4 rounded-lg border border-divine-200">
               <h4 className="font-semibold text-divine-700 mb-2">Oração de Bênção:</h4>
               <p className="text-gray-700 leading-relaxed">

@@ -152,7 +152,7 @@ export default function Home() {
               <h1 className="text-2xl font-bold text-gray-900 mb-1">
                 {getCurrentGreeting()}, {user?.name?.split(' ')[0] || 'Irmão'} ✨
               </h1>
-              <p className="text-gray-600">segunda-feira, 29 de julho</p>
+              <p className="text-gray-600">{new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </div>
             <Button variant="ghost" size="icon" className="rounded-full">
               <Bell className="h-5 w-5" />
@@ -208,6 +208,24 @@ export default function Home() {
           </CardContent>
         </Card>
 
+        {/* Quick Actions */}
+        <div className="mb-6">
+          <div className="flex gap-3">
+            <Link href="/emotion-today-improved" className="flex-1">
+              <Button className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700">
+                <Heart className="h-4 w-4 mr-2" />
+                Como me sinto hoje?
+              </Button>
+            </Link>
+            <Link href="/youtube-videos-improved" className="flex-1">
+              <Button variant="outline" className="w-full border-red-300 text-red-600 hover:bg-red-50">
+                <Video className="h-4 w-4 mr-2" />
+                Vídeos Cristãos
+              </Button>
+            </Link>
+          </div>
+        </div>
+
         {/* Main Features Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {/* IA Cristo */}
@@ -218,20 +236,20 @@ export default function Home() {
                   <Bot className="text-white w-6 h-6" />
                 </div>
                 <h3 className="text-sm font-semibold mb-1">IA Cristo</h3>
-                <p className="text-xs text-white/80">Compartilhe seus sentimentos</p>
+                <p className="text-xs text-white/80">Conversas espirituais com IA</p>
               </CardContent>
             </Card>
           </Link>
 
-          {/* Devocional */}
-          <Link href="/library">
+          {/* E-books */}
+          <Link href="/library-ebooks">
             <Card className="hover:shadow-lg transition-all hover:scale-105 cursor-pointer bg-green-500 text-white border-0">
               <CardContent className="p-4 text-center">
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
                   <BookOpen className="text-white w-6 h-6" />
                 </div>
-                <h3 className="text-sm font-semibold mb-1">Devocional</h3>
-                <p className="text-xs text-white/80">Guia devocional</p>
+                <h3 className="text-sm font-semibold mb-1">E-books</h3>
+                <p className="text-xs text-white/80">Biblioteca cristã gratuita</p>
               </CardContent>
             </Card>
           </Link>
@@ -249,15 +267,15 @@ export default function Home() {
             </Card>
           </Link>
 
-          {/* Frutos */}
-          <Link href="/sponsors">
+          {/* Colaboradores */}
+          <Link href="/pix-contributors">
             <Card className="hover:shadow-lg transition-all hover:scale-105 cursor-pointer bg-orange-500 text-white border-0">
               <CardContent className="p-4 text-center">
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Star className="text-white w-6 h-6" />
                 </div>
-                <h3 className="text-sm font-semibold mb-1">Frutos</h3>
-                <p className="text-xs text-white/80">Suas reflexões</p>
+                <h3 className="text-sm font-semibold mb-1">Colaborar</h3>
+                <p className="text-xs text-white/80">PIX e contribuições</p>
               </CardContent>
             </Card>
           </Link>

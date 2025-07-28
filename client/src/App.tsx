@@ -52,6 +52,10 @@ function Router() {
       <Route path="/store" component={Store} />
       <Route path="/videos" component={Videos} />
       <Route path="/library" component={Library} />
+      <Route path="/library-ebooks" component={() => import("@/pages/library-ebooks").then(m => m.default)} />
+      <Route path="/emotion-today-improved" component={() => import("@/pages/emotion-today-improved").then(m => m.default)} />
+      <Route path="/youtube-videos-improved" component={() => import("@/pages/youtube-videos-improved").then(m => m.default)} />
+      <Route path="/pix-contributors" component={() => import("@/pages/pix-contributors").then(m => m.default)} />
       <Route path="/sponsors" component={Sponsors} />
       <Route path="/prayer-requests" component={PrayerRequests} />
       <Route path="/ai-prayer" component={AIPrayer} />

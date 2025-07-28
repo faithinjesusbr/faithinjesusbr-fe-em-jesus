@@ -250,6 +250,14 @@ export class DatabaseStorage implements IStorage {
     return request;
   }
 
+  async getUserAIPrayerRequests(userId: string): Promise<AIPrayerRequest[]> {
+    return await db
+      .select()
+      .from(aiPrayerRequests)
+      .where(eq(aiPrayerRequests.userId, userId))
+      .orderBy(desc(aiPrayerRequests.createdAt));
+  }
+
   // Prayer Requests
   async getAllPrayerRequests(): Promise<PrayerRequest[]> {
     return await db.select().from(prayerRequests).orderBy(desc(prayerRequests.createdAt));
@@ -373,6 +381,14 @@ export class DatabaseStorage implements IStorage {
 
   async createContributor(insertContributor: InsertContributor): Promise<Contributor> {
     const [contributor] = await db.insert(contributors).values(insertContributor).returning();
+    return contributor;
+  }
+
+  async getContributorById(id: string): Promise<Contributor | undefined> {
+    const [contributor] = await db
+      .select()
+      .from(contributors)
+      .where(eq(contributors.id, id));
     return contributor;
   }
 

@@ -43,16 +43,16 @@ export default function AIPrayerPage() {
 
   const sendPrayerMutation = useMutation({
     mutationFn: async (userMessage: string) => {
-      return apiRequest("/api/ai-prayer", {
+      const response = await apiRequest("/api/ai-prayer", {
         method: "POST",
         body: {
           userId: user.id,
           userMessage,
-          aiResponse: "", // Será preenchido pelo backend
         },
       });
+      return response;
     },
-    onSuccess: (data) => {
+    onSuccess: (data: AIPrayerRequest) => {
       setConversation(prev => [...prev, data]);
       setMessage("");
       toast({
@@ -207,7 +207,7 @@ export default function AIPrayerPage() {
       </Card>
 
       {/* Prayer History */}
-      {prayerHistory && prayerHistory.length > 0 && conversation.length === 0 && (
+      {prayerHistory && Array.isArray(prayerHistory) && prayerHistory.length > 0 && conversation.length === 0 && (
         <Card className="mt-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -220,7 +220,7 @@ export default function AIPrayerPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {prayerHistory.slice(0, 5).map((item: AIPrayerRequest) => (
+              {Array.isArray(prayerHistory) && prayerHistory.slice(0, 5).map((item: AIPrayerRequest) => (
                 <div
                   key={item.id}
                   className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
