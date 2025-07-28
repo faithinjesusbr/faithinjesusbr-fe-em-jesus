@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import type { BibleVerse } from "./bible-service";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -146,4 +147,43 @@ export async function generateNightDevotional() {
     reference: "Salmos 4:8",
     prayer: "Senhor, concede-me uma noite de paz e descanso. Em nome de Jesus, amém."
   };
+}
+
+export async function generateBibleVerse(): Promise<BibleVerse> {
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are IA Cristo. Generate a random Bible verse in Portuguese with exact reference. Return JSON format with text, reference, book, chapter, and verse fields."
+        },
+        {
+          role: "user",
+          content: "Generate a random inspiring Bible verse in Portuguese"
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.9,
+      max_tokens: 300
+    });
+
+    const result = JSON.parse(completion.choices[0]?.message?.content || '{}');
+    return {
+      text: result.text || "Porque Deus tanto amou o mundo que deu o seu Filho Unigênito, para que todo o que nele crer não pereça, mas tenha a vida eterna.",
+      reference: result.reference || "João 3:16",
+      book: result.book || "João",
+      chapter: result.chapter || 3,
+      verse: result.verse || 16
+    };
+  } catch (error) {
+    // Fallback verse
+    return {
+      text: "Porque Deus tanto amou o mundo que deu o seu Filho Unigênito, para que todo o que nele crer não pereça, mas tenha a vida eterna.",
+      reference: "João 3:16",
+      book: "João",
+      chapter: 3,
+      verse: 16
+    };
+  }
 }

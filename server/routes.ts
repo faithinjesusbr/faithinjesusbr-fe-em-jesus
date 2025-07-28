@@ -13,6 +13,7 @@ import {
   generateContributorCertificate, generateDevotionalContent, generateChallengeContent,
   generatePrayerRequestResponse, generateNightDevotional
 } from "./openai";
+import { bibleService } from "./bible-service";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
@@ -145,6 +146,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(requests);
     } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Sistema de Versículos Bíblicos
+  app.get("/api/verses/daily", async (req, res) => {
+    try {
+      const dailyVerse = await bibleService.getDailyVerse();
+      res.json(dailyVerse);
+    } catch (error) {
+      console.error("Erro ao buscar versículo do dia:", error);
+      res.status(500).json({ message: "Erro ao buscar versículo do dia" });
+    }
+  });
+
+  app.get("/api/verses/random", async (req, res) => {
+    try {
+      const randomVerse = await bibleService.getRandomVerse();
+      res.json(randomVerse);
+    } catch (error) {
+      console.error("Erro ao buscar versículo aleatório:", error);
+      res.status(500).json({ message: "Erro ao buscar versículo aleatório" });
+    }
+  });
+
+  app.get("/api/verses/emotion/:emotion", async (req, res) => {
+    try {
+      const { emotion } = req.params;
+      const emotionVerse = bibleService.getVerseForEmotion(emotion);
+      res.json(emotionVerse);
+    } catch (error) {
+      console.error("Erro ao buscar versículo para emoção:", error);
+      res.status(500).json({ message: "Erro ao buscar versículo para emoção" });
     }
   });
 
