@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, BookOpen, Heart, RefreshCw } from "lucide-react";
+import { Loader2, BookOpen, Heart, RefreshCw, Share2, Copy, MessageCircle, Instagram } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { apiRequest } from "@/lib/queryClient";
@@ -68,6 +68,33 @@ export default function VerseOfDay() {
 
   const handleBackToDaily = () => {
     setShowDailyVerse(true);
+  };
+
+  const handleShareWhatsApp = () => {
+    if (!currentVerse) return;
+    const message = `🙏 *Versículo do Dia* 📖\n\n"${currentVerse.text}"\n\n📚 ${currentVerse.reference}\n\n✨ Que esta palavra abençoe seu dia! Compartilhado pelo app Fé em Jesus BR`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const handleShareInstagram = () => {
+    if (!currentVerse) return;
+    const message = `🙏 Versículo do Dia 📖\n\n"${currentVerse.text}"\n\n📚 ${currentVerse.reference}\n\n✨ Que esta palavra abençoe seu dia!`;
+    navigator.clipboard.writeText(message);
+    toast({
+      title: "Texto copiado!",
+      description: "Cole no Instagram Stories ou feed para compartilhar",
+    });
+  };
+
+  const handleCopyVerse = () => {
+    if (!currentVerse) return;
+    const message = `"${currentVerse.text}" - ${currentVerse.reference}`;
+    navigator.clipboard.writeText(message);
+    toast({
+      title: "Versículo copiado!",
+      description: "Cole onde quiser compartilhar",
+    });
   };
 
   if (isLoading) {
@@ -216,6 +243,43 @@ export default function VerseOfDay() {
                         )}
                       </Button>
                     )}
+
+                    {/* Botões de Compartilhamento */}
+                    <div className="border-t pt-4 mt-2">
+                      <h4 className="text-sm font-medium text-gray-700 mb-3 text-center">
+                        <Share2 className="h-4 w-4 inline mr-1" />
+                        Compartilhar Versículo
+                      </h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        <Button
+                          onClick={handleShareWhatsApp}
+                          variant="outline"
+                          size="sm"
+                          className="text-green-600 border-green-200 hover:bg-green-50"
+                        >
+                          <MessageCircle className="mr-1 h-4 w-4" />
+                          WhatsApp
+                        </Button>
+                        <Button
+                          onClick={handleShareInstagram}
+                          variant="outline"
+                          size="sm"
+                          className="text-pink-600 border-pink-200 hover:bg-pink-50"
+                        >
+                          <Instagram className="mr-1 h-4 w-4" />
+                          Instagram
+                        </Button>
+                        <Button
+                          onClick={handleCopyVerse}
+                          variant="outline"
+                          size="sm"
+                          className="text-blue-600 border-blue-200 hover:bg-blue-50 sm:col-span-1 col-span-2"
+                        >
+                          <Copy className="mr-1 h-4 w-4" />
+                          Copiar Texto
+                        </Button>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="text-center text-xs sm:text-sm text-gray-600 px-2">

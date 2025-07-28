@@ -9,11 +9,9 @@ import {
 } from "@shared/schema";
 import { z } from "zod";
 import { 
-  generateEmotionalGuidance, generatePrayerResponse, generateLoveCard,
-  generateContributorCertificate, generateDevotionalContent, generateChallengeContent,
-  generatePrayerRequestResponse, generateNightDevotional
-} from "./openai";
-import { bibleService } from "./bible-service";
+  generateEmotionalGuidance, generatePrayerResponse, generateAssistantResponse
+} from "./free-ai-service";
+import { freeBibleService } from "./free-bible-service";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
@@ -152,7 +150,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Sistema de Versículos Bíblicos
   app.get("/api/verses/daily", async (req, res) => {
     try {
-      const dailyVerse = await bibleService.getDailyVerse();
+      const dailyVerse = await freeBibleService.getDailyVerse();
       res.json(dailyVerse);
     } catch (error) {
       console.error("Erro ao buscar versículo do dia:", error);
@@ -162,7 +160,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/verses/random", async (req, res) => {
     try {
-      const randomVerse = await bibleService.getRandomVerse();
+      const randomVerse = await freeBibleService.getRandomVerse();
       res.json(randomVerse);
     } catch (error) {
       console.error("Erro ao buscar versículo aleatório:", error);
@@ -172,7 +170,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/verses/new", async (req, res) => {
     try {
-      const newVerse = await bibleService.getNewVerse();
+      const { current } = req.query;
+      const newVerse = await freeBibleService.getNewRandomVerse(current as string);
       res.json(newVerse);
     } catch (error) {
       console.error("Erro ao buscar novo versículo:", error);
@@ -1468,7 +1467,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Mensagem é obrigatória" });
       }
 
-      const { generateAssistantResponse } = await import('./ai-service');
       const response = await generateAssistantResponse(message);
       
       // Save interaction for analytics

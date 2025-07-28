@@ -138,25 +138,28 @@ export default function DigitalAssistant() {
 
   if (!isOpen) {
     return (
-      <div className="fixed bottom-6 right-6 z-50">
-        <Button
-          onClick={() => setIsOpen(true)}
-          className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-2xl pulse-animation"
-          size="lg"
-        >
-          <Bot className="h-8 w-8 text-white" />
-        </Button>
-        <div className="absolute -top-12 -left-20 bg-gray-800 text-white px-3 py-1 rounded-lg text-sm whitespace-nowrap">
-          IA Cristo - Seu assistente espiritual
-          <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800 absolute left-24 bottom-[-4px]"></div>
+      <div className="fixed bottom-20 right-4 z-50">
+        <div className="flex items-center justify-end">
+          {/* Label - only show on larger screens and not overlapping */}
+          <div className="hidden lg:block bg-white/95 backdrop-blur-sm rounded-lg shadow-lg px-3 py-2 mr-2 border max-w-[200px]">
+            <span className="text-sm font-medium text-gray-700">IA Cristo - Assistente</span>
+          </div>
+          <Button
+            onClick={() => setIsOpen(true)}
+            className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-2xl pulse-animation flex-shrink-0"
+            size="lg"
+            title="IA Cristo - Seu assistente espiritual"
+          >
+            <Bot className="h-6 w-6 text-white" />
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      <Card className={`w-96 shadow-2xl border-purple-200 ${isMinimized ? 'h-16' : 'h-[500px]'} transition-all duration-300`}>
+    <div className="fixed bottom-20 right-4 z-50">
+      <Card className={`w-80 sm:w-96 shadow-2xl border-purple-200 ${isMinimized ? 'h-16' : 'h-[500px]'} transition-all duration-300`}>
         <CardHeader className="pb-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
