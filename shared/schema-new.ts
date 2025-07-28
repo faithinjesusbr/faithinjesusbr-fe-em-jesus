@@ -63,17 +63,6 @@ export const emotionalStates = pgTable("emotional_states", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const emotionDevotionals = pgTable("emotion_devotionals", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  emotionId: varchar("emotion_id").notNull(),
-  title: text("title").notNull(),
-  content: text("content").notNull(),
-  verse: text("verse").notNull(),
-  reference: text("reference").notNull(),
-  prayer: text("prayer").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
 export const challenges = pgTable("challenges", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   title: text("title").notNull(),
@@ -191,15 +180,6 @@ export const libraryContent = pgTable("library_content", {
   reference: text("reference"),
   externalLink: text("external_link"),
   contentType: text("content_type").notNull(), // reflection, verse, link
-});
-
-export const devotionalAudios = pgTable("devotional_audios", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  title: text("title").notNull(),
-  description: text("description"),
-  audioUrl: text("audio_url").notNull(),
-  duration: text("duration"),
-  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const sponsors = pgTable("sponsors", {
@@ -324,8 +304,6 @@ export type Emotion = typeof emotions.$inferSelect;
 export type InsertEmotion = typeof emotions.$inferInsert;
 export type EmotionalState = typeof emotionalStates.$inferSelect;
 export type InsertEmotionalState = typeof emotionalStates.$inferInsert;
-export type EmotionDevotional = typeof emotionDevotionals.$inferSelect;
-export type InsertEmotionDevotional = typeof emotionDevotionals.$inferInsert;
 export type Challenge = typeof challenges.$inferSelect;
 export type InsertChallenge = typeof challenges.$inferInsert;
 export type ChallengeDay = typeof challengeDays.$inferSelect;
@@ -346,8 +324,6 @@ export type LibraryCategory = typeof libraryCategories.$inferSelect;
 export type InsertLibraryCategory = typeof libraryCategories.$inferInsert;
 export type LibraryContent = typeof libraryContent.$inferSelect;
 export type InsertLibraryContent = typeof libraryContent.$inferInsert;
-export type DevotionalAudio = typeof devotionalAudios.$inferSelect;
-export type InsertDevotionalAudio = typeof devotionalAudios.$inferInsert;
 export type Sponsor = typeof sponsors.$inferSelect;
 export type InsertSponsor = typeof sponsors.$inferInsert;
 export type SponsorAd = typeof sponsorAds.$inferSelect;
@@ -424,43 +400,4 @@ export const insertUserPointsSchema = createInsertSchema(userPoints).pick({
   userId: true,
   points: true,
   reason: true,
-});
-
-export const insertPrayerSchema = createInsertSchema(prayers).pick({
-  userId: true,
-  content: true,
-});
-
-export const insertPrayerRequestSchema = createInsertSchema(prayerRequests).pick({
-  userId: true,
-  subject: true,
-  content: true,
-});
-
-export const insertAIPrayerRequestSchema = createInsertSchema(aiPrayerRequests).pick({
-  userId: true,
-  userMessage: true,
-  aiResponse: true,
-});
-
-export const insertChallengeSchema = createInsertSchema(challenges).pick({
-  title: true,
-  description: true,
-  duration: true,
-  imageUrl: true,
-});
-
-export const insertEmotionSchema = createInsertSchema(emotions).pick({
-  name: true,
-  description: true,
-  color: true,
-  icon: true,
-});
-
-export const insertVerseSchema = createInsertSchema(verses).pick({
-  text: true,
-  reference: true,
-  book: true,
-  chapter: true,
-  verse: true,
 });

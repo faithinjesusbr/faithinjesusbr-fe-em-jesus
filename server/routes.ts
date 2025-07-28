@@ -3,20 +3,14 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { 
   insertUserSchema, loginSchema, insertDevotionalSchema, insertVerseSchema, insertPrayerSchema,
-  insertEmotionDevotionalSchema, insertUserChallengeProgressSchema, insertAIPrayerRequestSchema,
-  insertLoveCardSchema, insertPrayerRequestSchema, insertLibraryContentSchema, insertDevotionalAudioSchema,
-  insertSponsorSchema, insertSponsorAdSchema, insertContributorSchema, insertNotificationSchema,
-  insertUserNotificationSettingsSchema, insertUserInteractionSchema, insertCertificateSchema,
-  insertAppSettingsSchema, insertStoreProductSchema, insertYoutubeVideoSchema,
-  insertSpiritualPlannerEntrySchema, insertUserDevotionalSchema, insertVerseReactionSchema,
-  insertSpiritualPlannerSchema, insertChallengeProgressSchema
+  insertEmotionDevotionalSchema, insertAIPrayerRequestSchema,
+  insertLoveCardSchema, insertPrayerRequestSchema,
+  insertContributorSchema, insertEbookSchema, insertUserPointsSchema, insertEmotionalStateSchema
 } from "@shared/schema";
 import { z } from "zod";
 import { 
-  generateEmotionDevotional, generatePrayerResponse, generatePrayerRequestResponse,
-  generateSponsorCertificate, generateChallengeCertificate, generateNightDevotional,
-  generateContributorCertificate, generateExclusivePrayerAndVerse,
-  generateDailyDevotional, generatePersonalizedPrayer
+  generateEmotionalGuidance, generatePrayerResponse, generateLoveCard,
+  generateContributorCertificate, generateDevotionalContent, generateChallengeContent
 } from "./openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -54,11 +48,408 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Remove password from response
       const { password: _, ...userWithoutPassword } = user;
-      res.status(201).json({ user: userWithoutPassword });
+      res.json({ user: userWithoutPassword });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
       }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Sistema "Sinto Hoje" - Estados emocionais com IA
+  app.post("/api/emotional-states", async (req, res) => {
+    try {
+      const data = insertEmotionalStateSchema.parse(req.body);
+      
+      // Gerar resposta da IA
+      const aiGuidance = await generateEmotionalGuidance(
+        data.emotion,
+        data.intensity,
+        data.description
+      );
+      
+      const emotionalState = await storage.createEmotionalState({
+        ...data,
+        aiResponse: aiGuidance.response,
+        suggestedVerse: aiGuidance.verse,
+        verseReference: aiGuidance.verseReference,
+        personalizedPrayer: aiGuidance.prayer,
+      });
+      
+      // Adicionar pontos ao usuário
+      await storage.createUserPoints({
+        userId: data.userId,
+        points: "5",
+        reason: "emotional_guidance_received",
+      });
+      
+      res.json(emotionalState);
+    } catch (error) {
+      console.error("Erro ao criar estado emocional:", error);
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.get("/api/emotional-states/:userId", async (req, res) => {
+    try {
+      const states = await storage.getUserEmotionalStates(req.params.userId);
+      res.json(states);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Agente Digital IA Cristo
+  app.post("/api/ai-prayer", async (req, res) => {
+    try {
+      const data = insertAIPrayerRequestSchema.parse(req.body);
+      
+      // Gerar resposta da IA
+      const aiResponse = await generatePrayerResponse(data.userMessage);
+      
+      const prayerRequest = await storage.createAIPrayerRequest({
+        ...data,
+        aiResponse: aiResponse.response,
+        verse: aiResponse.verse,
+        reference: aiResponse.reference,
+      });
+      
+      // Adicionar pontos ao usuário
+      await storage.createUserPoints({
+        userId: data.userId,
+        points: "3",
+        reason: "ai_prayer_request",
+      });
+      
+      res.json(prayerRequest);
+    } catch (error) {
+      console.error("Erro ao processar oração com IA:", error);
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.get("/api/ai-prayer/:userId", async (req, res) => {
+    try {
+      const requests = await storage.getUserAIPrayerRequests(req.params.userId);
+      res.json(requests);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Sistema de apoio via PIX - Contribuidores
+  app.post("/api/contributors", async (req, res) => {
+    try {
+      const data = insertContributorSchema.parse(req.body);
+      
+      const contributor = await storage.createContributor(data);
+      
+      // Gerar certificado de contribuidor
+      const certificateData = await generateContributorCertificate(
+        data.name,
+        data.contributionType
+      );
+      
+      const certificate = await storage.createCertificate({
+        recipientType: "contributor",
+        recipientId: contributor.id,
+        title: certificateData.title,
+        description: certificateData.description,
+        aiGeneratedPrayer: certificateData.prayer,
+        aiGeneratedVerse: certificateData.verse,
+        verseReference: certificateData.verseReference,
+        templateStyle: "elegant",
+        backgroundColor: "#ffffff",
+        textColor: "#333333",
+      });
+      
+      res.json({ contributor, certificate });
+    } catch (error) {
+      console.error("Erro ao criar contribuidor:", error);
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.get("/api/contributors", async (req, res) => {
+    try {
+      const contributors = await storage.getAllContributors();
+      res.json(contributors);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Cartões de amor
+  app.get("/api/love-cards", async (req, res) => {
+    try {
+      const category = req.query.category as string;
+      const cards = category 
+        ? await storage.getLoveCardsByCategory(category)
+        : await storage.getAllLoveCards();
+      res.json(cards);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/love-cards/generate", async (req, res) => {
+    try {
+      const { category } = req.body;
+      
+      const cardData = await generateLoveCard(category);
+      
+      const card = await storage.createLoveCard({
+        title: cardData.title,
+        message: cardData.message,
+        verse: cardData.verse,
+        reference: cardData.reference,
+        backgroundColor: cardData.backgroundColor,
+        textColor: cardData.textColor,
+        category,
+        isGenerated: true,
+      });
+      
+      res.json(card);
+    } catch (error) {
+      console.error("Erro ao gerar cartão de amor:", error);
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // E-books da biblioteca
+  app.get("/api/ebooks", async (req, res) => {
+    try {
+      const category = req.query.category as string;
+      const ebooks = category 
+        ? await storage.getEbooksByCategory(category)
+        : await storage.getAllEbooks();
+      res.json(ebooks);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/ebooks/:id/download", async (req, res) => {
+    try {
+      await storage.updateEbookDownloads(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Sistema de pontuação devocional
+  app.get("/api/user-points/:userId", async (req, res) => {
+    try {
+      const points = await storage.getUserPoints(req.params.userId);
+      const total = await storage.getUserTotalPoints(req.params.userId);
+      res.json({ points, total });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/user-points", async (req, res) => {
+    try {
+      const data = insertUserPointsSchema.parse(req.body);
+      const points = await storage.createUserPoints(data);
+      res.json(points);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Certificados
+  app.get("/api/certificates/:contributorId", async (req, res) => {
+    try {
+      const certificates = await storage.getCertificatesForContributor(req.params.contributorId);
+      res.json(certificates);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Loja virtual
+  app.get("/api/store-products", async (req, res) => {
+    try {
+      const category = req.query.category as string;
+      const featured = req.query.featured === "true";
+      
+      let products;
+      if (featured) {
+        products = await storage.getFeaturedProducts();
+      } else if (category) {
+        products = await storage.getProductsByCategory(category);
+      } else {
+        products = await storage.getAllStoreProducts();
+      }
+      
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Vídeos do YouTube
+  app.get("/api/youtube-videos", async (req, res) => {
+    try {
+      const category = req.query.category as string;
+      const featured = req.query.featured === "true";
+      
+      let videos;
+      if (featured) {
+        videos = await storage.getFeaturedVideos();
+      } else if (category) {
+        videos = await storage.getVideosByCategory(category);
+      } else {
+        videos = await storage.getAllYoutubeVideos();
+      }
+      
+      res.json(videos);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Devotionals
+  app.get("/api/devotionals", async (req, res) => {
+    try {
+      const date = req.query.date as string;
+      if (date) {
+        const devotional = await storage.getDailyDevotional(date);
+        res.json(devotional);
+      } else {
+        const devotionals = await storage.getAllDevotionals();
+        res.json(devotionals);
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/devotionals", async (req, res) => {
+    try {
+      const data = insertDevotionalSchema.parse(req.body);
+      const devotional = await storage.createDevotional(data);
+      res.json(devotional);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Versículos
+  app.get("/api/verses", async (req, res) => {
+    try {
+      const random = req.query.random === "true";
+      if (random) {
+        const verse = await storage.getRandomVerse();
+        res.json(verse);
+      } else {
+        const verses = await storage.getAllVerses();
+        res.json(verses);
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Orações
+  app.post("/api/prayers", async (req, res) => {
+    try {
+      const data = insertPrayerSchema.parse(req.body);
+      const prayer = await storage.createPrayer(data);
+      
+      // Adicionar pontos
+      await storage.createUserPoints({
+        userId: data.userId,
+        points: "2",
+        reason: "prayer_submitted",
+      });
+      
+      res.json(prayer);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.get("/api/prayers/:userId", async (req, res) => {
+    try {
+      const prayers = await storage.getUserPrayers(req.params.userId);
+      res.json(prayers);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Estatísticas de oração
+  app.get("/api/prayer-stats", async (req, res) => {
+    try {
+      const stats = await storage.getPrayerStats();
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Desafios espirituais
+  app.get("/api/challenges", async (req, res) => {
+    try {
+      const challenges = await storage.getAllChallenges();
+      res.json(challenges);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.get("/api/challenges/:id/days", async (req, res) => {
+    try {
+      const days = await storage.getChallengeDays(req.params.id);
+      res.json(days);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Solicitações de oração
+  app.post("/api/prayer-requests", async (req, res) => {
+    try {
+      const data = insertPrayerRequestSchema.parse(req.body);
+      const request = await storage.createPrayerRequest(data);
+      res.json(request);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Biblioteca
+  app.get("/api/library/categories", async (req, res) => {
+    try {
+      const categories = await storage.getAllLibraryCategories();
+      res.json(categories);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.get("/api/library/content/:categoryId", async (req, res) => {
+    try {
+      const content = await storage.getLibraryContentByCategory(req.params.categoryId);
+      res.json(content);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Patrocinadores
+  app.get("/api/sponsors", async (req, res) => {
+    try {
+      const active = req.query.active === "true";
+      const sponsors = active 
+        ? await storage.getActiveSponsors()
+        : await storage.getAllSponsors();
+      res.json(sponsors);
+    } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor" });
     }
   });
