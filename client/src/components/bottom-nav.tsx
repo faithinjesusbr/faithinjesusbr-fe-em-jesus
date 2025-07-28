@@ -5,8 +5,8 @@ const navItems = [
   { path: "/", icon: Home, label: "Início" },
   { path: "/store", icon: ShoppingBag, label: "Loja" },
   { path: "/videos", icon: Video, label: "Vídeos" },
-  { path: "/library", icon: BookOpen, label: "Biblioteca" },
-  { path: "/sponsors", icon: Users, label: "Patrocinadores" },
+  { path: "/library", icon: BookOpen, label: "Biblio" },
+  { path: "/sponsors", icon: Users, label: "Apoio" },
   { path: "/prayer-requests", icon: MessageCircle, label: "Oração" },
 ];
 
@@ -31,7 +31,7 @@ export default function BottomNav() {
               }`}
             >
               <IconComponent className={`h-4 w-4 ${isActive ? 'scale-110' : ''}`} />
-              <span className="text-[10px] font-medium truncate max-w-[60px]">{item.label}</span>
+              <span className="text-[9px] font-medium truncate max-w-[50px] leading-tight">{item.label}</span>
             </Link>
           );
         })}

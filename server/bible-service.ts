@@ -17,7 +17,7 @@ interface BibleApiResponse {
   }
 }
 
-// Lista de versículos fixos como fallback final
+// Lista expandida de versículos em português como fallback principal
 const FALLBACK_VERSES = [
   {
     text: "Porque Deus tanto amou o mundo que deu o seu Filho Unigênito, para que todo o que nele crer não pereça, mas tenha a vida eterna.",
@@ -74,6 +74,90 @@ const FALLBACK_VERSES = [
     book: "Hebreus",
     chapter: 4,
     verse: 12
+  },
+  {
+    text: "Bem-aventurados os que têm fome e sede de justiça, porque eles serão fartos.",
+    reference: "Mateus 5:6",
+    book: "Mateus",
+    chapter: 5,
+    verse: 6
+  },
+  {
+    text: "Vinde a mim, todos os que estais cansados e oprimidos, e eu vos aliviarei.",
+    reference: "Mateus 11:28",
+    book: "Mateus",
+    chapter: 11,
+    verse: 28
+  },
+  {
+    text: "Porque eu bem sei os pensamentos que tenho a vosso respeito, diz o SENHOR; pensamentos de paz, e não de mal, para vos dar o fim que esperais.",
+    reference: "Jeremias 29:11",
+    book: "Jeremias",
+    chapter: 29,
+    verse: 11
+  },
+  {
+    text: "O SENHOR é a minha luz e a minha salvação; a quem temerei?",
+    reference: "Salmos 27:1",
+    book: "Salmos",
+    chapter: 27,
+    verse: 1
+  },
+  {
+    text: "Confia no SENHOR de todo o teu coração, e não te estribes no teu próprio entendimento.",
+    reference: "Provérbios 3:5",
+    book: "Provérbios",
+    chapter: 3,
+    verse: 5
+  },
+  {
+    text: "Porque o salário do pecado é a morte, mas o dom gratuito de Deus é a vida eterna, por Cristo Jesus nosso Senhor.",
+    reference: "Romanos 6:23",
+    book: "Romanos",
+    chapter: 6,
+    verse: 23
+  },
+  {
+    text: "E disse-lhes: Ide por todo o mundo, pregai o evangelho a toda criatura.",
+    reference: "Marcos 16:15",
+    book: "Marcos",
+    chapter: 16,
+    verse: 15
+  },
+  {
+    text: "Mas buscai primeiro o reino de Deus, e a sua justiça, e todas estas coisas vos serão acrescentadas.",
+    reference: "Mateus 6:33",
+    book: "Mateus",
+    chapter: 6,
+    verse: 33
+  },
+  {
+    text: "Porque onde estiverem dois ou três reunidos em meu nome, aí estou eu no meio deles.",
+    reference: "Mateus 18:20",
+    book: "Mateus",
+    chapter: 18,
+    verse: 20
+  },
+  {
+    text: "Se confessarmos os nossos pecados, ele é fiel e justo para nos perdoar os pecados, e nos purificar de toda a injustiça.",
+    reference: "1 João 1:9",
+    book: "1 João",
+    chapter: 1,
+    verse: 9
+  },
+  {
+    text: "Porque pela graça sois salvos, por meio da fé; e isto não vem de vós, é dom de Deus.",
+    reference: "Efésios 2:8",
+    book: "Efésios",
+    chapter: 2,
+    verse: 8
+  },
+  {
+    text: "Mas Deus prova o seu amor para conosco, em que Cristo morreu por nós, sendo nós ainda pecadores.",
+    reference: "Romanos 5:8",
+    book: "Romanos",
+    chapter: 5,
+    verse: 8
   }
 ];
 
@@ -104,81 +188,46 @@ class BibleService {
     const today = new Date();
     const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
     
-    try {
-      // Usar o dia do ano para escolher um versículo consistente
-      const verseIndex = dayOfYear % POPULAR_VERSES_IDS.length;
-      const verseId = POPULAR_VERSES_IDS[verseIndex];
-      
-      return await this.getVerseById(verseId);
-    } catch (error) {
-      console.error('Erro ao buscar versículo do dia:', error);
-      // Fallback: usar versículo fixo baseado no dia
-      const fallbackIndex = dayOfYear % FALLBACK_VERSES.length;
-      return FALLBACK_VERSES[fallbackIndex];
-    }
+    // Usar versículo fixo baseado no dia para garantir português
+    const fallbackIndex = dayOfYear % FALLBACK_VERSES.length;
+    return FALLBACK_VERSES[fallbackIndex];
   }
 
   // Gerar versículo aleatório
   async getRandomVerse(): Promise<BibleVerse> {
-    try {
-      // Tentar múltiplas abordagens em ordem de preferência
-      return await this.tryMultipleSources();
-    } catch (error) {
-      console.error('Erro ao buscar versículo aleatório:', error);
-      // Fallback final: versículo fixo aleatório
-      const randomIndex = Math.floor(Math.random() * FALLBACK_VERSES.length);
-      return FALLBACK_VERSES[randomIndex];
-    }
+    // Sempre usar versículos em português do banco local
+    const randomIndex = Math.floor(Math.random() * FALLBACK_VERSES.length);
+    return FALLBACK_VERSES[randomIndex];
   }
 
   // Gerar novo versículo (diferente do aleatório e do diário)
   async getNewVerse(): Promise<BibleVerse> {
     try {
-      // Usar uma abordagem similar ao aleatório mas com diferentes IDs
-      return await this.tryMultipleSources(true);
+      // Tentar OpenAI primeiro para garantir português
+      return await this.getVerseFromOpenAI();
     } catch (error) {
-      console.error('Erro ao buscar novo versículo:', error);
-      // Fallback final: versículo fixo aleatório
+      console.error('Erro ao buscar novo versículo via OpenAI:', error);
+      // Fallback: versículo fixo aleatório em português
       const randomIndex = Math.floor(Math.random() * FALLBACK_VERSES.length);
       return FALLBACK_VERSES[randomIndex];
     }
   }
 
-  // Tentar múltiplas fontes de API
+  // Tentar múltiplas fontes de API, priorizando versículos em português
   private async tryMultipleSources(forceNew: boolean = false): Promise<BibleVerse> {
     const errors: Error[] = [];
 
-    // 1. Tentar labs.bible.org com versículo aleatório popular
-    try {
-      const randomVerseId = POPULAR_VERSES_IDS[Math.floor(Math.random() * POPULAR_VERSES_IDS.length)];
-      return await this.getVerseById(randomVerseId);
-    } catch (error) {
-      errors.push(error as Error);
-    }
-
-    // 2. Tentar labs.bible.org com parâmetro random
-    try {
-      return await this.getRandomFromLabsBible();
-    } catch (error) {
-      errors.push(error as Error);
-    }
-
-    // 3. Tentar API bíblica alternativa (bible-api.com)
-    try {
-      return await this.getVerseFromBibleApi();
-    } catch (error) {
-      errors.push(error as Error);
-    }
-
-    // 4. Tentar OpenAI como backup (se disponível)
+    // 1. Tentar OpenAI primeiro para garantir português (se disponível)
     try {
       return await this.getVerseFromOpenAI();
     } catch (error) {
       errors.push(error as Error);
     }
 
-    // Se todas falharam, usar fallback local
-    throw new Error(`Todas as fontes falharam: ${errors.map(e => e.message).join(', ')}`);
+    // 2. Usar versículo fixo em português (mais confiável)
+    console.log('Usando versículo em português do banco local');
+    const randomIndex = Math.floor(Math.random() * FALLBACK_VERSES.length);
+    return FALLBACK_VERSES[randomIndex];
   }
 
   // Buscar versículo específico por ID
