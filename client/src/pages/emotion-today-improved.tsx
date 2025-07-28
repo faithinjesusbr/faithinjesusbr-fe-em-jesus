@@ -17,7 +17,7 @@ import {
   Share2,
   Download,
   MessageCircle,
-  PrayingHands,
+  HandHeart as PrayingHands,
   Gift
 } from "lucide-react";
 import Header from "@/components/header";

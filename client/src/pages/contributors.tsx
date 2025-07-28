@@ -13,7 +13,7 @@ import {
   HandHeart,
   DollarSign,
   Code,
-  Heart as PrayingHands
+  HandHeart as PrayingHands
 } from "lucide-react";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";

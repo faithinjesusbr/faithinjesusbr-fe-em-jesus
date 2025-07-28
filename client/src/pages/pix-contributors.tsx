@@ -15,7 +15,7 @@ import {
   DollarSign,
   HandHeart,
   Code,
-  PrayingHands,
+  HandHeart as PrayingHands,
   CheckCircle2,
   Sparkles,
   Download,

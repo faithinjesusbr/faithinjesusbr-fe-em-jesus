@@ -17,6 +17,11 @@ import AIPrayer from "@/pages/ai-prayer";
 import SharePage from "@/pages/share";
 import AdminDashboard from "@/pages/admin-dashboard";
 import DigitalAssistant from "@/components/digital-assistant";
+// Import the dynamic components directly
+import LibraryEbooks from "@/pages/library-ebooks";
+import EmotionTodayImproved from "@/pages/emotion-today-improved";
+import YoutubeVideosImproved from "@/pages/youtube-videos-improved";
+import PixContributors from "@/pages/pix-contributors";
 import { useEffect } from "react";
 
 function Router() {
@@ -54,10 +59,10 @@ function Router() {
         <Route path="/store" component={Store} />
         <Route path="/videos" component={Videos} />
         <Route path="/library" component={Library} />
-        <Route path="/library-ebooks" component={() => import("@/pages/library-ebooks").then(m => m.default)} />
-        <Route path="/emotion-today-improved" component={() => import("@/pages/emotion-today-improved").then(m => m.default)} />
-        <Route path="/youtube-videos-improved" component={() => import("@/pages/youtube-videos-improved").then(m => m.default)} />
-        <Route path="/pix-contributors" component={() => import("@/pages/pix-contributors").then(m => m.default)} />
+        <Route path="/library-ebooks" component={LibraryEbooks} />
+        <Route path="/emotion-today-improved" component={EmotionTodayImproved} />
+        <Route path="/youtube-videos-improved" component={YoutubeVideosImproved} />
+        <Route path="/pix-contributors" component={PixContributors} />
         <Route path="/sponsors" component={Sponsors} />
         <Route path="/prayer-requests" component={PrayerRequests} />
         <Route path="/ai-prayer" component={AIPrayer} />

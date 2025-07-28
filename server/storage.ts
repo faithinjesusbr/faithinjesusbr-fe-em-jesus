@@ -60,14 +60,18 @@ export interface IStorage {
 
   // AI Prayer
   getAIPrayerRequests(userId: string): Promise<AIPrayerRequest[]>;
+  getUserAIPrayerRequests(userId: string): Promise<AIPrayerRequest[]>;
   createAIPrayerRequest(insertRequest: InsertAIPrayerRequest): Promise<AIPrayerRequest>;
 
   // Prayer Requests
   getAllPrayerRequests(): Promise<PrayerRequest[]>;
+  getRecentPrayerRequests(limit: number): Promise<PrayerRequest[]>;
   createPrayerRequest(insertRequest: InsertPrayerRequest): Promise<PrayerRequest>;
 
   // Love Cards
   getLoveCards(category?: string): Promise<LoveCard[]>;
+  getAllLoveCards(): Promise<LoveCard[]>;
+  getLoveCardsByCategory(category: string): Promise<LoveCard[]>;
   createLoveCard(insertCard: InsertLoveCard): Promise<LoveCard>;
 
   // Library
@@ -276,6 +280,16 @@ export class DatabaseStorage implements IStorage {
         .orderBy(desc(loveCards.createdAt));
     }
     return await db.select().from(loveCards).orderBy(desc(loveCards.createdAt));
+  }
+
+  async getAllLoveCards(): Promise<LoveCard[]> {
+    return await db.select().from(loveCards).orderBy(desc(loveCards.createdAt));
+  }
+
+  async getLoveCardsByCategory(category: string): Promise<LoveCard[]> {
+    return await db.select().from(loveCards)
+      .where(eq(loveCards.category, category))
+      .orderBy(desc(loveCards.createdAt));
   }
 
   async createLoveCard(insertCard: InsertLoveCard): Promise<LoveCard> {
