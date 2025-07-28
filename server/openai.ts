@@ -304,3 +304,117 @@ export async function generateNightDevotional(): Promise<{
     throw new Error("Falha ao gerar devocional noturno. Tente novamente.");
   }
 }
+
+// Generate Daily Devotional for Users
+export async function generateDailyDevotional(userId: string): Promise<{
+  title: string;
+  content: string;
+  verse: string;
+  reference: string;
+  application: string;
+}> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `Você é um pastor e escritor cristão brasileiro experiente. Crie um devocional diário em português brasileiro para fortalecer a fé e inspirar crescimento espiritual. O devocional deve ser:
+          
+          1. Pessoal e tocante, falando diretamente ao coração
+          2. Baseado em verdades bíblicas sólidas
+          3. Prático com aplicação para o dia a dia
+          4. Cheio de esperança e encorajamento
+          5. Adequado para qualquer idade ou fase da vida cristã
+          
+          Responda em JSON com este formato exato:
+          {
+            "title": "Título inspirador para o devocional",
+            "content": "Texto principal do devocional (3-4 parágrafos)",
+            "verse": "Versículo bíblico relevante",
+            "reference": "Referência bíblica (ex: João 3:16)",
+            "application": "Aplicação prática para hoje"
+          }`
+        },
+        {
+          role: "user",
+          content: "Gere um devocional diário inspirador e edificante para hoje."
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.8,
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    return {
+      title: result.title || "Palavra de Deus para Hoje",
+      content: result.content || "Deus tem uma palavra especial para você hoje.",
+      verse: result.verse || "Porque eu bem sei os pensamentos que tenho a vosso respeito, diz o Senhor; pensamentos de paz, e não de mal, para vos dar o fim que esperais.",
+      reference: result.reference || "Jeremias 29:11",
+      application: result.application || "Confie nos planos de Deus para sua vida hoje."
+    };
+  } catch (error) {
+    console.error("Error generating daily devotional:", error);
+    // Fallback devotional
+    return {
+      title: "Confiança em Deus",
+      content: "Hoje é um novo dia que o Senhor preparou para você. Independentemente dos desafios que possa enfrentar, lembre-se de que Deus está no controle de todas as coisas. Ele conhece cada detalhe da sua vida e tem um plano perfeito para você. Quando as dificuldades surgirem, não se desespere, mas confie no amor infinito do seu Criador.",
+      verse: "Porque eu bem sei os pensamentos que tenho a vosso respeito, diz o Senhor; pensamentos de paz, e não de mal, para vos dar o fim que esperais.",
+      reference: "Jeremias 29:11",
+      application: "Hoje, a cada decisão que tomar, lembre-se de buscar a direção de Deus em oração. Confie que Ele está guiando seus passos."
+    };
+  }
+}
+
+// Generate Personalized Prayer
+export async function generatePersonalizedPrayer(userMessage: string): Promise<{
+  prayer: string;
+  verse: string;
+  reference: string;
+}> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `Você é um pastor cristão brasileiro compassivo e sábio. Baseado na mensagem do usuário, crie uma oração personalizada e um versículo bíblico de apoio em português brasileiro.
+
+          A oração deve:
+          1. Ser calorosa e pessoal, falando diretamente com Deus
+          2. Abordar especificamente os sentimentos e situações mencionados
+          3. Pedir sabedoria, força e direção divina
+          4. Incluir gratidão e esperança
+          5. Ser escrita em uma linguagem acolhedora e de fé
+
+          Responda em JSON com este formato exato:
+          {
+            "prayer": "Oração personalizada baseada na mensagem do usuário",
+            "verse": "Versículo bíblico relevante à situação",
+            "reference": "Referência bíblica"
+          }`
+        },
+        {
+          role: "user",
+          content: `Por favor, crie uma oração personalizada para esta situação: ${userMessage}`
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.7,
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    return {
+      prayer: result.prayer || "Pai celestial, venho diante de Ti com um coração que busca Tua presença. Obrigado por me ouvir e por estar sempre comigo. Concede-me sabedoria e força para enfrentar este dia. Em nome de Jesus, amém.",
+      verse: result.verse || "Não andeis ansiosos por coisa alguma; antes, em tudo, sejam conhecidas, diante de Deus, as vossas petições, pela oração e pela súplica, com ações de graças.",
+      reference: result.reference || "Filipenses 4:6"
+    };
+  } catch (error) {
+    console.error("Error generating personalized prayer:", error);
+    return {
+      prayer: "Pai celestial, venho diante de Ti com um coração que busca Tua presença e direção. Tu conheces cada detalhe da minha vida e cada necessidade do meu coração. Peço que me concedas paz em meio às tempestades e sabedoria para tomar as decisões certas. Ajuda-me a confiar em Teus planos, mesmo quando não compreendo o caminho. Que Tua vontade seja feita em minha vida, e que eu possa ser um instrumento de Teu amor para outros. Obrigado por Teu amor incondicional e por nunca me abandonar. Em nome de Jesus, amém.",
+      verse: "Não andeis ansiosos por coisa alguma; antes, em tudo, sejam conhecidas, diante de Deus, as vossas petições, pela oração e pela súplica, com ações de graças.",
+      reference: "Filipenses 4:6"
+    };
+  }
+}

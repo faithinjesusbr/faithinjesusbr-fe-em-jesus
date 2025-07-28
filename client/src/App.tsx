@@ -3,28 +3,21 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/hooks/use-auth";
 import NotFound from "@/pages/not-found";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
 import Home from "@/pages/home";
-import Admin from "@/pages/admin";
-import AdminDashboard from "@/pages/admin-dashboard";
-import Sponsors from "@/pages/sponsors";
-import Contributors from "@/pages/contributors";
-import Emotions from "@/pages/emotions";
-import Challenges from "@/pages/challenges";
-import AIPrayer from "@/pages/ai-prayer";
-import LoveCards from "@/pages/love-cards";
-import PrayerRequests from "@/pages/prayer-requests";
-import Library from "@/pages/library";
-import DevotionalAudios from "@/pages/devotional-audios";
-import Store from "@/pages/store";
-import Videos from "@/pages/videos";
+import DailyDevotional from "@/pages/daily-devotional";
+import VerseOfDay from "@/pages/verse-of-day";
+import SpiritualPlanner from "@/pages/spiritual-planner";
+import MoodToday from "@/pages/mood-today";
+import JesusChallenge from "@/pages/jesus-challenge";
+import AIPrayerAgent from "@/pages/ai-prayer-agent";
 import { useEffect } from "react";
 
 function Router() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
   // Register service worker for PWA
   useEffect(() => {
@@ -39,6 +32,17 @@ function Router() {
     }
   }, []);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-blue-600 font-medium">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
     return (
       <Switch>
@@ -51,20 +55,14 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/admin" component={Admin} />
-      <Route path="/admin-dashboard" component={AdminDashboard} />
-      <Route path="/sponsors" component={Sponsors} />
-      <Route path="/contributors" component={Contributors} />
-      <Route path="/emotions" component={Emotions} />
-      <Route path="/challenges" component={Challenges} />
-      <Route path="/ai-prayer" component={AIPrayer} />
-      <Route path="/love-cards" component={LoveCards} />
-      <Route path="/prayer-requests" component={PrayerRequests} />
-      <Route path="/library" component={Library} />
-      <Route path="/devotional-audios" component={DevotionalAudios} />
-      <Route path="/store" component={Store} />
-      <Route path="/videos" component={Videos} />
+      <Route path="/" component={DailyDevotional} />
+      <Route path="/daily-devotional" component={DailyDevotional} />
+      <Route path="/verse-of-day" component={VerseOfDay} />
+      <Route path="/spiritual-planner" component={SpiritualPlanner} />
+      <Route path="/mood-today" component={MoodToday} />
+      <Route path="/jesus-challenge" component={JesusChallenge} />
+      <Route path="/ai-prayer-agent" component={AIPrayerAgent} />
+      <Route path="/home" component={Home} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -73,12 +71,10 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Router />
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }

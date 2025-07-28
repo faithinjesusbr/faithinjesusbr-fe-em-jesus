@@ -1,192 +1,119 @@
-import { DatabaseStorage } from "./storage";
+import { storage } from "./storage";
 
-const storage = new DatabaseStorage();
-
-// Dados de exemplo para a loja
-const sampleProducts = [
-  {
-    name: "Bíblia de Estudo MacArthur",
-    description: "Uma Bíblia completa com notas explicativas e comentários profundos para aprofundar seu estudo bíblico.",
-    price: 89.90,
-    originalPrice: 119.90,
-    category: "books",
-    imageUrl: "https://images.unsplash.com/photo-1544716278-e513176f20a5?w=400",
-    affiliateUrl: "https://amzn.to/bible-macarthur",
-    isActive: true,
-    isFeatured: true,
-    rating: 4.8,
-    reviewCount: 1234,
-    discount: 25
-  },
-  {
-    name: "Jesus Freak - Revolucionando sua fé",
-    description: "Um livro transformador sobre como viver uma fé radical e autêntica nos dias de hoje.",
-    price: 24.90,
-    originalPrice: 34.90,
-    category: "books",
-    imageUrl: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400",
-    affiliateUrl: "https://amzn.to/jesus-freak",
-    isActive: true,
-    isFeatured: false,
-    rating: 4.6,
-    reviewCount: 567,
-    discount: 29
-  },
-  {
-    name: "Colar Cruz Feminino Banhado a Ouro",
-    description: "Lindo colar com pingente de cruz, banhado a ouro 18k. Peça delicada e elegante para o dia a dia.",
-    price: 49.90,
-    originalPrice: 79.90,
-    category: "jewelry",
-    imageUrl: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400",
-    affiliateUrl: "https://amzn.to/cross-necklace",
-    isActive: true,
-    isFeatured: true,
-    rating: 4.7,
-    reviewCount: 289,
-    discount: 38
-  },
-  {
-    name: "CD Diante do Trono - Águas Purificadoras",
-    description: "Álbum de worship com 14 faixas inspiradoras para momentos de adoração e reflexão.",
-    price: 19.90,
-    originalPrice: 29.90,
-    category: "worship",
-    imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400",
-    affiliateUrl: "https://amzn.to/diante-trono-cd",
-    isActive: true,
-    isFeatured: false,
-    rating: 4.9,
-    reviewCount: 892,
-    discount: 33
-  },
-  {
-    name: "Quadro Decorativo - Salmo 23",
-    description: "Quadro decorativo com o texto do Salmo 23 em design moderno. Perfeito para sala ou quarto.",
-    price: 59.90,
-    originalPrice: 89.90,
-    category: "home",
-    imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400",
-    affiliateUrl: "https://amzn.to/psalm-23-frame",
-    isActive: true,
-    isFeatured: true,
-    rating: 4.5,
-    reviewCount: 156,
-    discount: 33
-  },
-  {
-    name: "Bíblia Infantil Ilustrada",
-    description: "Bíblia com histórias adaptadas para crianças, com ilustrações coloridas e linguagem acessível.",
-    price: 39.90,
-    originalPrice: 54.90,
-    category: "kids",
-    imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
-    affiliateUrl: "https://amzn.to/kids-bible",
-    isActive: true,
-    isFeatured: false,
-    rating: 4.8,
-    reviewCount: 423,
-    discount: 27
-  }
-];
-
-// Dados de exemplo para vídeos do YouTube
-const sampleVideos = [
-  {
-    youtubeId: "dQw4w9WgXcQ",
-    title: "Devocional Matinal - A Força da Oração",
-    description: "Começe seu dia com uma reflexão poderosa sobre o poder da oração na vida cristã. Uma mensagem de esperança e fé.",
-    thumbnailUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=480",
-    duration: "PT12M34S",
-    publishedAt: new Date("2024-01-15"),
-    viewCount: 15420,
-    category: "devotional",
-    isFeatured: true,
-    tags: ["oração", "devocional", "matinal", "fé"]
-  },
-  {
-    youtubeId: "abc123def456",
-    title: "Testemunho: Como Deus Transformou Minha Vida",
-    description: "Um testemunho emocionante de transformação através do amor de Cristo. História real de superação e fé.",
-    thumbnailUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=480",
-    duration: "PT18M45S",
-    publishedAt: new Date("2024-01-12"),
-    viewCount: 8234,
-    category: "testimony",
-    isFeatured: false,
-    tags: ["testemunho", "transformação", "superação"]
-  },
-  {
-    youtubeId: "xyz789uvw012",
-    title: "Momento de Adoração - Quão Grande é o Meu Deus",
-    description: "Um momento especial de adoração com a música 'Quão Grande é o Meu Deus'. Prepare seu coração para adorar.",
-    thumbnailUrl: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=480",
-    duration: "PT8M12S",
-    publishedAt: new Date("2024-01-10"),
-    viewCount: 23567,
-    category: "worship",
-    isFeatured: true,
-    tags: ["adoração", "louvor", "música cristã"]
-  },
-  {
-    youtubeId: "prayer456def",
-    title: "Ensinamento: O Que Jesus Ensinou Sobre Perdão",
-    description: "Estudo bíblico profundo sobre o perdão segundo os ensinamentos de Jesus Cristo. Transforme sua vida através do perdão.",
-    thumbnailUrl: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=480",
-    duration: "PT25M30S",
-    publishedAt: new Date("2024-01-08"),
-    viewCount: 12890,
-    category: "teaching",
-    isFeatured: false,
-    tags: ["ensinamento", "perdão", "jesus", "estudo bíblico"]
-  },
-  {
-    youtubeId: "live789abc123",
-    title: "Culto Especial Ao Vivo - Noite de Milagres",
-    description: "Transmissão ao vivo de um culto especial com momentos de oração, adoração e pregação da Palavra. Deus quer fazer milagres!",
-    thumbnailUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=480",
-    duration: "PT1H45M12S",
-    publishedAt: new Date("2024-01-05"),
-    viewCount: 45623,
-    category: "live",
-    isFeatured: true,
-    tags: ["ao vivo", "culto", "milagres", "oração"]
-  }
-];
-
-export async function seedData() {
+export async function seedDatabase() {
   try {
-    console.log("🌱 Iniciando seed dos dados de exemplo...");
+    console.log("🌱 Iniciando seed do banco de dados...");
+    
+    // Seed Bible Verses
+    const verses = [
+      {
+        text: "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.",
+        reference: "João 3:16",
+        book: "João",
+        chapter: "3",
+        verse: "16"
+      },
+      {
+        text: "Tudo posso naquele que me fortalece.",
+        reference: "Filipenses 4:13",
+        book: "Filipenses",
+        chapter: "4",
+        verse: "13"
+      },
+      {
+        text: "O Senhor é meu pastor, nada me faltará.",
+        reference: "Salmos 23:1",
+        book: "Salmos", 
+        chapter: "23",
+        verse: "1"
+      },
+      {
+        text: "Porque eu bem sei os pensamentos que tenho a vosso respeito, diz o Senhor; pensamentos de paz, e não de mal, para vos dar o fim que esperais.",
+        reference: "Jeremias 29:11",
+        book: "Jeremias",
+        chapter: "29",
+        verse: "11"
+      },
+      {
+        text: "Não andeis ansiosos por coisa alguma; antes, em tudo, sejam conhecidas, diante de Deus, as vossas petições, pela oração e pela súplica, com ações de graças.",
+        reference: "Filipenses 4:6",
+        book: "Filipenses",
+        chapter: "4",
+        verse: "6"
+      }
+    ];
 
-    // Adicionar produtos da loja
-    console.log("📦 Adicionando produtos da loja...");
-    for (const product of sampleProducts) {
+    for (const verse of verses) {
       try {
-        await storage.createStoreProduct(product);
-        console.log(`✅ Produto adicionado: ${product.name}`);
+        await storage.createVerse(verse);
       } catch (error) {
-        console.log(`⚠️  Produto já existe: ${product.name}`);
+        // Verse may already exist, skip
       }
     }
 
-    // Adicionar vídeos do YouTube
-    console.log("🎥 Adicionando vídeos do YouTube...");
-    for (const video of sampleVideos) {
+    // Seed Daily Devotionals
+    const devotionals = [
+      {
+        id: "1",
+        title: "Confiança em Deus",
+        content: "Hoje é um novo dia que o Senhor preparou para você. Independentemente dos desafios que possa enfrentar, lembre-se de que Deus está no controle de todas as coisas. Ele conhece cada detalhe da sua vida e tem um plano perfeito para você. Quando as dificuldades surgirem, não se desespere, mas confie no amor infinito do seu Criador.",
+        verse: "Porque eu bem sei os pensamentos que tenho a vosso respeito, diz o Senhor; pensamentos de paz, e não de mal, para vos dar o fim que esperais.",
+        reference: "Jeremias 29:11",
+        date: new Date().toISOString().split('T')[0],
+        type: "daily"
+      }
+    ];
+
+    for (const devotional of devotionals) {
       try {
-        await storage.createYoutubeVideo(video);
-        console.log(`✅ Vídeo adicionado: ${video.title}`);
+        await storage.createDevotional(devotional);
       } catch (error) {
-        console.log(`⚠️  Vídeo já existe: ${video.title}`);
+        // Devotional may already exist, skip
       }
     }
 
-    console.log("🎉 Seed dos dados concluído com sucesso!");
+    // Seed Emotions
+    const emotions = [
+      { id: "1", name: "Feliz", description: "Sentimentos de alegria e contentamento", color: "#FFD700", icon: "😊" },
+      { id: "2", name: "Triste", description: "Momentos de tristeza e melancolia", color: "#4169E1", icon: "😢" },
+      { id: "3", name: "Ansioso", description: "Preocupações e ansiedades", color: "#FF6347", icon: "😰" },
+      { id: "4", name: "Grato", description: "Sentimentos de gratidão", color: "#32CD32", icon: "🙏" },
+      { id: "5", name: "Confuso", description: "Momentos de dúvida e confusão", color: "#9370DB", icon: "🤔" }
+    ];
+
+    for (const emotion of emotions) {
+      try {
+        await storage.createEmotion(emotion);
+      } catch (error) {
+        // Emotion may already exist, skip
+      }
+    }
+
+    // Seed Challenges
+    const challenges = [
+      {
+        title: "7 Dias com Jesus",
+        description: "Uma semana de crescimento espiritual",
+        duration: "7"
+      },
+      {
+        title: "21 Dias de Oração",
+        description: "Transforme sua vida através da oração",
+        duration: "21"
+      }
+    ];
+
+    for (const challenge of challenges) {
+      try {
+        await storage.createChallenge(challenge);
+      } catch (error) {
+        // Challenge may already exist, skip
+      }
+    }
+
+    console.log("✅ Seed do banco de dados concluído com sucesso!");
+    
   } catch (error) {
-    console.error("❌ Erro ao fazer seed dos dados:", error);
+    console.error("❌ Erro durante o seed:", error);
   }
-}
-
-// Executar seed se chamado diretamente
-if (require.main === module) {
-  seedData().then(() => process.exit(0));
 }

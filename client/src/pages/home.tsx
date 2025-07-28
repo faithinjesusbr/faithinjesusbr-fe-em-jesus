@@ -86,8 +86,11 @@ export default function Home() {
 
   const randomVerseMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest("/api/verses/random");
-      return response;
+      const response = await fetch("/api/verses/random");
+      if (!response.ok) {
+        throw new Error('Failed to fetch verse');
+      }
+      return response.json();
     },
     onSuccess: (verse: any) => {
       setCurrentVerse(verse);

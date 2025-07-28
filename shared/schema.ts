@@ -580,4 +580,73 @@ export type StoreProduct = typeof storeProducts.$inferSelect;
 export type InsertYoutubeVideo = z.infer<typeof insertYoutubeVideoSchema>;
 export type YoutubeVideo = typeof youtubeVideos.$inferSelect;
 
+// Novos schemas para as funcionalidades solicitadas
+export const spiritualPlannerEntry = pgTable("spiritual_planner_entries", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  dayOfWeek: text("day_of_week").notNull(), // segunda, terca, quarta, quinta, sexta, sabado, domingo
+  prayer: text("prayer"),
+  favoriteVerse: text("favorite_verse"),
+  spiritualGoal: text("spiritual_goal"),
+  gratitude: text("gratitude"),
+  specialRequest: text("special_request"),
+  date: text("date").notNull(), // YYYY-MM-DD for the week
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const userDevotionals = pgTable("user_devotionals", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  verse: text("verse").notNull(),
+  reference: text("reference").notNull(),
+  application: text("application").notNull(),
+  date: text("date").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const verseReactions = pgTable("verse_reactions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  verseId: varchar("verse_id").notNull(),
+  reaction: text("reaction").notNull(), // "amen"
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertSpiritualPlannerEntrySchema = createInsertSchema(spiritualPlannerEntry).pick({
+  userId: true,
+  dayOfWeek: true,
+  prayer: true,
+  favoriteVerse: true,
+  spiritualGoal: true,
+  gratitude: true,
+  specialRequest: true,
+  date: true,
+});
+
+export const insertUserDevotionalSchema = createInsertSchema(userDevotionals).pick({
+  userId: true,
+  title: true,
+  content: true,
+  verse: true,
+  reference: true,
+  application: true,
+  date: true,
+});
+
+export const insertVerseReactionSchema = createInsertSchema(verseReactions).pick({
+  userId: true,
+  verseId: true,
+  reaction: true,
+});
+
+export type SpiritualPlannerEntry = typeof spiritualPlannerEntry.$inferSelect;
+export type InsertSpiritualPlannerEntry = z.infer<typeof insertSpiritualPlannerEntrySchema>;
+export type UserDevotional = typeof userDevotionals.$inferSelect;
+export type InsertUserDevotional = z.infer<typeof insertUserDevotionalSchema>;
+export type VerseReaction = typeof verseReactions.$inferSelect;
+export type InsertVerseReaction = z.infer<typeof insertVerseReactionSchema>;
+
 

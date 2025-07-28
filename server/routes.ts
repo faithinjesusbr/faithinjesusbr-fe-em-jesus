@@ -7,13 +7,16 @@ import {
   insertLoveCardSchema, insertPrayerRequestSchema, insertLibraryContentSchema, insertDevotionalAudioSchema,
   insertSponsorSchema, insertSponsorAdSchema, insertContributorSchema, insertNotificationSchema,
   insertUserNotificationSettingsSchema, insertUserInteractionSchema, insertCertificateSchema,
-  insertAppSettingsSchema, insertStoreProductSchema, insertYoutubeVideoSchema
+  insertAppSettingsSchema, insertStoreProductSchema, insertYoutubeVideoSchema,
+  insertSpiritualPlannerEntrySchema, insertUserDevotionalSchema, insertVerseReactionSchema,
+  insertSpiritualPlannerSchema, insertChallengeProgressSchema
 } from "@shared/schema";
 import { z } from "zod";
 import { 
   generateEmotionDevotional, generatePrayerResponse, generatePrayerRequestResponse,
   generateSponsorCertificate, generateChallengeCertificate, generateNightDevotional,
-  generateContributorCertificate, generateExclusivePrayerAndVerse
+  generateContributorCertificate, generateExclusivePrayerAndVerse,
+  generateDailyDevotional, generatePersonalizedPrayer
 } from "./openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -380,7 +383,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/library/categories/:categoryId/content", async (req, res) => {
     try {
       const { categoryId } = req.params;
-      const content = await storage.getLibraryContent(categoryId);
+      const content = await storage.getLibraryContentByCategory(categoryId);
       res.json(content);
     } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor" });
@@ -411,7 +414,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Sponsor routes
   app.get("/api/sponsors", async (req, res) => {
     try {
-      const sponsors = await storage.getAllActiveSponsors();
+      const sponsors = await storage.getAllSponsors();
       res.json(sponsors);
     } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor" });
@@ -437,7 +440,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Patrocinador não encontrado" });
       }
 
-      const certificate = await generateSponsorCertificate(sponsor.name, sponsor.description);
+      const certificate = await generateSponsorCertificate(sponsor.name);
       
       // Criar certificado no banco de dados
       const certificateData = await storage.createCertificate({
@@ -892,6 +895,146 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Notificação marcada como lida" });
     } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // User Devotional routes (Core Features)
+  app.get("/api/user-devotionals/:userId/:date", async (req, res) => {
+    try {
+      const { userId, date } = req.params;
+      const devotional = await storage.getUserDevotionalByDate(userId, date);
+      res.json(devotional);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/user-devotionals/generate", async (req, res) => {
+    try {
+      const { userId, date } = req.body;
+      
+      // Gerar devocional com IA
+      const aiDevotional = await generateDailyDevotional(userId);
+      
+      // Salvar no banco
+      const devotional = await storage.createUserDevotional({
+        userId,
+        date,
+        title: aiDevotional.title,
+        content: aiDevotional.content,
+        verse: aiDevotional.verse,
+        reference: aiDevotional.reference,
+        application: aiDevotional.application
+      });
+      
+      res.json(devotional);
+    } catch (error) {
+      console.error("Error generating devotional:", error);
+      res.status(500).json({ message: "Erro ao gerar devocional" });
+    }
+  });
+
+  // Verse reactions
+  app.get("/api/verse-reactions/:userId/:verseId", async (req, res) => {
+    try {
+      const { userId, verseId } = req.params;
+      const reaction = await storage.getUserVerseReaction(userId, verseId);
+      res.json(!!reaction);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/verse-reactions", async (req, res) => {
+    try {
+      const reactionData = insertVerseReactionSchema.parse(req.body);
+      const reaction = await storage.createVerseReaction(reactionData);
+      res.json(reaction);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Spiritual Planner routes
+  app.get("/api/spiritual-planner/:userId/:date", async (req, res) => {
+    try {
+      const { userId, date } = req.params;
+      const entries = await storage.getSpiritualPlannerEntries(userId, date);
+      res.json(entries);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/spiritual-planner", async (req, res) => {
+    try {
+      const plannerData = insertSpiritualPlannerEntrySchema.parse(req.body);
+      const entry = await storage.createOrUpdateSpiritualPlannerEntry(plannerData);
+      res.json(entry);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Challenge Progress routes
+  app.get("/api/challenge-progress/:userId/:challengeId", async (req, res) => {
+    try {
+      const { userId, challengeId } = req.params;
+      const progress = await storage.getChallengeProgress(userId, challengeId);
+      res.json(progress);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/challenge-progress", async (req, res) => {
+    try {
+      const progressData = insertUserChallengeProgressSchema.parse(req.body);
+      const progress = await storage.createChallengeProgress(progressData);
+      res.json(progress);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // AI Prayer Agent routes
+  app.post("/api/ai-prayer/generate", async (req, res) => {
+    try {
+      const { userId, userMessage } = req.body;
+      
+      // Gerar oração personalizada com IA
+      const aiPrayer = await generatePersonalizedPrayer(userMessage);
+      
+      // Salvar interação no banco
+      const interaction = await storage.trackUserInteraction({
+        userId,
+        interactionType: "prayer_request",
+        userMessage,
+        aiResponse: aiPrayer.prayer,
+        additionalData: JSON.stringify({
+          verse: aiPrayer.verse,
+          reference: aiPrayer.reference
+        })
+      });
+      
+      res.json({
+        aiResponse: aiPrayer.prayer,
+        verse: aiPrayer.verse,
+        reference: aiPrayer.reference,
+        interaction
+      });
+    } catch (error) {
+      console.error("Error generating AI prayer:", error);
+      res.status(500).json({ message: "Erro ao gerar oração" });
     }
   });
 

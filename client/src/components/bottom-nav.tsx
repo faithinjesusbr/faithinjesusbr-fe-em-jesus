@@ -1,36 +1,37 @@
-import { Home, BookOpen, HandHeart, User, Gift, Users, ShoppingBag, Youtube } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { cn } from "@/lib/utils";
+import { BookOpen, Calendar, Heart, Trophy, MessageCircle, Home } from "lucide-react";
 
 const navItems = [
-  { href: "/", icon: Home, label: "Início" },
-  { href: "/store", icon: ShoppingBag, label: "Loja" },
-  { href: "/videos", icon: Youtube, label: "Vídeos" },
-  { href: "/library", icon: BookOpen, label: "Biblioteca" },
-  { href: "/sponsors", icon: Gift, label: "Parceiros" },
-  { href: "/prayer-requests", icon: HandHeart, label: "Oração" },
+  { path: "/daily-devotional", icon: BookOpen, label: "Devocional" },
+  { path: "/verse-of-day", icon: Home, label: "Versículo" },
+  { path: "/mood-today", icon: Heart, label: "Humor" },
+  { path: "/spiritual-planner", icon: Calendar, label: "Planner" },
+  { path: "/jesus-challenge", icon: Trophy, label: "Desafio" },
+  { path: "/ai-prayer-agent", icon: MessageCircle, label: "Oração IA" },
 ];
 
 export default function BottomNav() {
   const [location] = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-cream-100 border-t border-lilac-200 md:hidden z-40">
-      <div className="grid grid-cols-6 h-16">
-        {navItems.map(({ href, icon: Icon, label }) => {
-          const isActive = location === href;
+    <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur border-t border-gray-200 px-2 py-2">
+      <div className="flex justify-around items-center max-w-screen-xl mx-auto">
+        {navItems.map((item) => {
+          const IconComponent = item.icon;
+          const isActive = location === item.path;
           
           return (
-            <Link key={href} href={href}>
-              <button className={cn(
-                "flex flex-col items-center justify-center space-y-1 w-full h-full transition-colors",
+            <Link
+              key={item.path}
+              href={item.path}
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${
                 isActive 
-                  ? "text-lilac-600" 
-                  : "text-lilac-400 hover:text-lilac-600"
-              )}>
-                <Icon className="w-5 h-5" />
-                <span className="text-xs">{label}</span>
-              </button>
+                  ? 'text-blue-600 bg-blue-50' 
+                  : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
+              }`}
+            >
+              <IconComponent className={`h-5 w-5 ${isActive ? 'scale-110' : ''}`} />
+              <span className="text-xs font-medium">{item.label}</span>
             </Link>
           );
         })}

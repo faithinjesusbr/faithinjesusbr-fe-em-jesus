@@ -25,7 +25,10 @@ import {
   certificates,
   appSettings,
   storeProducts,
-  youtubeVideos
+  youtubeVideos,
+  spiritualPlannerEntry,
+  userDevotionals,
+  verseReactions
 } from "@shared/schema";
 import type {
   User,
@@ -78,6 +81,12 @@ import type {
   InsertStoreProduct,
   YoutubeVideo,
   InsertYoutubeVideo,
+  SpiritualPlannerEntry,
+  InsertSpiritualPlannerEntry,
+  UserDevotional,
+  InsertUserDevotional,
+  VerseReaction,
+  InsertVerseReaction,
 } from "@shared/schema";
 
 export interface IStorage {
@@ -209,6 +218,19 @@ export interface IStorage {
     activeSponsors: number;
     recentInteractions: UserInteraction[];
   }>;
+
+  // Spiritual Planner
+  getSpiritualPlannerEntries(userId: string, date: string): Promise<SpiritualPlannerEntry[]>;
+  createOrUpdateSpiritualPlannerEntry(entry: InsertSpiritualPlannerEntry): Promise<SpiritualPlannerEntry>;
+
+  // User Devotionals
+  createUserDevotional(devotional: InsertUserDevotional): Promise<UserDevotional>;
+  getUserDevotionals(userId: string): Promise<UserDevotional[]>;
+  getUserDevotionalByDate(userId: string, date: string): Promise<UserDevotional | undefined>;
+
+  // Verse Reactions
+  createVerseReaction(reaction: InsertVerseReaction): Promise<VerseReaction>;
+  getUserVerseReaction(userId: string, verseId: string): Promise<VerseReaction | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -563,30 +585,7 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(appSettings).where(eq(appSettings.isPublic, true));
   }
 
-  // Admin Dashboard Data (Novo)
-  async getAdminDashboardData(): Promise<{
-    totalUsers: number;
-    totalPrayers: number;
-    totalDevotionals: number;
-    activeSponsors: number;
-    recentInteractions: UserInteraction[];
-  }> {
-    const [usersCount] = await db.select({ count: count() }).from(users);
-    const [prayersCount] = await db.select({ count: count() }).from(prayers);
-    const [devotionalsCount] = await db.select({ count: count() }).from(devotionals);
-    const [sponsorsCount] = await db.select({ count: count() }).from(sponsors).where(eq(sponsors.isActive, true));
-    
-    const recentInteractions = await db.select().from(userInteractions)
-      .orderBy(desc(userInteractions.createdAt)).limit(10);
 
-    return {
-      totalUsers: usersCount.count,
-      totalPrayers: prayersCount.count,
-      totalDevotionals: devotionalsCount.count,
-      activeSponsors: sponsorsCount.count,
-      recentInteractions
-    };
-  }
 
   // Store Products methods
   async getAllStoreProducts(): Promise<StoreProduct[]> {
@@ -670,6 +669,91 @@ export class DatabaseStorage implements IStorage {
       }
     }
     return results;
+  }
+
+  // Admin Dashboard Data
+  async getAdminDashboardData(): Promise<{
+    totalUsers: number;
+    totalPrayers: number;
+    totalDevotionals: number;
+    activeSponsors: number;
+    recentInteractions: UserInteraction[];
+  }> {
+    const [totalUsersResult] = await db.select({ count: count() }).from(users);
+    const [totalPrayersResult] = await db.select({ count: count() }).from(prayers);
+    const [totalDevotionalsResult] = await db.select({ count: count() }).from(devotionals);
+    const [activeSponsorsResult] = await db.select({ count: count() }).from(sponsors).where(eq(sponsors.isActive, true));
+    
+    const recentInteractions = await db.select().from(userInteractions)
+      .orderBy(desc(userInteractions.createdAt))
+      .limit(10);
+
+    return {
+      totalUsers: totalUsersResult.count,
+      totalPrayers: totalPrayersResult.count,
+      totalDevotionals: totalDevotionalsResult.count,
+      activeSponsors: activeSponsorsResult.count,
+      recentInteractions,
+    };
+  }
+
+  // Spiritual Planner methods
+  async getSpiritualPlannerEntries(userId: string, date: string): Promise<SpiritualPlannerEntry[]> {
+    return await db.select().from(spiritualPlannerEntry)
+      .where(and(eq(spiritualPlannerEntry.userId, userId), eq(spiritualPlannerEntry.date, date)));
+  }
+
+  async createOrUpdateSpiritualPlannerEntry(entry: InsertSpiritualPlannerEntry): Promise<SpiritualPlannerEntry> {
+    const [result] = await db.insert(spiritualPlannerEntry).values(entry)
+      .onConflictDoUpdate({
+        target: [spiritualPlannerEntry.userId, spiritualPlannerEntry.dayOfWeek, spiritualPlannerEntry.date],
+        set: {
+          ...entry,
+          updatedAt: new Date()
+        }
+      }).returning();
+    return result;
+  }
+
+  // User Devotionals methods
+  async createUserDevotional(devotional: InsertUserDevotional): Promise<UserDevotional> {
+    const [result] = await db.insert(userDevotionals).values(devotional).returning();
+    return result;
+  }
+
+  // Add missing methods for Challenge Progress
+  async createChallengeProgress(progressData: any): Promise<any> {
+    // Placeholder for challenge progress
+    return { id: "1", userId: progressData.userId, challengeId: progressData.challengeId, completed: false };
+  }
+
+  async getChallengeProgress(userId: string, challengeId: string): Promise<any[]> {
+    // Placeholder for challenge progress
+    return [];
+  }
+
+  async getUserDevotionals(userId: string): Promise<UserDevotional[]> {
+    return await db.select().from(userDevotionals)
+      .where(eq(userDevotionals.userId, userId))
+      .orderBy(desc(userDevotionals.createdAt));
+  }
+
+  async getUserDevotionalByDate(userId: string, date: string): Promise<UserDevotional | undefined> {
+    const [result] = await db.select().from(userDevotionals)
+      .where(and(eq(userDevotionals.userId, userId), eq(userDevotionals.date, date)));
+    return result;
+  }
+
+  // Verse Reactions methods
+  async createVerseReaction(reaction: InsertVerseReaction): Promise<VerseReaction> {
+    const [result] = await db.insert(verseReactions).values(reaction).returning();
+    return result;
+  }
+
+  async getUserVerseReaction(userId: string, verseId: string): Promise<VerseReaction | undefined> {
+    const [result] = await db.select().from(verseReactions)
+      .where(and(eq(verseReactions.userId, userId), eq(verseReactions.verseId, verseId)));
+    return result;
   }
 }
 
