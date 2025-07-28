@@ -7,7 +7,7 @@ import {
   insertLoveCardSchema, insertPrayerRequestSchema, insertLibraryContentSchema, insertDevotionalAudioSchema,
   insertSponsorSchema, insertSponsorAdSchema, insertContributorSchema, insertNotificationSchema,
   insertUserNotificationSettingsSchema, insertUserInteractionSchema, insertCertificateSchema,
-  insertAppSettingsSchema
+  insertAppSettingsSchema, insertStoreProductSchema, insertYoutubeVideoSchema
 } from "@shared/schema";
 import { z } from "zod";
 import { 
@@ -727,6 +727,170 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
       }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Store Products routes
+  app.get("/api/store/products", async (req, res) => {
+    try {
+      const products = await storage.getActiveStoreProducts();
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.get("/api/store/products/featured", async (req, res) => {
+    try {
+      const products = await storage.getFeaturedStoreProducts();
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/admin/store/products", async (req, res) => {
+    try {
+      const productData = insertStoreProductSchema.parse(req.body);
+      const product = await storage.createStoreProduct(productData);
+      res.status(201).json(product);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.patch("/api/admin/store/products/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      const product = await storage.updateStoreProduct(id, updates);
+      
+      if (!product) {
+        return res.status(404).json({ message: "Produto não encontrado" });
+      }
+      
+      res.json(product);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.delete("/api/admin/store/products/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const success = await storage.deleteStoreProduct(id);
+      
+      if (!success) {
+        return res.status(404).json({ message: "Produto não encontrado" });
+      }
+      
+      res.json({ message: "Produto removido com sucesso" });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // YouTube Videos routes
+  app.get("/api/youtube/videos", async (req, res) => {
+    try {
+      const videos = await storage.getAllYoutubeVideos();
+      res.json(videos);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.get("/api/youtube/videos/featured", async (req, res) => {
+    try {
+      const videos = await storage.getFeaturedYoutubeVideos();
+      res.json(videos);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/admin/youtube/videos", async (req, res) => {
+    try {
+      const videoData = insertYoutubeVideoSchema.parse(req.body);
+      const video = await storage.createYoutubeVideo(videoData);
+      res.status(201).json(video);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/admin/youtube/sync", async (req, res) => {
+    try {
+      const videos = req.body.videos;
+      const syncedVideos = await storage.syncYoutubeVideos(videos);
+      res.json({ 
+        message: `${syncedVideos.length} vídeos sincronizados com sucesso`,
+        videos: syncedVideos 
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.patch("/api/admin/youtube/videos/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      const video = await storage.updateYoutubeVideo(id, updates);
+      
+      if (!video) {
+        return res.status(404).json({ message: "Vídeo não encontrado" });
+      }
+      
+      res.json(video);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Notifications routes
+  app.get("/api/notifications/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const notifications = await storage.getUserNotifications(userId, limit);
+      res.json(notifications);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/notifications", async (req, res) => {
+    try {
+      const notificationData = insertNotificationSchema.parse(req.body);
+      const notification = await storage.createNotification(notificationData);
+      res.status(201).json(notification);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.patch("/api/notifications/:id/read", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const success = await storage.markNotificationAsRead(id);
+      
+      if (!success) {
+        return res.status(404).json({ message: "Notificação não encontrada" });
+      }
+      
+      res.json({ message: "Notificação marcada como lida" });
+    } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor" });
     }
   });

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -24,29 +26,54 @@
   --ring: hsl(20, 14.3%, 4.1%);
   --radius: 0.5rem;
 
-  /* Custom Christian theme colors - Divine Blue Palette */
-  --divine-50: hsl(214, 100%, 97%);
-  --divine-100: hsl(214, 95%, 93%);
-  --divine-200: hsl(213, 97%, 87%);
-  --divine-300: hsl(212, 96%, 78%);
-  --divine-400: hsl(213, 94%, 68%);
-  --divine-500: hsl(207, 90%, 54%);
-  --divine-600: hsl(208, 93%, 47%);
-  --divine-700: hsl(210, 98%, 42%);
-  --divine-800: hsl(212, 97%, 36%);
-  --divine-900: hsl(214, 98%, 27%);
-  
-  /* Golden Accent Colors */
-  --golden-50: hsl(54, 91%, 95%);
-  --golden-100: hsl(54, 91%, 88%);
-  --golden-200: hsl(53, 98%, 77%);
-  --golden-300: hsl(50, 97%, 63%);
-  --golden-400: hsl(45, 93%, 47%);
-  --golden-500: hsl(48, 96%, 53%);
-  --golden-600: hsl(32, 95%, 44%);
-  --golden-700: hsl(26, 90%, 37%);
-  --golden-800: hsl(23, 83%, 31%);
-  --golden-900: hsl(22, 78%, 26%);
+  /* Modern Christian Theme - Lilás, Azul-Céu, Creme e Dourado */
+  /* Lilás (Purple/Lavender) Palette */
+  --lilac-50: hsl(270, 30%, 98%);
+  --lilac-100: hsl(270, 30%, 95%);
+  --lilac-200: hsl(270, 30%, 88%);
+  --lilac-300: hsl(270, 30%, 78%);
+  --lilac-400: hsl(270, 30%, 68%);
+  --lilac-500: hsl(270, 30%, 58%);
+  --lilac-600: hsl(270, 35%, 48%);
+  --lilac-700: hsl(270, 40%, 38%);
+  --lilac-800: hsl(270, 45%, 28%);
+  --lilac-900: hsl(270, 50%, 18%);
+
+  /* Azul-Céu (Sky Blue) Palette */
+  --sky-50: hsl(210, 100%, 98%);
+  --sky-100: hsl(210, 100%, 95%);
+  --sky-200: hsl(210, 100%, 90%);
+  --sky-300: hsl(210, 100%, 82%);
+  --sky-400: hsl(210, 100%, 72%);
+  --sky-500: hsl(210, 100%, 62%);
+  --sky-600: hsl(210, 95%, 52%);
+  --sky-700: hsl(210, 90%, 42%);
+  --sky-800: hsl(210, 85%, 32%);
+  --sky-900: hsl(210, 80%, 22%);
+
+  /* Creme (Cream) Palette */
+  --cream-50: hsl(45, 50%, 98%);
+  --cream-100: hsl(45, 45%, 95%);
+  --cream-200: hsl(45, 40%, 92%);
+  --cream-300: hsl(45, 35%, 88%);
+  --cream-400: hsl(45, 30%, 82%);
+  --cream-500: hsl(45, 25%, 75%);
+  --cream-600: hsl(45, 20%, 65%);
+  --cream-700: hsl(45, 18%, 55%);
+  --cream-800: hsl(45, 15%, 45%);
+  --cream-900: hsl(45, 12%, 35%);
+
+  /* Dourado (Golden) Palette */
+  --gold-50: hsl(48, 100%, 96%);
+  --gold-100: hsl(48, 95%, 90%);
+  --gold-200: hsl(48, 90%, 82%);
+  --gold-300: hsl(48, 85%, 72%);
+  --gold-400: hsl(48, 80%, 62%);
+  --gold-500: hsl(48, 75%, 52%);
+  --gold-600: hsl(42, 85%, 45%);
+  --gold-700: hsl(36, 90%, 38%);
+  --gold-800: hsl(30, 95%, 32%);
+  --gold-900: hsl(24, 100%, 26%);
 }
 
 .dark {
@@ -85,45 +112,118 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    @apply font-sans antialiased bg-cream-50 text-lilac-900;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   }
 
-  /* Serif font for scripture quotes */
-  .font-serif {
-    font-family: 'Crimson Text', 'Georgia', 'Times New Roman', serif;
+  /* Playfair Display for headings and scripture quotes */
+  .font-display {
+    font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
+  }
+
+  /* Montserrat for body text */
+  .font-sans {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   }
 }
 
 @layer utilities {
-  /* Divine color utilities */
-  .bg-divine-50 { background-color: var(--divine-50); }
-  .bg-divine-100 { background-color: var(--divine-100); }
-  .bg-divine-200 { background-color: var(--divine-200); }
-  .bg-divine-300 { background-color: var(--divine-300); }
-  .bg-divine-400 { background-color: var(--divine-400); }
-  .bg-divine-500 { background-color: var(--divine-500); }
-  .bg-divine-600 { background-color: var(--divine-600); }
-  .bg-divine-700 { background-color: var(--divine-700); }
-  .bg-divine-800 { background-color: var(--divine-800); }
-  .bg-divine-900 { background-color: var(--divine-900); }
+  /* Lilás color utilities */
+  .bg-lilac-50 { background-color: var(--lilac-50); }
+  .bg-lilac-100 { background-color: var(--lilac-100); }
+  .bg-lilac-200 { background-color: var(--lilac-200); }
+  .bg-lilac-300 { background-color: var(--lilac-300); }
+  .bg-lilac-400 { background-color: var(--lilac-400); }
+  .bg-lilac-500 { background-color: var(--lilac-500); }
+  .bg-lilac-600 { background-color: var(--lilac-600); }
+  .bg-lilac-700 { background-color: var(--lilac-700); }
+  .bg-lilac-800 { background-color: var(--lilac-800); }
+  .bg-lilac-900 { background-color: var(--lilac-900); }
 
-  .text-divine-50 { color: var(--divine-50); }
-  .text-divine-100 { color: var(--divine-100); }
-  .text-divine-200 { color: var(--divine-200); }
-  .text-divine-300 { color: var(--divine-300); }
-  .text-divine-400 { color: var(--divine-400); }
-  .text-divine-500 { color: var(--divine-500); }
-  .text-divine-600 { color: var(--divine-600); }
-  .text-divine-700 { color: var(--divine-700); }
-  .text-divine-800 { color: var(--divine-800); }
-  .text-divine-900 { color: var(--divine-900); }
+  .text-lilac-50 { color: var(--lilac-50); }
+  .text-lilac-100 { color: var(--lilac-100); }
+  .text-lilac-200 { color: var(--lilac-200); }
+  .text-lilac-300 { color: var(--lilac-300); }
+  .text-lilac-400 { color: var(--lilac-400); }
+  .text-lilac-500 { color: var(--lilac-500); }
+  .text-lilac-600 { color: var(--lilac-600); }
+  .text-lilac-700 { color: var(--lilac-700); }
+  .text-lilac-800 { color: var(--lilac-800); }
+  .text-lilac-900 { color: var(--lilac-900); }
 
-  .border-divine-50 { border-color: var(--divine-50); }
-  .border-divine-100 { border-color: var(--divine-100); }
-  .border-divine-200 { border-color: var(--divine-200); }
-  .border-divine-300 { border-color: var(--divine-300); }
-  .border-divine-400 { border-color: var(--divine-400); }
+  .border-lilac-50 { border-color: var(--lilac-50); }
+  .border-lilac-100 { border-color: var(--lilac-100); }
+  .border-lilac-200 { border-color: var(--lilac-200); }
+  .border-lilac-300 { border-color: var(--lilac-300); }
+
+  /* Sky Blue color utilities */
+  .bg-sky-50 { background-color: var(--sky-50); }
+  .bg-sky-100 { background-color: var(--sky-100); }
+  .bg-sky-200 { background-color: var(--sky-200); }
+  .bg-sky-300 { background-color: var(--sky-300); }
+  .bg-sky-400 { background-color: var(--sky-400); }
+  .bg-sky-500 { background-color: var(--sky-500); }
+  .bg-sky-600 { background-color: var(--sky-600); }
+  .bg-sky-700 { background-color: var(--sky-700); }
+  .bg-sky-800 { background-color: var(--sky-800); }
+  .bg-sky-900 { background-color: var(--sky-900); }
+
+  .text-sky-50 { color: var(--sky-50); }
+  .text-sky-100 { color: var(--sky-100); }
+  .text-sky-200 { color: var(--sky-200); }
+  .text-sky-300 { color: var(--sky-300); }
+  .text-sky-400 { color: var(--sky-400); }
+  .text-sky-500 { color: var(--sky-500); }
+  .text-sky-600 { color: var(--sky-600); }
+  .text-sky-700 { color: var(--sky-700); }
+  .text-sky-800 { color: var(--sky-800); }
+  .text-sky-900 { color: var(--sky-900); }
+
+  /* Cream color utilities */
+  .bg-cream-50 { background-color: var(--cream-50); }
+  .bg-cream-100 { background-color: var(--cream-100); }
+  .bg-cream-200 { background-color: var(--cream-200); }
+  .bg-cream-300 { background-color: var(--cream-300); }
+  .bg-cream-400 { background-color: var(--cream-400); }
+  .bg-cream-500 { background-color: var(--cream-500); }
+  .bg-cream-600 { background-color: var(--cream-600); }
+  .bg-cream-700 { background-color: var(--cream-700); }
+  .bg-cream-800 { background-color: var(--cream-800); }
+  .bg-cream-900 { background-color: var(--cream-900); }
+
+  .text-cream-50 { color: var(--cream-50); }
+  .text-cream-100 { color: var(--cream-100); }
+  .text-cream-200 { color: var(--cream-200); }
+  .text-cream-300 { color: var(--cream-300); }
+  .text-cream-400 { color: var(--cream-400); }
+  .text-cream-500 { color: var(--cream-500); }
+  .text-cream-600 { color: var(--cream-600); }
+  .text-cream-700 { color: var(--cream-700); }
+  .text-cream-800 { color: var(--cream-800); }
+  .text-cream-900 { color: var(--cream-900); }
+
+  /* Gold color utilities */
+  .bg-gold-50 { background-color: var(--gold-50); }
+  .bg-gold-100 { background-color: var(--gold-100); }
+  .bg-gold-200 { background-color: var(--gold-200); }
+  .bg-gold-300 { background-color: var(--gold-300); }
+  .bg-gold-400 { background-color: var(--gold-400); }
+  .bg-gold-500 { background-color: var(--gold-500); }
+  .bg-gold-600 { background-color: var(--gold-600); }
+  .bg-gold-700 { background-color: var(--gold-700); }
+  .bg-gold-800 { background-color: var(--gold-800); }
+  .bg-gold-900 { background-color: var(--gold-900); }
+
+  .text-gold-50 { color: var(--gold-50); }
+  .text-gold-100 { color: var(--gold-100); }
+  .text-gold-200 { color: var(--gold-200); }
+  .text-gold-300 { color: var(--gold-300); }
+  .text-gold-400 { color: var(--gold-400); }
+  .text-gold-500 { color: var(--gold-500); }
+  .text-gold-600 { color: var(--gold-600); }
+  .text-gold-700 { color: var(--gold-700); }
+  .text-gold-800 { color: var(--gold-800); }
+  .text-gold-900 { color: var(--gold-900); }
   .border-divine-500 { border-color: var(--divine-500); }
   .border-divine-600 { border-color: var(--divine-600); }
   .border-divine-700 { border-color: var(--divine-700); }

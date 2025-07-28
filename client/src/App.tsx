@@ -19,6 +19,8 @@ import LoveCards from "@/pages/love-cards";
 import PrayerRequests from "@/pages/prayer-requests";
 import Library from "@/pages/library";
 import DevotionalAudios from "@/pages/devotional-audios";
+import Store from "@/pages/store";
+import Videos from "@/pages/videos";
 import { useEffect } from "react";
 
 function Router() {
@@ -61,6 +63,8 @@ function Router() {
       <Route path="/prayer-requests" component={PrayerRequests} />
       <Route path="/library" component={Library} />
       <Route path="/devotional-audios" component={DevotionalAudios} />
+      <Route path="/store" component={Store} />
+      <Route path="/videos" component={Videos} />
       <Route component={NotFound} />
     </Switch>
   );

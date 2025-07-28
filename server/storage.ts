@@ -23,7 +23,9 @@ import {
   userNotificationSettings,
   userInteractions,
   certificates,
-  appSettings
+  appSettings,
+  storeProducts,
+  youtubeVideos
 } from "@shared/schema";
 import type {
   User,
@@ -72,6 +74,10 @@ import type {
   InsertCertificate,
   AppSettings,
   InsertAppSettings,
+  StoreProduct,
+  InsertStoreProduct,
+  YoutubeVideo,
+  InsertYoutubeVideo,
 } from "@shared/schema";
 
 export interface IStorage {
@@ -179,6 +185,22 @@ export interface IStorage {
   updateSetting(key: string, value: string): Promise<AppSettings>;
   getPublicSettings(): Promise<AppSettings[]>;
   
+  // Store Products
+  getAllStoreProducts(): Promise<StoreProduct[]>;
+  getActiveStoreProducts(): Promise<StoreProduct[]>;
+  getFeaturedStoreProducts(): Promise<StoreProduct[]>;
+  createStoreProduct(product: InsertStoreProduct): Promise<StoreProduct>;
+  updateStoreProduct(id: string, updates: Partial<StoreProduct>): Promise<StoreProduct | undefined>;
+  deleteStoreProduct(id: string): Promise<boolean>;
+  
+  // YouTube Videos
+  getAllYoutubeVideos(): Promise<YoutubeVideo[]>;
+  getFeaturedYoutubeVideos(): Promise<YoutubeVideo[]>;
+  createYoutubeVideo(video: InsertYoutubeVideo): Promise<YoutubeVideo>;
+  updateYoutubeVideo(id: string, updates: Partial<YoutubeVideo>): Promise<YoutubeVideo | undefined>;
+  deleteYoutubeVideo(id: string): Promise<boolean>;
+  syncYoutubeVideos(videos: InsertYoutubeVideo[]): Promise<YoutubeVideo[]>;
+
   // Admin Dashboard Data
   getAdminDashboardData(): Promise<{
     totalUsers: number;
@@ -564,6 +586,90 @@ export class DatabaseStorage implements IStorage {
       activeSponsors: sponsorsCount.count,
       recentInteractions
     };
+  }
+
+  // Store Products methods
+  async getAllStoreProducts(): Promise<StoreProduct[]> {
+    return await db.select().from(storeProducts).orderBy(desc(storeProducts.createdAt));
+  }
+
+  async getActiveStoreProducts(): Promise<StoreProduct[]> {
+    return await db.select().from(storeProducts)
+      .where(eq(storeProducts.isActive, true))
+      .orderBy(desc(storeProducts.createdAt));
+  }
+
+  async getFeaturedStoreProducts(): Promise<StoreProduct[]> {
+    return await db.select().from(storeProducts)
+      .where(and(eq(storeProducts.isActive, true), eq(storeProducts.featured, true)))
+      .orderBy(desc(storeProducts.createdAt));
+  }
+
+  async createStoreProduct(insertProduct: InsertStoreProduct): Promise<StoreProduct> {
+    const [product] = await db.insert(storeProducts).values(insertProduct).returning();
+    return product;
+  }
+
+  async updateStoreProduct(id: string, updates: Partial<StoreProduct>): Promise<StoreProduct | undefined> {
+    const [product] = await db.update(storeProducts).set(updates).where(eq(storeProducts.id, id)).returning();
+    return product;
+  }
+
+  async deleteStoreProduct(id: string): Promise<boolean> {
+    const result = await db.delete(storeProducts).where(eq(storeProducts.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
+  }
+
+  // YouTube Videos methods
+  async getAllYoutubeVideos(): Promise<YoutubeVideo[]> {
+    return await db.select().from(youtubeVideos).orderBy(desc(youtubeVideos.publishedAt));
+  }
+
+  async getFeaturedYoutubeVideos(): Promise<YoutubeVideo[]> {
+    return await db.select().from(youtubeVideos)
+      .where(eq(youtubeVideos.isFeatured, true))
+      .orderBy(desc(youtubeVideos.publishedAt));
+  }
+
+  async createYoutubeVideo(insertVideo: InsertYoutubeVideo): Promise<YoutubeVideo> {
+    const [video] = await db.insert(youtubeVideos).values(insertVideo).returning();
+    return video;
+  }
+
+  async updateYoutubeVideo(id: string, updates: Partial<YoutubeVideo>): Promise<YoutubeVideo | undefined> {
+    const [video] = await db.update(youtubeVideos).set(updates).where(eq(youtubeVideos.id, id)).returning();
+    return video;
+  }
+
+  async deleteYoutubeVideo(id: string): Promise<boolean> {
+    const result = await db.delete(youtubeVideos).where(eq(youtubeVideos.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
+  }
+
+  async syncYoutubeVideos(videos: InsertYoutubeVideo[]): Promise<YoutubeVideo[]> {
+    const results: YoutubeVideo[] = [];
+    for (const video of videos) {
+      try {
+        const [existingVideo] = await db.select().from(youtubeVideos)
+          .where(eq(youtubeVideos.youtubeId, video.youtubeId));
+        
+        if (existingVideo) {
+          // Update existing video
+          const [updatedVideo] = await db.update(youtubeVideos)
+            .set({ ...video, syncedAt: new Date() })
+            .where(eq(youtubeVideos.youtubeId, video.youtubeId))
+            .returning();
+          results.push(updatedVideo);
+        } else {
+          // Create new video
+          const [newVideo] = await db.insert(youtubeVideos).values(video).returning();
+          results.push(newVideo);
+        }
+      } catch (error) {
+        console.error(`Error syncing video ${video.youtubeId}:`, error);
+      }
+    }
+    return results;
   }
 }
 

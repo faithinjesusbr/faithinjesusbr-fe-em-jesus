@@ -259,6 +259,40 @@ export const appSettings = pgTable("app_settings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Loja Virtual
+export const storeProducts = pgTable("store_products", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  price: text("price").notNull(),
+  imageUrl: text("image_url").notNull(),
+  category: text("category").notNull(), // books, accessories, courses, digital
+  isAffiliate: boolean("is_affiliate").default(false),
+  affiliateLink: text("affiliate_link"),
+  internalLink: text("internal_link"),
+  isActive: boolean("is_active").default(true),
+  featured: boolean("featured").default(false),
+  tags: text("tags"), // JSON array de tags
+  stock: text("stock"), // Para produtos próprios
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Vídeos do YouTube
+export const youtubeVideos = pgTable("youtube_videos", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  youtubeId: text("youtube_id").notNull().unique(),
+  title: text("title").notNull(),
+  description: text("description"),
+  thumbnailUrl: text("thumbnail_url").notNull(),
+  publishedAt: timestamp("published_at").notNull(),
+  duration: text("duration"),
+  viewCount: text("view_count"),
+  tags: text("tags"), // JSON array
+  category: text("category"), // sermon, devotional, music, testimony
+  isFeatured: boolean("is_featured").default(false),
+  syncedAt: timestamp("synced_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   name: true,
   email: true,
@@ -464,6 +498,34 @@ export const insertAppSettingsSchema = createInsertSchema(appSettings).pick({
   isPublic: true,
 });
 
+export const insertStoreProductSchema = createInsertSchema(storeProducts).pick({
+  name: true,
+  description: true,
+  price: true,
+  imageUrl: true,
+  category: true,
+  isAffiliate: true,
+  affiliateLink: true,
+  internalLink: true,
+  isActive: true,
+  featured: true,
+  tags: true,
+  stock: true,
+});
+
+export const insertYoutubeVideoSchema = createInsertSchema(youtubeVideos).pick({
+  youtubeId: true,
+  title: true,
+  description: true,
+  thumbnailUrl: true,
+  publishedAt: true,
+  duration: true,
+  viewCount: true,
+  tags: true,
+  category: true,
+  isFeatured: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type LoginUser = z.infer<typeof loginSchema>;
 export type User = typeof users.$inferSelect;
@@ -513,5 +575,9 @@ export type InsertCertificate = z.infer<typeof insertCertificateSchema>;
 export type Certificate = typeof certificates.$inferSelect;
 export type InsertAppSettings = z.infer<typeof insertAppSettingsSchema>;
 export type AppSettings = typeof appSettings.$inferSelect;
+export type InsertStoreProduct = z.infer<typeof insertStoreProductSchema>;
+export type StoreProduct = typeof storeProducts.$inferSelect;
+export type InsertYoutubeVideo = z.infer<typeof insertYoutubeVideoSchema>;
+export type YoutubeVideo = typeof youtubeVideos.$inferSelect;
 
 
