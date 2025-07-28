@@ -10,7 +10,8 @@ import {
 import { z } from "zod";
 import { 
   generateEmotionalGuidance, generatePrayerResponse, generateLoveCard,
-  generateContributorCertificate, generateDevotionalContent, generateChallengeContent
+  generateContributorCertificate, generateDevotionalContent, generateChallengeContent,
+  generatePrayerRequestResponse, generateNightDevotional
 } from "./openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -824,11 +825,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/prayer-requests/recent", async (req, res) => {
     try {
+      console.log("Fetching recent prayer requests...");
       const requests = await storage.getRecentPrayerRequests(5);
+      console.log("Recent prayer requests:", requests);
       res.json(requests || []);
     } catch (error) {
       console.error("Error fetching recent prayer requests:", error);
-      res.json([]); // Return empty array instead of error for UI stability
+      res.status(500).json({ message: "Erro interno do servidor", error: error.message });
     }
   });
 

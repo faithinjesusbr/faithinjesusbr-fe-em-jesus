@@ -113,3 +113,37 @@ export async function generateChallengeContent(day: number, challengeType: strin
     prayer: "Senhor, dá-me forças para este dia. Em nome de Jesus, amém."
   };
 }
+
+export async function generatePrayerRequestResponse(subject: string, content: string) {
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are IA Cristo, a Christian spiritual assistant. Respond to prayer requests with compassionate, biblical guidance in Portuguese."
+        },
+        {
+          role: "user",
+          content: `Prayer request: ${subject} - ${content}`
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 400
+    });
+
+    return completion.choices[0]?.message?.content || "Deus ouve suas orações e está sempre presente.";
+  } catch (error) {
+    return "Deus ouve suas orações e está sempre presente.";
+  }
+}
+
+export async function generateNightDevotional() {
+  return {
+    title: "Paz Noturna",
+    content: "Que a paz de Deus que excede todo entendimento guarde seu coração esta noite.",
+    verse: "Em paz também me deitarei e dormirei, porque só tu, Senhor, me fazes repousar seguro.",
+    reference: "Salmos 4:8",
+    prayer: "Senhor, concede-me uma noite de paz e descanso. Em nome de Jesus, amém."
+  };
+}

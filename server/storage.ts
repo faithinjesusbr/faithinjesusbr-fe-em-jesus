@@ -67,6 +67,9 @@ export interface IStorage {
   getAllPrayerRequests(): Promise<PrayerRequest[]>;
   getRecentPrayerRequests(limit: number): Promise<PrayerRequest[]>;
   createPrayerRequest(insertRequest: InsertPrayerRequest): Promise<PrayerRequest>;
+  getUserPrayerRequests(userId: string): Promise<PrayerRequest[]>;
+  updatePrayerRequest(id: string, updateData: Partial<PrayerRequest>): Promise<PrayerRequest | undefined>;
+  getPrayerStats(): Promise<any>;
 
   // Love Cards
   getLoveCards(category?: string): Promise<LoveCard[]>;
@@ -80,6 +83,7 @@ export interface IStorage {
 
   // Audio Devotionals
   getDevotionalAudios(): Promise<DevotionalAudio[]>;
+  getAllDevotionalAudios(): Promise<DevotionalAudio[]>;
 
   // Sponsors
   getAllSponsors(): Promise<Sponsor[]>;
@@ -272,6 +276,47 @@ export class DatabaseStorage implements IStorage {
     return request;
   }
 
+  async getUserPrayerRequests(userId: string): Promise<PrayerRequest[]> {
+    return await db.select().from(prayerRequests)
+      .where(eq(prayerRequests.userId, userId))
+      .orderBy(desc(prayerRequests.createdAt));
+  }
+
+  async updatePrayerRequest(id: string, updateData: Partial<PrayerRequest>): Promise<PrayerRequest | undefined> {
+    const [updated] = await db.update(prayerRequests)
+      .set(updateData)
+      .where(eq(prayerRequests.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getPrayerStats(): Promise<any> {
+    const totalPrayers = await db.select().from(prayers);
+    const totalRequests = await db.select().from(prayerRequests);
+    
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    
+    return {
+      totalPrayers: totalPrayers.length,
+      totalRequests: totalRequests.length,
+      thisMonth: {
+        prayers: totalPrayers.filter(p => {
+          const date = p.createdAt ? new Date(p.createdAt) : new Date();
+          return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+        }).length,
+        requests: totalRequests.filter(r => {
+          const date = r.createdAt ? new Date(r.createdAt) : new Date();
+          return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+        }).length
+      }
+    };
+  }
+
+  async getAllDevotionalAudios(): Promise<DevotionalAudio[]> {
+    return await db.select().from(devotionalAudios).orderBy(desc(devotionalAudios.createdAt));
+  }
+
   // Love Cards
   async getLoveCards(category?: string): Promise<LoveCard[]> {
     if (category) {
@@ -337,9 +382,17 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getRecentPrayerRequests(limit: number = 10): Promise<PrayerRequest[]> {
-    return await db.select().from(prayerRequests)
-      .orderBy(desc(prayerRequests.createdAt))
-      .limit(limit);
+    try {
+      console.log("Querying recent prayer requests...");
+      const result = await db.select().from(prayerRequests)
+        .orderBy(desc(prayerRequests.createdAt))
+        .limit(limit);
+      console.log("Prayer requests result:", result);
+      return result;
+    } catch (error) {
+      console.error("Error in getRecentPrayerRequests:", error);
+      throw error;
+    }
   }
 
   // Store
