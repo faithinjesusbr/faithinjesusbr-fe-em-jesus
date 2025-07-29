@@ -67,6 +67,7 @@ export default function EmotionTodayImproved() {
       return await response.json();
     },
     onSuccess: (data: any) => {
+      console.log("✅ Devocional recebido:", data);
       setDevotional(data);
       setShowDevotional(true);
       toast({
@@ -74,7 +75,8 @@ export default function EmotionTodayImproved() {
         description: "IA Cristo criou um devocional especial para você.",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("❌ Erro ao gerar devocional:", error);
       toast({
         title: "Erro",
         description: "Não foi possível gerar o devocional. Tente novamente.",
@@ -84,6 +86,7 @@ export default function EmotionTodayImproved() {
   });
 
   const handleEmotionSelect = (emotionId: string) => {
+    console.log("🎯 Emoção selecionada:", emotionId);
     setSelectedEmotion(emotionId);
     generateDevotionalMutation.mutate(emotionId);
   };
