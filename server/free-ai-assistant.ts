@@ -76,8 +76,7 @@ export class FreeAIAssistant {
             temperature: 0.7,
             do_sample: true
           }
-        }),
-        timeout: 8000
+        })
       });
 
       if (response.ok) {

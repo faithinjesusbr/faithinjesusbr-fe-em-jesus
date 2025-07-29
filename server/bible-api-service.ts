@@ -161,9 +161,7 @@ export class FreeBibleAPIService {
   // GetBible API
   private async getVerseFromGetBible(): Promise<BibleVerse | null> {
     try {
-      const response = await fetch('https://getbible.net/v2/almeida/verses/random', {
-        timeout: 5000
-      });
+      const response = await fetch('https://getbible.net/v2/almeida/verses/random');
       
       if (!response.ok) return null;
       
@@ -197,9 +195,7 @@ export class FreeBibleAPIService {
       ];
       
       const randomVerse = popularVerses[Math.floor(Math.random() * popularVerses.length)];
-      const response = await fetch(`https://bible-api.com/${randomVerse}`, {
-        timeout: 5000
-      });
+      const response = await fetch(`https://bible-api.com/${randomVerse}`);
       
       if (!response.ok) return null;
       

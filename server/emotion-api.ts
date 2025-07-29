@@ -91,8 +91,7 @@ export class EmotionAPI {
       const response = await fetch(url, {
         method: 'POST',
         headers: headers,
-        body: JSON.stringify(data),
-        timeout: 8000
+        body: JSON.stringify(data)
       });
 
       if (response.ok) {
