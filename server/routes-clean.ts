@@ -343,6 +343,103 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Contributors endpoints
+  app.get("/api/contributors", async (req, res) => {
+    try {
+      const contributors = [
+        {
+          id: "1",
+          name: "David Wilson",
+          email: "davidkoog@gmail.com",
+          description: "amem deus abençoe",
+          contribution: "donation",
+          amount: "R$ 50,00",
+          isActive: true,
+          exclusivePrayer: "Que Deus continue abençoando sua generosidade e multiplicando suas bênçãos.",
+          exclusiveVerse: "Dai, e dar-se-vos-á; boa medida, recalcada, sacudida e transbordando vos deitarão no vosso regaço.",
+          verseReference: "Lucas 6:38",
+          createdAt: new Date().toISOString()
+        }
+      ];
+      res.json(contributors);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/contributors", async (req, res) => {
+    try {
+      const { name, email, amount = "50,00", description = "amem deus abençoe" } = req.body;
+      
+      if (!name || !email) {
+        return res.status(400).json({ message: "Nome e email são obrigatórios" });
+      }
+
+      // Gerar certificado personalizado
+      const aiResponse = await freeHuggingFaceAIService.generatePrayerResponse(`Oração de gratidão para ${name} que contribuiu com nossa missão`);
+      const verse = await freeBibleAPIService.getVerseByTheme("gratidão");
+      
+      const contributor = {
+        id: Date.now().toString(),
+        name,
+        email,
+        description,
+        contribution: "donation",
+        amount: `R$ ${amount}`,
+        isActive: true,
+        certificate: `Certificado gerado para ${name}`,
+        exclusivePrayer: aiResponse.response,
+        exclusiveVerse: verse.text,
+        verseReference: verse.reference,
+        createdAt: new Date().toISOString()
+      };
+
+      console.log(`✅ Certificado gerado para ${name} com oração exclusiva`);
+      
+      res.json(contributor);
+    } catch (error) {
+      console.error("Erro ao criar colaborador:", error);
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.get("/api/contributors/:id/certificate", async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Simular busca do colaborador
+      const contributor = {
+        id,
+        name: "David Wilson",
+        email: "davidkoog@gmail.com",
+        contribution: "donation",
+        amount: "R$ 50,00"
+      };
+
+      // Gerar certificado com IA
+      const aiResponse = await freeHuggingFaceAIService.generatePrayerResponse(`Oração especial de gratidão para ${contributor.name}`);
+      const verse = await freeBibleAPIService.getVerseByTheme("gratidão");
+      
+      const certificate = {
+        contributorName: contributor.name,
+        contributionType: "Doação Financeira",
+        amount: contributor.amount,
+        exclusivePrayer: aiResponse.response,
+        exclusiveVerse: verse.text,
+        verseReference: verse.reference,
+        issuedDate: new Date().toLocaleDateString('pt-BR'),
+        certificateId: `CERT-${id}-${Date.now()}`
+      };
+
+      console.log(`✅ Certificado gerado para ${contributor.name}`);
+      
+      res.json(certificate);
+    } catch (error) {
+      console.error("Erro ao gerar certificado:", error);
+      res.status(500).json({ message: "Erro ao gerar certificado" });
+    }
+  });
+
   // Admin
   app.get("/api/admin/users", async (req, res) => {
     try {

@@ -200,18 +200,25 @@ export default function Home() {
               <Button 
                 variant="ghost" 
                 className="text-white hover:bg-white/10"
-                onClick={handleGenerateVerse}
+                onClick={() => {
+                  const text = `${dailyVerse?.text || "Versículo do dia"} - ${dailyVerse?.reference || ""}`;
+                  const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+                  window.open(whatsappUrl, '_blank');
+                }}
               >
-                Gerar Outro
+                Compartilhar
               </Button>
             </div>
             <p className="text-lg leading-relaxed mb-4">
               {dailyVerse?.text || "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna."}
             </p>
             <div className="flex items-center gap-4">
-              <Button className="bg-white/20 hover:bg-white/30 text-white border-0">
+              <Button 
+                className="bg-white/20 hover:bg-white/30 text-white border-0"
+                onClick={handleGenerateVerse}
+              >
                 <Star className="w-4 h-4 mr-2" />
-                Compartilhar
+                Gerar Outro
               </Button>
             </div>
           </CardContent>
