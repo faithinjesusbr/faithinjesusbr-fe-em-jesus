@@ -1524,32 +1524,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Digital Assistant route
   app.post("/api/digital-assistant", async (req, res) => {
     try {
+      console.log('📨 Recebida mensagem para assistente digital:', req.body);
+      
       const { userId, message } = req.body;
       
       if (!message) {
+        console.log('❌ Mensagem não fornecida');
         return res.status(400).json({ message: "Mensagem é obrigatória" });
       }
 
+      console.log('🤖 Gerando resposta do assistente...');
       const response = await generateAssistantResponse(message);
+      console.log('✅ Resposta gerada:', response);
       
-      // Save interaction for analytics
+      // Save interaction for analytics (simplified - skip if fails)
       if (userId) {
         try {
           await storage.createUserInteraction({
             userId,
-            interactionType: "digital_assistant",
-            entityId: "assistant",
-            details: JSON.stringify({ userMessage: message, aiResponse: response.response })
+            action: "digital_assistant_chat",
+            entityType: "assistant",
+            entityId: "digital_assistant"
           });
         } catch (interactionError) {
-          console.error('Error saving interaction:', interactionError);
+          console.log('⚠️ Erro ao salvar interação (ignorado):', interactionError.message);
         }
       }
       
       res.json(response);
     } catch (error) {
-      console.error('Erro no assistente digital:', error);
-      res.status(500).json({ message: "Erro interno do servidor" });
+      console.error('❌ Erro no assistente digital:', error);
+      res.status(500).json({ message: "Erro interno do servidor", error: error.message });
     }
   });
 
