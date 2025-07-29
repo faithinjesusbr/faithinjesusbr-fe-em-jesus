@@ -216,7 +216,7 @@ export class FreeBibleAPIService {
     return randomVerse;
   }
 
-  // Obter versículo do dia com cache
+  // Obter versículo do dia com cache baseado na data
   async getDailyVerse(): Promise<BibleVerse> {
     const today = new Date().toDateString();
     
@@ -226,7 +226,15 @@ export class FreeBibleAPIService {
       return this.cache.dailyVerse;
     }
     
-    console.log('🔍 Buscando novo versículo do dia...');
+    console.log('🔍 Buscando novo versículo do dia para:', today);
+    
+    // Versículo baseado no dia do mês para garantir variação diária
+    const dayOfMonth = new Date().getDate();
+    const fallbackData = await this.loadFallbackVerses();
+    const allThemes = Object.keys(fallbackData.verses);
+    const selectedTheme = allThemes[dayOfMonth % allThemes.length];
+    
+    console.log(`📅 Tema do dia ${dayOfMonth}: ${selectedTheme}`);
     
     // Tentar APIs externas primeiro
     let verse = await this.tryBibleAPI();
@@ -235,9 +243,12 @@ export class FreeBibleAPIService {
       verse = await this.tryGetBible();
     }
     
-    // Se todas as APIs falharam, usar fallback
+    // Se todas as APIs falharam, usar fallback temático do dia
     if (!verse) {
-      verse = await this.getFallbackVerse();
+      const themesVerses = fallbackData.verses[selectedTheme];
+      const verseIndex = dayOfMonth % themesVerses.length;
+      verse = themesVerses[verseIndex];
+      console.log(`✅ Versículo temático do dia (${selectedTheme}):`, verse.reference);
     }
     
     // Salvar no cache

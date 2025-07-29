@@ -1,0 +1,72 @@
+import requests
+import random
+import datetime
+
+# ✅ Token Hugging Face que você criou
+HUGGINGFACE_TOKEN = "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"
+
+# 🔒 Base local se a internet ou API falhar
+versiculos_por_sentimento = {
+    "triste": [
+        "O Senhor está perto dos que têm o coração quebrantado. - Salmos 34:18",
+        "Lança o teu cuidado sobre o Senhor, e ele te susterá. - Salmos 55:22"
+    ],
+    "alegre": [
+        "Alegrai-vos sempre no Senhor. - Filipenses 4:4",
+        "O coração alegre aformoseia o rosto. - Provérbios 15:13"
+    ],
+    "ansioso": [
+        "Não andeis ansiosos por coisa alguma. - Filipenses 4:6",
+        "Confia no Senhor de todo o teu coração. - Provérbios 3:5"
+    ],
+    "esperança": [
+        "Os que esperam no Senhor renovarão as suas forças. - Isaías 40:31",
+        "Bendito o homem que confia no Senhor. - Jeremias 17:7"
+    ]
+}
+
+# 🗓 Versículo diferente por dia (baseada no dia do mês)
+versiculos_do_dia = [
+    "Porque eu bem sei os planos que tenho para vós. - Jeremias 29:11",
+    "O Senhor é o meu pastor, nada me faltará. - Salmos 23:1",
+    "Buscai primeiro o Reino de Deus. - Mateus 6:33",
+    "Tudo posso naquele que me fortalece. - Filipenses 4:13"
+]
+
+def versiculo_do_dia():
+    dia = datetime.datetime.now().day
+    return versiculos_do_dia[dia % len(versiculos_do_dia)]
+
+# 🎯 Gera versículo por IA Hugging Face ou base local
+def gerar_versiculo(sentimento=None):
+    try:
+        print("🔄 Usando Hugging Face IA...")
+        url = "https://api-inference.huggingface.co/models/lorrabomfim/biblia-em-portugues"
+        headers = {"Authorization": f"Bearer {HUGGINGFACE_TOKEN}"}
+        payload = {"inputs": f"Versículo para: {sentimento or 'esperança'}"}
+
+        response = requests.post(url, headers=headers, json=payload, timeout=5)
+        if response.status_code == 200:
+            return response.json()[0]['generated_text']
+        else:
+            raise Exception("Erro Hugging Face")
+    except:
+        print("⚠️ Falha na IA, usando base offline...")
+        if sentimento in versiculos_por_sentimento:
+            return random.choice(versiculos_por_sentimento[sentimento])
+        return random.choice(sum(versiculos_por_sentimento.values(), []))
+
+# 🔗 Compartilhamento
+def compartilhar_versiculo(texto):
+    whatsapp = f"https://api.whatsapp.com/send?text={texto.replace(' ', '%20')}"
+    instagram = f"https://www.instagram.com/create/story/?text={texto.replace(' ', '%20')}"
+    return whatsapp, instagram
+
+# 🧪 Teste direto no terminal
+if __name__ == "__main__":
+    sentimento_usuario = "esperança"
+    print("📖 Versículo do dia:", versiculo_do_dia())
+    print("🤖 Versículo por sentimento:", gerar_versiculo(sentimento_usuario))
+    links = compartilhar_versiculo(versiculo_do_dia())
+    print("🔗 WhatsApp:", links[0])
+    print("🔗 Instagram:", links[1])

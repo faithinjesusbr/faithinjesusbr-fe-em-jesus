@@ -128,20 +128,21 @@ export class FreeHuggingFaceAIService {
     }
   }
 
-  // Tentar HuggingFace API
+  // Tentar HuggingFace API com token
   private async tryHuggingFace(message: string): Promise<string | null> {
     try {
       console.log('Tentando HuggingFace API...');
       
       const response = await this.fetchWithTimeout(
-        'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium',
+        'https://api-inference.huggingface.co/models/lorrabomfim/biblia-em-portugues',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer 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'
           },
           body: JSON.stringify({
-            inputs: `Você é um pastor cristão evangélico que oferece conselhos bíblicos em português. ${message}`
+            inputs: `Resposta cristã para: ${message}`
           })
         }
       );
@@ -152,9 +153,9 @@ export class FreeHuggingFaceAIService {
 
       const data = await response.json();
       
-      if (data && data.generated_text) {
+      if (data && Array.isArray(data) && data[0] && data[0].generated_text) {
         console.log('✅ HuggingFace funcionou!');
-        return data.generated_text;
+        return data[0].generated_text;
       }
       
       throw new Error('Resposta inválida do HuggingFace');

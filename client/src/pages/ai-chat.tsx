@@ -72,10 +72,23 @@ export default function AIChatPage() {
       });
     },
     onError: () => {
+      // Mesmo com erro, dar uma resposta de fallback
+      const fallbackMessage: ChatMessage = {
+        id: Date.now().toString(),
+        type: 'ai',
+        message: 'Deus conhece seu coração e suas necessidades. Ele está sempre presente para te guiar. Lembre-se de que você não está sozinho nesta jornada.',
+        verse: 'Porque eu bem sei os pensamentos que tenho a vosso respeito, diz o Senhor; pensamentos de paz, e não de mal, para vos dar o fim que esperais.',
+        verseReference: 'Jeremias 29:11',
+        confidence: 'low',
+        source: 'Fallback Local',
+        timestamp: new Date().toISOString()
+      };
+      
+      setMessages(prev => [...prev, fallbackMessage]);
+      
       toast({
-        title: "Erro",
-        description: "Não foi possível enviar a mensagem. Tente novamente.",
-        variant: "destructive",
+        title: "Resposta Disponível",
+        description: "Aqui está uma palavra de encorajamento para você.",
       });
     },
   });

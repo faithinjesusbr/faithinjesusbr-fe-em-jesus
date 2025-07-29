@@ -1,6 +1,12 @@
 {
-  "dailyVerse": null,
-  "lastUpdateDate": null,
+  "dailyVerse": {
+    "text": "E o Senhor vos espalhará entre os povos, e ficareis poucos em número entre as nações para as quais o Senhor vos conduzirá.",
+    "reference": "Deuteronômio 4:27",
+    "book": "Desconhecido",
+    "chapter": 1,
+    "verse": 1
+  },
+  "lastUpdateDate": "Tue Jul 29 2025",
   "lastHuggingFaceResponse": null,
   "lastResponseDate": null
 }
