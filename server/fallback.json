@@ -1,0 +1,304 @@
+{
+  "verses": {
+    "fé": [
+      {
+        "text": "Ora, a fé é o firme fundamento das coisas que se esperam, e a prova das coisas que se não veem.",
+        "reference": "Hebreus 11:1",
+        "book": "Hebreus",
+        "chapter": 11,
+        "verse": 1
+      },
+      {
+        "text": "Porque andamos por fé, e não por vista.",
+        "reference": "2 Coríntios 5:7",
+        "book": "2 Coríntios",
+        "chapter": 5,
+        "verse": 7
+      },
+      {
+        "text": "E tudo o que pedirdes na oração, crendo, o recebereis.",
+        "reference": "Mateus 21:22",
+        "book": "Mateus",
+        "chapter": 21,
+        "verse": 22
+      },
+      {
+        "text": "Se tiverdes fé como um grão de mostarda, direis a este monte: Passa daqui para acolá, e há de passar; e nada vos será impossível.",
+        "reference": "Mateus 17:20",
+        "book": "Mateus",
+        "chapter": 17,
+        "verse": 20
+      }
+    ],
+    "medo": [
+      {
+        "text": "Não temas, porque eu sou contigo; não te assombres, porque eu sou teu Deus; eu te fortaleço, e te ajudo, e te sustento com a destra da minha justiça.",
+        "reference": "Isaías 41:10",
+        "book": "Isaías",
+        "chapter": 41,
+        "verse": 10
+      },
+      {
+        "text": "O Senhor é a minha luz e a minha salvação; a quem temerei? O Senhor é a força da minha vida; de quem me recearei?",
+        "reference": "Salmos 27:1",
+        "book": "Salmos",
+        "chapter": 27,
+        "verse": 1
+      },
+      {
+        "text": "Ainda que eu andasse pelo vale da sombra da morte, não temeria mal algum, porque tu estás comigo.",
+        "reference": "Salmos 23:4",
+        "book": "Salmos",
+        "chapter": 23,
+        "verse": 4
+      },
+      {
+        "text": "Porque Deus não nos deu o espírito de temor, mas de fortaleza, e de amor, e de moderação.",
+        "reference": "2 Timóteo 1:7",
+        "book": "2 Timóteo",
+        "chapter": 1,
+        "verse": 7
+      }
+    ],
+    "ansiedade": [
+      {
+        "text": "Lançando sobre ele toda a vossa ansiedade, porque ele tem cuidado de vós.",
+        "reference": "1 Pedro 5:7",
+        "book": "1 Pedro",
+        "chapter": 5,
+        "verse": 7
+      },
+      {
+        "text": "Não estejais inquietos por coisa alguma; antes as vossas petições sejam em tudo conhecidas diante de Deus pela oração e súplicas, com ação de graças.",
+        "reference": "Filipenses 4:6",
+        "book": "Filipenses",
+        "chapter": 4,
+        "verse": 6
+      },
+      {
+        "text": "Vinde a mim, todos os que estais cansados e oprimidos, e eu vos aliviarei.",
+        "reference": "Mateus 11:28",
+        "book": "Mateus",
+        "chapter": 11,
+        "verse": 28
+      },
+      {
+        "text": "Deixo-vos a paz, a minha paz vos dou; não vo-la dou como o mundo a dá. Não se turbe o vosso coração, nem se atemorize.",
+        "reference": "João 14:27",
+        "book": "João",
+        "chapter": 14,
+        "verse": 27
+      }
+    ],
+    "gratidão": [
+      {
+        "text": "Em tudo dai graças, porque esta é a vontade de Deus em Cristo Jesus para convosco.",
+        "reference": "1 Tessalonicenses 5:18",
+        "book": "1 Tessalonicenses",
+        "chapter": 5,
+        "verse": 18
+      },
+      {
+        "text": "Bendize, ó minha alma, ao Senhor, e não te esqueças de nenhum de seus benefícios.",
+        "reference": "Salmos 103:2",
+        "book": "Salmos",
+        "chapter": 103,
+        "verse": 2
+      },
+      {
+        "text": "Louvai ao Senhor, porque ele é bom; porque a sua benignidade é para sempre.",
+        "reference": "Salmos 136:1",
+        "book": "Salmos",
+        "chapter": 136,
+        "verse": 1
+      },
+      {
+        "text": "Toda a boa dádiva e todo o dom perfeito vem do alto, descendo do Pai das luzes.",
+        "reference": "Tiago 1:17",
+        "book": "Tiago",
+        "chapter": 1,
+        "verse": 17
+      }
+    ],
+    "força": [
+      {
+        "text": "Posso todas as coisas naquele que me fortalece.",
+        "reference": "Filipenses 4:13",
+        "book": "Filipenses",
+        "chapter": 4,
+        "verse": 13
+      },
+      {
+        "text": "Mas os que esperam no Senhor renovarão as suas forças; subirão com asas como águias; correrão, e não se cansarão; andarão, e não se fatigarão.",
+        "reference": "Isaías 40:31",
+        "book": "Isaías",
+        "chapter": 40,
+        "verse": 31
+      },
+      {
+        "text": "O Senhor é a minha força e o meu cântico; ele me foi por salvação; este é o meu Deus, portanto lhe farei uma habitação.",
+        "reference": "Êxodo 15:2",
+        "book": "Êxodo",
+        "chapter": 15,
+        "verse": 2
+      },
+      {
+        "text": "A alegria do Senhor é a vossa força.",
+        "reference": "Neemias 8:10",
+        "book": "Neemias",
+        "chapter": 8,
+        "verse": 10
+      }
+    ],
+    "amor": [
+      {
+        "text": "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.",
+        "reference": "João 3:16",
+        "book": "João",
+        "chapter": 3,
+        "verse": 16
+      },
+      {
+        "text": "Nisto conhecemos o amor: em que Cristo deu a sua vida por nós.",
+        "reference": "1 João 3:16",
+        "book": "1 João",
+        "chapter": 3,
+        "verse": 16
+      },
+      {
+        "text": "O amor nunca falha.",
+        "reference": "1 Coríntios 13:8",
+        "book": "1 Coríntios",
+        "chapter": 13,
+        "verse": 8
+      },
+      {
+        "text": "E nós conhecemos, e cremos no amor que Deus nos tem. Deus é amor; e quem está em amor está em Deus, e Deus nele.",
+        "reference": "1 João 4:16",
+        "book": "1 João",
+        "chapter": 4,
+        "verse": 16
+      }
+    ],
+    "esperança": [
+      {
+        "text": "Porque eu bem sei os pensamentos que tenho a vosso respeito, diz o Senhor; pensamentos de paz, e não de mal, para vos dar o fim que esperais.",
+        "reference": "Jeremias 29:11",
+        "book": "Jeremias",
+        "chapter": 29,
+        "verse": 11
+      },
+      {
+        "text": "Bendito seja o Deus e Pai de nosso Senhor Jesus Cristo que, segundo a sua grande misericórdia, nos gerou de novo para uma viva esperança.",
+        "reference": "1 Pedro 1:3",
+        "book": "1 Pedro",
+        "chapter": 1,
+        "verse": 3
+      },
+      {
+        "text": "Porque para Deus nada é impossível.",
+        "reference": "Lucas 1:37",
+        "book": "Lucas",
+        "chapter": 1,
+        "verse": 37
+      },
+      {
+        "text": "E sabemos que todas as coisas contribuem juntamente para o bem daqueles que amam a Deus.",
+        "reference": "Romanos 8:28",
+        "book": "Romanos",
+        "chapter": 8,
+        "verse": 28
+      }
+    ],
+    "paz": [
+      {
+        "text": "Em paz também me deitarei e dormirei, porque só tu, Senhor, me fazes repousar seguro.",
+        "reference": "Salmos 4:8",
+        "book": "Salmos",
+        "chapter": 4,
+        "verse": 8
+      },
+      {
+        "text": "E a paz de Deus, que excede todo o entendimento, guardará os vossos corações e os vossos sentimentos em Cristo Jesus.",
+        "reference": "Filipenses 4:7",
+        "book": "Filipenses",
+        "chapter": 4,
+        "verse": 7
+      },
+      {
+        "text": "Estas coisas vos tenho dito, para que em mim tenhais paz; no mundo tereis aflições, mas tende bom ânimo, eu venci o mundo.",
+        "reference": "João 16:33",
+        "book": "João",
+        "chapter": 16,
+        "verse": 33
+      },
+      {
+        "text": "Muito paz têm os que amam a tua lei, e para eles não há tropeço.",
+        "reference": "Salmos 119:165",
+        "book": "Salmos",
+        "chapter": 119,
+        "verse": 165
+      }
+    ],
+    "sabedoria": [
+      {
+        "text": "Se algum de vós tem falta de sabedoria, peça-a a Deus, que a todos dá liberalmente, e o não lança em rosto; e ser-lhe-á dada.",
+        "reference": "Tiago 1:5",
+        "book": "Tiago",
+        "chapter": 1,
+        "verse": 5
+      },
+      {
+        "text": "O temor do Senhor é o princípio da sabedoria; todos os que cumprem os seus mandamentos têm bom entendimento.",
+        "reference": "Salmos 111:10",
+        "book": "Salmos",
+        "chapter": 111,
+        "verse": 10
+      },
+      {
+        "text": "Confia no Senhor de todo o teu coração, e não te estribes no teu próprio entendimento.",
+        "reference": "Provérbios 3:5",
+        "book": "Provérbios",
+        "chapter": 3,
+        "verse": 5
+      },
+      {
+        "text": "Porque o Senhor dá a sabedoria; da sua boca vem o conhecimento e o entendimento.",
+        "reference": "Provérbios 2:6",
+        "book": "Provérbios",
+        "chapter": 2,
+        "verse": 6
+      }
+    ],
+    "perdão": [
+      {
+        "text": "Se confessarmos os nossos pecados, ele é fiel e justo para nos perdoar os pecados, e nos purificar de toda a injustiça.",
+        "reference": "1 João 1:9",
+        "book": "1 João",
+        "chapter": 1,
+        "verse": 9
+      },
+      {
+        "text": "Antes sede uns para com os outros benignos, misericordiosos, perdoando-vos uns aos outros, como também Deus vos perdoou em Cristo.",
+        "reference": "Efésios 4:32",
+        "book": "Efésios",
+        "chapter": 4,
+        "verse": 32
+      },
+      {
+        "text": "Quanto está longe o oriente do ocidente, assim afasta de nós as nossas transgressões.",
+        "reference": "Salmos 103:12",
+        "book": "Salmos",
+        "chapter": 103,
+        "verse": 12
+      },
+      {
+        "text": "E perdoa-nos as nossas dívidas, assim como nós perdoamos aos nossos devedores.",
+        "reference": "Mateus 6:12",
+        "book": "Mateus",
+        "chapter": 6,
+        "verse": 12
+      }
+    ]
+  }
+}

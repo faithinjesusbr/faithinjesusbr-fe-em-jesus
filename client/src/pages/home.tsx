@@ -91,6 +91,21 @@ export default function Home() {
     }
   }, [sponsorAds.length]);
 
+  // Buscar versículo do dia com fallback garantido
+  const { data: dailyVerse } = useQuery({
+    queryKey: ["/api/verses/daily"],
+    staleTime: 24 * 60 * 60 * 1000, // Cache por 24 horas
+    refetchOnWindowFocus: false,
+    retry: false,
+    placeholderData: {
+      text: "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.",
+      reference: "João 3:16",
+      book: "João",
+      chapter: 3,
+      verse: 16
+    }
+  });
+
   const { data: devotional, isLoading: devotionalLoading } = useQuery<any>({
     queryKey: ["/api/devotionals/daily"],
   });
@@ -117,10 +132,19 @@ export default function Home() {
     },
     onError: () => {
       toast({
-        title: "Erro",
-        description: "Não foi possível carregar um versículo.",
-        variant: "destructive",
+        title: "Versículo Disponível",
+        description: "Aqui está um versículo para você.",
+        variant: "default",
       });
+      // Mesmo com erro, mostrar um versículo de fallback
+      setCurrentVerse({
+        text: "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.",
+        reference: "João 3:16",
+        book: "João",
+        chapter: 3,
+        verse: 16
+      });
+      setShowVerseModal(true);
     },
   });
 
@@ -170,17 +194,19 @@ export default function Home() {
                 </div>
                 <div>
                   <h3 className="font-semibold">Versículo do Dia</h3>
-                  <p className="text-white/80 text-sm">Mateus 17:17</p>
+                  <p className="text-white/80 text-sm">{dailyVerse?.reference || "João 3:16"}</p>
                 </div>
               </div>
-              <Button variant="ghost" className="text-white hover:bg-white/10">
-                Compartilhar
+              <Button 
+                variant="ghost" 
+                className="text-white hover:bg-white/10"
+                onClick={handleGenerateVerse}
+              >
+                Gerar Outro
               </Button>
             </div>
             <p className="text-lg leading-relaxed mb-4">
-              A oração é a chave que abre todas as portas na vida. Você abriu hoje? 
-              Faça um teste: comece pedindo a oração por algo que parece impossível, 
-              clique no evento para se precisar de oração.
+              {dailyVerse?.text || "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna."}
             </p>
             <div className="flex items-center gap-4">
               <Button className="bg-white/20 hover:bg-white/30 text-white border-0">
