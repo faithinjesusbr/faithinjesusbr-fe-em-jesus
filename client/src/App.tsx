@@ -21,6 +21,7 @@ import DigitalAssistant from "@/components/digital-assistant";
 import LibraryEbooks from "@/pages/library-ebooks";
 import EmotionTodayImproved from "@/pages/emotion-today-improved";
 import AIChatPage from "@/pages/ai-chat";
+import EmotionSimple from "@/pages/emotion-simple";
 import YoutubeVideosImproved from "@/pages/youtube-videos-improved";
 import PixContributors from "@/pages/pix-contributors";
 import VerseOfDay from "@/pages/verse-of-day";
@@ -64,6 +65,7 @@ function Router() {
         <Route path="/library" component={Library} />
         <Route path="/library-ebooks" component={LibraryEbooks} />
         <Route path="/emotion-today-improved" component={EmotionTodayImproved} />
+        <Route path="/emotion-simple" component={EmotionSimple} />
         <Route path="/youtube-videos-improved" component={YoutubeVideosImproved} />
         <Route path="/pix-contributors" component={PixContributors} />
         <Route path="/verse-of-day" component={VerseSimple} />
