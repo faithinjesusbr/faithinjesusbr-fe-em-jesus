@@ -17,7 +17,7 @@ import {
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 
 interface Contributor {
   id: string;
@@ -189,7 +189,7 @@ export default function ContributorsSimple() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {contributors?.slice(0, 6).map((contributor: Contributor) => (
+            {(contributors || []).slice(0, 6).map((contributor: Contributor) => (
               <Card key={contributor.id} className="border border-purple-200">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-4">
