@@ -67,13 +67,22 @@ export default function DigitalAssistant() {
 
   const assistantMutation = useMutation({
     mutationFn: async (userMessage: string): Promise<AssistantResponse> => {
-      return apiRequest("/api/digital-assistant", {
+      const response = await fetch("/api/digital-assistant", {
         method: "POST",
-        body: { 
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
           userId: user?.id,
           message: userMessage 
-        },
+        }),
       });
+      
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      
+      return response.json();
     },
     onSuccess: (response: AssistantResponse, userMessage: string) => {
       const assistantMessage: AssistantMessage = {
@@ -331,7 +340,7 @@ export default function DigitalAssistant() {
         )}
       </Card>
 
-      <style jsx>{`
+      <style>{`
         @keyframes pulse-animation {
           0%, 100% { transform: scale(1); }
           50% { transform: scale(1.05); }

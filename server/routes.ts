@@ -9,6 +9,34 @@ import { z } from "zod";
 import { freeBibleAPIService } from "./free-bible-api-service";
 import { freeHuggingFaceAIService } from "./free-huggingface-ai-service";
 
+// Import AI functions from the advanced AI service
+async function generateAssistantResponse(message: string) {
+  try {
+    // Try to generate AI response using HuggingFace service
+    const aiResponse = await freeHuggingFaceAIService.generateResponse(message);
+    
+    // Get a relevant Bible verse
+    const verse = await freeBibleAPIService.getRandomVerse();
+    
+    return {
+      response: aiResponse.response,
+      verse: verse.text,
+      reference: verse.reference,
+      prayer: "Senhor, abençoe nossa conversa e que ela seja para Tua glória. Amém."
+    };
+  } catch (error) {
+    console.error('Erro ao gerar resposta do assistente:', error);
+    
+    // Fallback response in case of error
+    return {
+      response: "Que a paz de Cristo esteja contigo! Mesmo que eu não consiga responder perfeitamente agora, saiba que Deus te ama e está sempre contigo.",
+      verse: "Porque eu sei os planos que tenho para vocês', diz o Senhor, 'planos de fazê-los prosperar e não de causar dano, planos de dar esperança e um futuro.",
+      reference: "Jeremias 29:11",
+      prayer: "Senhor, abençoe nossa conversa e que ela seja para Tua glória. Amém."
+    };
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.post("/api/auth/login", async (req, res) => {
