@@ -1,76 +1,28 @@
-import OpenAI from "openai";
+// Updated OpenAI service - now uses advanced free AI service
 import type { BibleVerse } from "./bible-service";
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+import { 
+  generateEmotionalGuidance as advancedEmotionalGuidance,
+  generatePrayerResponse as advancedPrayerResponse,
+  generateDevotional as advancedDevotional
+} from './advanced-ai-service';
 
 export async function generateEmotionalGuidance(emotion: string, intensity: number, description?: string) {
-  try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: "You are IA Cristo, a Christian spiritual assistant. Provide loving, biblical guidance for emotional states in Portuguese."
-        },
-        {
-          role: "user",
-          content: `Please help someone feeling ${emotion} with intensity ${intensity}. ${description ? `Additional context: ${description}` : ''}`
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 600
-    });
-
-    const response = completion.choices[0]?.message?.content || "Deus está contigo em todos os momentos.";
-    return {
-      response,
-      verse: "Vinde a mim, todos os que estais cansados e oprimidos, e eu vos aliviarei.",
-      verseReference: "Mateus 11:28",
-      prayer: "Pai celestial, concede paz e conforto neste momento. Em nome de Jesus, amém."
-    };
-  } catch (error) {
-    return {
-      response: "Deus está contigo em todos os momentos.",
-      verse: "Vinde a mim, todos os que estais cansados e oprimidos, e eu vos aliviarei.", 
-      verseReference: "Mateus 11:28",
-      prayer: "Pai celestial, concede paz e conforto neste momento. Em nome de Jesus, amém."
-    };
-  }
+  const result = await advancedEmotionalGuidance(emotion, intensity, description);
+  return {
+    response: result.response,
+    verse: result.verse,
+    verseReference: result.reference,
+    prayer: result.prayer
+  };
 }
 
 export async function generatePrayerResponse(message: string) {
-  try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: "You are IA Cristo, a Christian spiritual assistant. Respond with prayer, biblical verse and reference in Portuguese."
-        },
-        {
-          role: "user", 
-          content: message
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 500
-    });
-
-    const response = completion.choices[0]?.message?.content || "Deus ouve suas orações.";
-    return {
-      response,
-      verse: "E tudo o que pedirdes em oração, crendo, recebereis.",
-      reference: "Mateus 21:22"
-    };
-  } catch (error) {
-    return {
-      response: "Deus ouve suas orações.",
-      verse: "E tudo o que pedirdes em oração, crendo, recebereis.",
-      reference: "Mateus 21:22"
-    };
-  }
+  const result = await advancedPrayerResponse(message);
+  return {
+    response: result.response,
+    verse: result.verse,
+    reference: result.reference
+  };
 }
 
 export async function generateLoveCard(category: string) {
@@ -96,12 +48,13 @@ export async function generateContributorCertificate(name: string, contributionT
 }
 
 export async function generateDevotionalContent(topic?: string) {
+  const result = await advancedDevotional(topic);
   return {
-    title: "Devocional Diário",
-    content: "Deus tem um plano maravilhoso para sua vida.",
-    verse: "Porque eu bem sei os pensamentos que tenho a vosso respeito.",
-    reference: "Jeremias 29:11",
-    prayer: "Pai, guia-nos hoje segundo Tua vontade. Em nome de Jesus, amém."
+    title: result.title,
+    content: result.content,
+    verse: result.verse,
+    reference: result.reference,
+    prayer: result.prayer
   };
 }
 
@@ -116,27 +69,8 @@ export async function generateChallengeContent(day: number, challengeType: strin
 }
 
 export async function generatePrayerRequestResponse(subject: string, content: string) {
-  try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: "You are IA Cristo, a Christian spiritual assistant. Respond to prayer requests with compassionate, biblical guidance in Portuguese."
-        },
-        {
-          role: "user",
-          content: `Prayer request: ${subject} - ${content}`
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 400
-    });
-
-    return completion.choices[0]?.message?.content || "Deus ouve suas orações e está sempre presente.";
-  } catch (error) {
-    return "Deus ouve suas orações e está sempre presente.";
-  }
+  const result = await advancedPrayerResponse(`${subject} - ${content}`);
+  return result.response;
 }
 
 export async function generateNightDevotional() {
@@ -150,40 +84,13 @@ export async function generateNightDevotional() {
 }
 
 export async function generateBibleVerse(): Promise<BibleVerse> {
-  try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: "You are IA Cristo. Generate a random Bible verse in Portuguese with exact reference. Return JSON format with text, reference, book, chapter, and verse fields."
-        },
-        {
-          role: "user",
-          content: "Generate a random inspiring Bible verse in Portuguese"
-        }
-      ],
-      response_format: { type: "json_object" },
-      temperature: 0.9,
-      max_tokens: 300
-    });
-
-    const result = JSON.parse(completion.choices[0]?.message?.content || '{}');
-    return {
-      text: result.text || "Porque Deus tanto amou o mundo que deu o seu Filho Unigênito, para que todo o que nele crer não pereça, mas tenha a vida eterna.",
-      reference: result.reference || "João 3:16",
-      book: result.book || "João",
-      chapter: result.chapter || 3,
-      verse: result.verse || 16
-    };
-  } catch (error) {
-    // Fallback verse
-    return {
-      text: "Porque Deus tanto amou o mundo que deu o seu Filho Unigênito, para que todo o que nele crer não pereça, mas tenha a vida eterna.",
-      reference: "João 3:16",
-      book: "João",
-      chapter: 3,
-      verse: 16
-    };
-  }
+  // Use one of the predefined verses from advanced AI service
+  const verses = [
+    { text: "Porque Deus tanto amou o mundo que deu o seu Filho Unigênito, para que todo o que nele crer não pereça, mas tenha a vida eterna.", reference: "João 3:16", book: "João", chapter: 3, verse: 16 },
+    { text: "Posso todas as coisas naquele que me fortalece.", reference: "Filipenses 4:13", book: "Filipenses", chapter: 4, verse: 13 },
+    { text: "O Senhor é o meu pastor; nada me faltará.", reference: "Salmos 23:1", book: "Salmos", chapter: 23, verse: 1 },
+    { text: "Não temas, porque eu sou contigo; não te assombres, porque eu sou teu Deus.", reference: "Isaías 41:10", book: "Isaías", chapter: 41, verse: 10 }
+  ];
+  
+  return verses[Math.floor(Math.random() * verses.length)];
 }
