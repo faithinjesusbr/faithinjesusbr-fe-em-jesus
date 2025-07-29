@@ -23,7 +23,7 @@ export default function VerseOfDay() {
 
   // Novo versículo (aleatório)
   const { data: newVerse, isLoading: newLoading, refetch: refetchNew } = useQuery({
-    queryKey: ['/api/verses/new'],
+    queryKey: ['/api/verses/new', dailyVerse?.reference || ''],
     enabled: false, // Só busca quando solicitado
   });
 
@@ -31,7 +31,7 @@ export default function VerseOfDay() {
   const currentVerse = showDailyVerse ? dailyVerse : newVerse;
   const isLoading = showDailyVerse ? dailyLoading : newLoading;
 
-  const verseId = currentVerse ? (currentVerse as any)?.id || `${currentVerse.book}_${currentVerse.chapter}_${currentVerse.verse}` : null;
+  const verseId = currentVerse ? (currentVerse as any)?.id || `${(currentVerse as any).book}_${(currentVerse as any).chapter}_${(currentVerse as any).verse}` : null;
   
   const { data: hasReacted } = useQuery({
     queryKey: ['/api/verse-reactions', user?.id, verseId],
@@ -43,7 +43,7 @@ export default function VerseOfDay() {
       if (!currentVerse || !user?.id) throw new Error("Missing data");
       await apiRequest("/api/verse-reactions", "POST", {
         userId: user.id,
-        verseId: (currentVerse as any)?.id || `${currentVerse.book}_${currentVerse.chapter}_${currentVerse.verse}`,
+        verseId: (currentVerse as any)?.id || `${(currentVerse as any).book}_${(currentVerse as any).chapter}_${(currentVerse as any).verse}`,
         reaction: "amen"
       });
     },
@@ -61,9 +61,9 @@ export default function VerseOfDay() {
     },
   });
 
-  const handleNewVerse = () => {
+  const handleNewVerse = async () => {
     setShowDailyVerse(false);
-    refetchNew();
+    await refetchNew();
   };
 
   const handleBackToDaily = () => {
@@ -72,14 +72,14 @@ export default function VerseOfDay() {
 
   const handleShareWhatsApp = () => {
     if (!currentVerse) return;
-    const message = `🙏 *Versículo do Dia* 📖\n\n"${currentVerse.text}"\n\n📚 ${currentVerse.reference}\n\n✨ Que esta palavra abençoe seu dia! Compartilhado pelo app Fé em Jesus BR`;
+    const message = `🙏 *Versículo do Dia* 📖\n\n"${(currentVerse as any).text}"\n\n📚 ${(currentVerse as any).reference}\n\n✨ Que esta palavra abençoe seu dia! Compartilhado pelo app Fé em Jesus BR`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const handleShareInstagram = () => {
     if (!currentVerse) return;
-    const message = `🙏 Versículo do Dia 📖\n\n"${currentVerse.text}"\n\n📚 ${currentVerse.reference}\n\n✨ Que esta palavra abençoe seu dia!`;
+    const message = `🙏 Versículo do Dia 📖\n\n"${(currentVerse as any).text}"\n\n📚 ${(currentVerse as any).reference}\n\n✨ Que esta palavra abençoe seu dia!`;
     navigator.clipboard.writeText(message);
     toast({
       title: "Texto copiado!",
@@ -89,7 +89,7 @@ export default function VerseOfDay() {
 
   const handleCopyVerse = () => {
     if (!currentVerse) return;
-    const message = `"${currentVerse.text}" - ${currentVerse.reference}`;
+    const message = `"${(currentVerse as any).text}" - ${(currentVerse as any).reference}`;
     navigator.clipboard.writeText(message);
     toast({
       title: "Versículo copiado!",
@@ -192,10 +192,10 @@ export default function VerseOfDay() {
                 <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6 pb-4 sm:pb-6">
                   <div className="bg-purple-50 rounded-lg p-4 sm:p-8 text-center">
                     <blockquote className="text-purple-900 text-base sm:text-xl leading-relaxed mb-3 sm:mb-4 font-medium">
-                      "{currentVerse?.text || 'Carregando versículo...'}"
+                      "{(currentVerse as any)?.text || 'Carregando versículo...'}"
                     </blockquote>
                     <cite className="text-purple-700 font-semibold text-sm sm:text-lg">
-                      {currentVerse?.reference || ''}
+                      {(currentVerse as any)?.reference || ''}
                     </cite>
                   </div>
 
