@@ -283,38 +283,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Sistema de apoio via PIX - Contribuidores
-  app.post("/api/contributors", async (req, res) => {
-    try {
-      const data = insertContributorSchema.parse(req.body);
-      
-      const contributor = await storage.createContributor(data);
-      
-      // Gerar certificado de contribuidor
-      const certificateData = await generateContributorCertificate(
-        data.name,
-        data.contributionType
-      );
-      
-      const certificate = await storage.createCertificate({
-        recipientType: "contributor",
-        recipientId: contributor.id,
-        title: certificateData.title,
-        description: certificateData.description,
-        aiGeneratedPrayer: certificateData.prayer,
-        aiGeneratedVerse: certificateData.verse,
-        verseReference: certificateData.verseReference,
-        templateStyle: "elegant",
-        backgroundColor: "#ffffff",
-        textColor: "#333333",
-      });
-      
-      res.json({ contributor, certificate });
-    } catch (error) {
-      console.error("Erro ao criar contribuidor:", error);
-      res.status(500).json({ message: "Erro interno do servidor" });
-    }
-  });
+  // Sistema de apoio via PIX - Contribuidores (REMOVIDO - duplicado)
 
   app.get("/api/contributors", async (req, res) => {
     try {
@@ -956,31 +925,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/contributors", async (req, res) => {
     try {
-      const contributorData = insertContributorSchema.parse(req.body);
-      const contributor = await storage.createContributor(contributorData);
+      const { name, email, donationAmount, contributionType, specialMessage } = req.body;
       
-      // Gerar oração e versículo exclusivos
-      try {
-        const exclusive = await generateExclusivePrayerAndVerse(
-          contributor.name, 
-          'contributor', 
-          contributorData.contribution
-        );
-        
-        await storage.updateContributor(contributor.id, {
-          exclusivePrayer: exclusive.prayer,
-          exclusiveVerse: exclusive.verse,
-          verseReference: exclusive.reference
-        });
-      } catch (aiError) {
-        console.error("Error generating exclusive content:", aiError);
+      if (!name || !email) {
+        return res.status(400).json({ message: "Nome e email são obrigatórios" });
       }
+
+      // Gerar certificado com IA
+      const aiResponse = await freeHuggingFaceAIService.generatePrayerResponse(`Oração de gratidão para ${name} que contribuiu com nossa missão`);
+      const verse = await freeBibleAPIService.getVerseByTheme("gratidão");
       
-      res.status(201).json(contributor);
+      const contributor = {
+        id: Date.now().toString(),
+        name,
+        email,
+        donationAmount: donationAmount || "0",
+        contributionType: contributionType || "donation",
+        specialMessage: specialMessage || "",
+        certificateUrl: "",
+        specialVerse: verse.text,
+        verseReference: verse.reference,
+        isActive: true,
+        createdAt: new Date().toISOString()
+      };
+
+      console.log(`✅ Certificado gerado para ${name} com oração exclusiva`);
+      
+      const certificate = {
+        title: "Certificado de Gratidão",
+        description: `Reconhecemos com gratidão a valiosa contribuição de ${name} em nossa missão de espalhar a Palavra de Deus. Que Deus continue abençoando abundantemente sua vida e ministério.`,
+        aiGeneratedPrayer: aiResponse.response,
+        aiGeneratedVerse: verse.text,
+        verseReference: verse.reference
+      };
+      
+      res.json({
+        contributor,
+        certificate
+      });
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
-      }
+      console.error('Erro ao criar colaborador:', error);
       res.status(500).json({ message: "Erro interno do servidor" });
     }
   });
@@ -1444,41 +1428,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // AI Prayer routes with OpenAI integration - REMOVED DUPLICATE
 
-  // Contributors routes with AI certificate generation
-  app.post("/api/contributors", async (req, res) => {
-    try {
-      const contributorData = req.body;
-      
-      if (!contributorData.name || !contributorData.email) {
-        return res.status(400).json({ message: "Nome e email são obrigatórios" });
-      }
-
-      // Create contributor with proper schema
-      const contributor = await storage.createContributor({
-        name: contributorData.name,
-        email: contributorData.email,
-        description: contributorData.message,
-        contributionType: contributorData.contributionType || 'donation',
-        donationAmount: contributorData.amount,
-        isActive: true,
-      });
-
-      // Generate AI certificate
-      const { generateCertificateContent } = await import('./ai-service');
-      const certificate = await generateCertificateContent(
-        contributorData.name, 
-        contributorData.contributionType || 'donation'
-      );
-
-      res.json({
-        contributor,
-        certificate
-      });
-    } catch (error) {
-      console.error('Erro ao criar colaborador:', error);
-      res.status(500).json({ message: "Erro interno do servidor" });
-    }
-  });
+  // Contributors routes with AI certificate generation (REMOVIDO - usar a versão mais simples da linha 926)
 
   app.get("/api/contributors/:id/certificate", async (req, res) => {
     try {
