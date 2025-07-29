@@ -1,11 +1,17 @@
 {
-  "dailyVerse": null,
-  "lastUpdateDate": null,
+  "dailyVerse": {
+    "text": "Jesus, na verdade, operou na presença de seus discípulos ainda muitos outros sinais que não estão escritos neste livro;",
+    "reference": "João 20:30",
+    "book": "Desconhecido",
+    "chapter": 1,
+    "verse": 1
+  },
+  "lastUpdateDate": "Tue Jul 29 2025",
   "lastHuggingFaceResponse": {
-    "message": "Teste final do sistema",
-    "response": "Lembre-se sempre de que você é amado(a), valorizado(a) e tem um propósito divino. Deus nunca desiste de você.",
+    "message": "Como fortalecer minha fé?",
+    "response": "Sua fé pode ser pequena como um grão de mostarda, mas com Deus ela pode mover montanhas. Não desista de crer, pois Ele está trabalhando em sua vida de formas que você ainda não pode ver.",
     "source": "Offline Inteligente",
-    "timestamp": "2025-07-29T14:31:59.463Z"
+    "timestamp": "2025-07-29T14:40:31.624Z"
   },
   "lastResponseDate": null
 }
