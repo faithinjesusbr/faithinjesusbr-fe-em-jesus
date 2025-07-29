@@ -20,7 +20,8 @@ import DigitalAssistant from "@/components/digital-assistant";
 // Import the dynamic components directly
 import LibraryEbooks from "@/pages/library-ebooks";
 import EmotionTodayImproved from "@/pages/emotion-today-improved";
-import AIChatPage from "@/pages/ai-chat";
+import AIChatSimple from "@/pages/ai-chat-simple";
+import ContributorsSimple from "@/pages/contributors-simple";
 import EmotionSimple from "@/pages/emotion-simple";
 import YoutubeVideosImproved from "@/pages/youtube-videos-improved";
 import PixContributors from "@/pages/pix-contributors";
@@ -73,7 +74,8 @@ function Router() {
         <Route path="/sponsors" component={Sponsors} />
         <Route path="/prayer-requests" component={PrayerRequests} />
         <Route path="/ai-prayer" component={AIPrayer} />
-        <Route path="/ai-chat" component={AIChatPage} />
+        <Route path="/ai-chat" component={AIChatSimple} />
+        <Route path="/contributors" component={ContributorsSimple} />
         <Route path="/share" component={SharePage} />
         <Route path="/admin" component={AdminDashboard} />
         <Route component={NotFound} />
