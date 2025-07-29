@@ -3,9 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { 
   insertUserSchema, loginSchema, insertDevotionalSchema, insertVerseSchema, insertPrayerSchema,
-  insertEmotionDevotionalSchema, insertAIPrayerRequestSchema,
-  insertLoveCardSchema, insertPrayerRequestSchema,
-  insertContributorSchema, insertEbookSchema, insertUserPointsSchema, insertEmotionalStateSchema
+  insertAIPrayerRequestSchema, insertPrayerRequestSchema
 } from "@shared/schema";
 import { z } from "zod";
 import { 
@@ -67,20 +65,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Emoção é obrigatória" });
       }
       
-      // Importar função de geração de devocional emocional
-      const { generateEmotionDevotional } = await import('./emotion-api');
+      console.log(`Gerando devocional para emoção: ${emotion}`);
       
-      // Gerar devocional personalizado
-      const devotional = await generateEmotionDevotional(emotion);
+      // Gerar devocional usando o serviço de IA avançado
+      const devotional = await generateDevotional(emotion);
       
-      res.json(devotional);
+      console.log(`Devocional gerado com sucesso: ${devotional.title}`);
+      
+      res.json({
+        title: devotional.title,
+        content: devotional.content,
+        verse: devotional.verse,
+        reference: devotional.reference,
+        prayer: devotional.prayer,
+        emotion: emotion
+      });
     } catch (error) {
       console.error("Erro ao gerar devocional emocional:", error);
       res.status(500).json({ message: "Erro ao gerar devocional" });
     }
   });
 
-  // Sistema simplificado de orientação emocional
+  // Sistema simplificado de orientação emocional  
   app.post("/api/emotions/guidance", async (req, res) => {
     try {
       const { emotion, intensity = 5, description } = req.body;
@@ -89,8 +95,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Emoção é obrigatória" });
       }
       
+      console.log(`Gerando orientação para emoção: ${emotion}, intensidade: ${intensity}`);
+      
       // Gerar resposta de IA para a emoção
       const aiGuidance = await generateEmotionalGuidance(emotion, intensity, description);
+      
+      console.log(`Orientação gerada com sucesso para ${emotion}`);
       
       res.json({
         emotion,
@@ -644,37 +654,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/emotions/:emotionId/devotional", async (req, res) => {
-    try {
-      const { emotionId } = req.params;
-      const emotions = await storage.getAllEmotions();
-      const emotion = emotions.find(e => e.id === emotionId);
-      
-      if (!emotion) {
-        return res.status(404).json({ message: "Emoção não encontrada" });
-      }
-
-      // Check if devotional already exists
-      let devotional = await storage.getEmotionDevotional(emotionId);
-      
-      if (!devotional) {
-        // Generate new devotional using AI
-        const aiDevotional = await generateEmotionDevotional(emotion.name);
-        
-        const devotionalData = {
-          emotionId,
-          ...aiDevotional
-        };
-        
-        devotional = await storage.createEmotionDevotional(devotionalData);
-      }
-      
-      res.json(devotional);
-    } catch (error) {
-      console.error("Error in emotion devotional route:", error);
-      res.status(500).json({ message: "Erro ao gerar devocional" });
-    }
-  });
+  // REMOVIDO - Endpoint duplicado, usar /api/emotions/generate-devotional
 
   // Challenge routes
   app.get("/api/challenges", async (req, res) => {
