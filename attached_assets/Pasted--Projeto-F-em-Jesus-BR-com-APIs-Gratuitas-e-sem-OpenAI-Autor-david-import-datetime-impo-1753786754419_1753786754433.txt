@@ -1,0 +1,78 @@
+# Projeto: Fé em Jesus BR - com APIs Gratuitas e sem OpenAI
+# Autor: david
+
+import datetime
+import random
+import requests
+
+# Função para obter versículo do dia via API gratuita
+
+def versiculo_do_dia():
+    try:
+        response = requests.get("https://beta.ourmanna.com/api/v1/get/?format=text")
+        if response.status_code == 200:
+            return response.text.strip()
+        else:
+            return versiculo_reserva_por_dia()
+    except:
+        return versiculo_reserva_por_dia()
+
+# Função para gerar mensagem com DeepInfra (gratuito)
+
+def gerar_mensagem_crista(texto_usuario):
+    url = "https://api.deepinfra.com/v1/openai/chat/completions"
+    headers = {
+        "Authorization": "Bearer IasbEQCNlgTcUpWXuNsurq6o891KUlhK",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "model": "mistralai/Mistral-7B-Instruct-v0.1",
+        "messages": [
+            {"role": "system", "content": "Você é um pastor cristão que responde com mensagens bíblicas e inspiradoras."},
+            {"role": "user", "content": texto_usuario}
+        ],
+        "temperature": 0.7
+    }
+    try:
+        response = requests.post(url, headers=headers, json=data)
+        return response.json()["choices"][0]["message"]["content"]
+    except:
+        return mensagem_emocao_reserva(texto_usuario)
+
+# Mensagens reserva caso IA falhe (por sentimento)
+
+mensagens_reserva = {
+    "Ansioso": "Entregue todas as suas preocupações a Deus, pois Ele cuida de você. (1 Pedro 5:7)",
+    "Triste": "Próximo está o Senhor dos que têm o coração quebrantado. (Salmo 34:18)",
+    "Alegre": "Alegra-te sempre no Senhor. (Filipenses 4:4)",
+    "Cansado": "Venham a mim todos os que estão cansados e sobrecarregados. (Mateus 11:28)",
+    "Solitário": "Deus nunca te deixa sozinho. (Isaías 41:10)",
+    "Agradecido": "Dai graças em todas as circunstâncias. (1 Tessalonicenses 5:18)"
+}
+
+def mensagem_emocao_reserva(emocao):
+    return mensagens_reserva.get(emocao, "Confie em Deus, Ele te entende e está contigo.")
+
+# Versículos de reserva por dia (caso API externa falhe completamente)
+versiculos_por_dia = [
+    "João 3:16 - Porque Deus amou o mundo de tal maneira...",
+    "Salmo 23:1 - O Senhor é o meu pastor...",
+    "Filipenses 4:13 - Posso todas as coisas naquele que me fortalece.",
+    "Provérbios 3:5 - Confie no Senhor de todo o seu coração...",
+    "Mateus 5:9 - Bem-aventurados os pacificadores...",
+    "Isaías 40:31 - Mas os que esperam no Senhor renovarão as suas forças...",
+    # ... adicione mais até 50 versículos
+]
+
+def versiculo_reserva_por_dia():
+    dia = datetime.datetime.now().day
+    return versiculos_por_dia[dia % len(versiculos_por_dia)]
+
+# Exemplo de uso (você pode adaptar para sua interface):
+if __name__ == "__main__":
+    sentimento_usuario = "Ansioso"
+    mensagem = gerar_mensagem_crista(sentimento_usuario)
+    versiculo = versiculo_do_dia()
+
+    print("Mensagem inspiradora:", mensagem)
+    print("Versículo do dia:", versiculo)

@@ -13,6 +13,7 @@ import {
 import { freeBibleService } from "./free-bible-service";
 import { freeBibleAPIService } from "./bible-api-service";
 import { freeAIAssistant } from "./free-ai-assistant";
+import { emotionAPI } from "./emotion-api";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
@@ -69,19 +70,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`Gerando devocional para emoção: ${emotion}`);
       
-      // Gerar devocional usando o serviço de IA avançado
-      const devotional = await generateDevotional(emotion);
+      // Usar nova API de emoções gratuita (baseada no código Python)
+      const devotional = await emotionAPI.generateEmotionalGuidance(emotion);
       
       console.log(`Devocional gerado com sucesso: ${devotional.title}`);
       
-      res.json({
-        title: devotional.title,
-        content: devotional.content,
-        verse: devotional.verse,
-        reference: devotional.reference,
-        prayer: devotional.prayer,
-        emotion: emotion
-      });
+      res.json(devotional);
     } catch (error) {
       console.error("Erro ao gerar devocional emocional:", error);
       res.status(500).json({ message: "Erro ao gerar devocional" });
