@@ -11,9 +11,8 @@ import {
   generateDevotional
 } from "./advanced-ai-service";
 import { freeBibleService } from "./free-bible-service";
-import { freeBibleAPIService } from "./bible-api-service";
-import { freeAIAssistant } from "./free-ai-assistant";
-import { emotionAPI } from "./emotion-api";
+import { robustBibleService } from "./robust-bible-service";
+import { robustAIService } from "./robust-ai-service";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
@@ -70,8 +69,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`Gerando devocional para emoção: ${emotion}`);
       
-      // Usar nova API de emoções gratuita (baseada no código Python)
-      const devotional = await emotionAPI.generateEmotionalGuidance(emotion);
+      // Usar serviço robusto de IA
+      const devotional = await robustAIService.generateDevotionalByEmotion(emotion);
       
       console.log(`Devocional gerado com sucesso: ${devotional.title}`);
       
@@ -125,9 +124,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`IA Cristo processando: ${userMessage}`);
       
-      // Usar novo assistente IA gratuito
-      const aiResponse = await freeAIAssistant.getResponse(userMessage);
-      const dailyVerse = await freeBibleAPIService.getDailyVerse();
+      // Usar serviço robusto de IA
+      const aiResponse = await robustAIService.getIntelligentResponse(userMessage);
+      const dailyVerse = await robustBibleService.getDailyVerse();
       
       const prayerRequest = await storage.createAIPrayerRequest({
         userId,
@@ -157,17 +156,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`Assistente IA processando: ${message}`);
       
-      let aiResponse;
-      if (type === 'advice') {
-        aiResponse = await freeAIAssistant.getChristianAdvice(message);
-      } else if (type === 'encouragement') {
-        aiResponse = await freeAIAssistant.getEncouragement();
-      } else {
-        aiResponse = await freeAIAssistant.getResponse(message);
-      }
+      // Usar serviço robusto de IA
+      const aiResponse = await robustAIService.getIntelligentResponse(message);
       
       // Adicionar versículo relacionado
-      const verse = await freeBibleAPIService.getRandomVerse();
+      const verse = await robustBibleService.getRandomVerse();
       
       res.json({
         response: aiResponse.response,
@@ -196,9 +189,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Sistema de Versículos Bíblicos (NOVO - APIs gratuitas)
   app.get("/api/verses/daily", async (req, res) => {
     try {
-      console.log('Buscando versículo do dia...');
-      const dailyVerse = await freeBibleAPIService.getDailyVerse();
-      console.log('Versículo do dia obtido:', dailyVerse.reference);
+      console.log('🔍 Buscando versículo do dia...');
+      const dailyVerse = await robustBibleService.getDailyVerse();
+      console.log('✅ Versículo do dia obtido:', dailyVerse.reference);
       res.json(dailyVerse);
     } catch (error) {
       console.error("Erro ao buscar versículo do dia:", error);
@@ -209,9 +202,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Novo endpoint para versículo aleatório
   app.get("/api/verses/random", async (req, res) => {
     try {
-      console.log('Buscando versículo aleatório...');
-      const randomVerse = await freeBibleAPIService.getRandomVerse();
-      console.log('Versículo aleatório obtido:', randomVerse.reference);
+      console.log('🎲 Buscando versículo aleatório...');
+      const randomVerse = await robustBibleService.getRandomVerse();
+      console.log('✅ Versículo aleatório obtido:', randomVerse.reference);
       res.json(randomVerse);
     } catch (error) {
       console.error("Erro ao buscar versículo aleatório:", error);

@@ -52,11 +52,19 @@ export default function EmotionTodayImproved() {
 
   const generateDevotionalMutation = useMutation({
     mutationFn: async (emotion: string) => {
-      const response = await apiRequest("/api/emotions/generate-devotional", {
+      const response = await fetch("/api/emotions/generate-devotional", {
         method: "POST",
-        body: { emotion, intensity: 5 },
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ emotion, intensity: 5 }),
       });
-      return response;
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      return await response.json();
     },
     onSuccess: (data: any) => {
       setDevotional(data);
