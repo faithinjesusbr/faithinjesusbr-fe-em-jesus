@@ -218,7 +218,8 @@ export default function AIChatPage() {
                               )}
                               {msg.source && (
                                 <Badge variant="outline" className="text-xs">
-                                  {msg.source === 'huggingface' ? 'IA Online' : 'Base Local'}
+                                  {msg.source === 'huggingface' ? 'IA Online' : 
+                                   msg.source === 'Offline Inteligente' ? 'IA Local' : 'Base Local'}
                                 </Badge>
                               )}
                             </div>

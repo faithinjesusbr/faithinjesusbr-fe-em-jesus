@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { 
   Search, 
   Heart, 
@@ -13,12 +14,14 @@ import {
   HandHeart,
   DollarSign,
   Code,
-  HandHeart as PrayingHands
+  HandHeart as PrayingHands,
+  Sparkles
 } from "lucide-react";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 interface Contributor {
   id: string;
@@ -39,11 +42,61 @@ interface Contributor {
 export default function ContributorsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    amount: "50,00",
+    description: "amem deus abençoe"
+  });
   const { toast } = useToast();
 
   const { data: contributors, isLoading } = useQuery({
     queryKey: ["/api/contributors"],
   });
+
+  const submitContributorMutation = useMutation({
+    mutationFn: async (data: any) => {
+      return apiRequest("/api/contributors", {
+        method: "POST",
+        body: data,
+      });
+    },
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/contributors"] });
+      toast({
+        title: "Cadastro Realizado!",
+        description: "Seu certificado personalizado foi gerado com IA.",
+      });
+      setShowForm(false);
+      setFormData({
+        name: "",
+        email: "",
+        amount: "50,00",
+        description: "amem deus abençoe"
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erro",
+        description: "Não foi possível processar seu cadastro. Tente novamente.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.email) {
+      toast({
+        title: "Dados Incompletos",
+        description: "Por favor, preencha pelo menos nome e email.",
+        variant: "destructive",
+      });
+      return;
+    }
+    submitContributorMutation.mutate(formData);
+  };
 
   const filteredContributors = (contributors || []).filter((contributor: Contributor) => {
     const matchesSearch = contributor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -165,14 +218,106 @@ export default function ContributorsPage() {
               orações ou suporte técnico - toda ajuda é uma bênção!
             </p>
             <div className="flex gap-4 justify-center flex-wrap">
-              <Button size="lg" className="bg-green-600 hover:bg-green-700">
+              <Button 
+                size="lg" 
+                className="bg-green-600 hover:bg-green-700"
+                onClick={() => setShowForm(true)}
+              >
                 <DollarSign className="h-5 w-5 mr-2" />
-                Fazer Doação
+                Cadastrar e Gerar Certificado
               </Button>
-              <Button size="lg" variant="outline" className="border-divine-600 text-divine-600">
-                <HandHeart className="h-5 w-5 mr-2" />
-                Ser Voluntário
-              </Button>
+            </div>
+            
+            {/* Registration Form Modal */}
+            {showForm && (
+              <Card className="mt-8 max-w-2xl mx-auto">
+                <CardHeader>
+                  <CardTitle className="text-center text-2xl text-divine-700">
+                    <Gift className="w-6 h-6 mx-auto mb-2" />
+                    Cadastro de Colaborador
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Nome Completo *
+                        </label>
+                        <Input
+                          value={formData.name}
+                          onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                          placeholder="Seu nome completo"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Email *
+                        </label>
+                        <Input
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                          placeholder="seu@email.com"
+                          required
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Valor da Doação (opcional)
+                      </label>
+                      <Input
+                        value={formData.amount}
+                        onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
+                        placeholder="50,00"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Mensagem ou Testemunho (opcional)
+                      </label>
+                      <Textarea
+                        value={formData.description}
+                        onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                        placeholder="Compartilhe como Deus tocou seu coração..."
+                        className="min-h-[80px]"
+                      />
+                    </div>
+                    
+                    <div className="flex gap-4">
+                      <Button
+                        type="submit"
+                        disabled={submitContributorMutation.isPending}
+                        className="flex-1 bg-divine-600 hover:bg-divine-700"
+                      >
+                        {submitContributorMutation.isPending ? (
+                          <>
+                            <Sparkles className="w-4 h-4 mr-2 animate-spin" />
+                            Gerando Certificado...
+                          </>
+                        ) : (
+                          <>
+                            <Award className="w-4 h-4 mr-2" />
+                            Cadastrar e Gerar Certificado
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setShowForm(false)}
+                      >
+                        Cancelar
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            )
             </div>
           </CardContent>
         </Card>
