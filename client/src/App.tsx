@@ -23,6 +23,7 @@ import EmotionTodayImproved from "@/pages/emotion-today-improved";
 import YoutubeVideosImproved from "@/pages/youtube-videos-improved";
 import PixContributors from "@/pages/pix-contributors";
 import VerseOfDay from "@/pages/verse-of-day";
+import VerseSimple from "@/pages/verse-simple";
 import { useEffect } from "react";
 
 function Router() {
@@ -64,7 +65,8 @@ function Router() {
         <Route path="/emotion-today-improved" component={EmotionTodayImproved} />
         <Route path="/youtube-videos-improved" component={YoutubeVideosImproved} />
         <Route path="/pix-contributors" component={PixContributors} />
-        <Route path="/verse-of-day" component={VerseOfDay} />
+        <Route path="/verse-of-day" component={VerseSimple} />
+        <Route path="/verse-advanced" component={VerseOfDay} />
         <Route path="/sponsors" component={Sponsors} />
         <Route path="/prayer-requests" component={PrayerRequests} />
         <Route path="/ai-prayer" component={AIPrayer} />
