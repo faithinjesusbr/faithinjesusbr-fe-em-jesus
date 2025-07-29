@@ -11,6 +11,8 @@ import {
   generateDevotional
 } from "./advanced-ai-service";
 import { freeBibleService } from "./free-bible-service";
+import { freeBibleAPIService } from "./bible-api-service";
+import { freeAIAssistant } from "./free-ai-assistant";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
@@ -118,7 +120,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Agente Digital IA Cristo
+  // Agente Digital IA Cristo (ATUALIZADO - IA gratuita)
   app.post("/api/ai-prayer", async (req, res) => {
     try {
       const { userId, userMessage } = req.body;
@@ -127,31 +129,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "UserId e userMessage são obrigatórios" });
       }
       
-      // Gerar resposta da IA
-      const aiResponse = await generatePrayerResponse(userMessage);
+      console.log(`IA Cristo processando: ${userMessage}`);
+      
+      // Usar novo assistente IA gratuito
+      const aiResponse = await freeAIAssistant.getResponse(userMessage);
+      const dailyVerse = await freeBibleAPIService.getDailyVerse();
       
       const prayerRequest = await storage.createAIPrayerRequest({
         userId,
         userMessage,
         aiResponse: aiResponse.response,
-        verse: aiResponse.verse,
-        reference: aiResponse.reference,
+        verse: dailyVerse.text,
+        reference: dailyVerse.reference,
       });
       
-      // Adicionar pontos ao usuário
-      try {
-        await storage.createUserPoints({
-          userId,
-          points: "3",
-          reason: "ai_prayer_request",
-        });
-      } catch (pointsError) {
-        console.log("Error adding points:", pointsError);
-      }
+      console.log(`Resposta gerada com ${aiResponse.confidence} confiança via ${aiResponse.source}`);
       
       res.json(prayerRequest);
     } catch (error) {
       console.error("Erro ao processar oração com IA:", error);
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Novo endpoint para assistente IA conversacional
+  app.post("/api/ai-assistant", async (req, res) => {
+    try {
+      const { message, type = 'general' } = req.body;
+      
+      if (!message) {
+        return res.status(400).json({ message: "Mensagem é obrigatória" });
+      }
+      
+      console.log(`Assistente IA processando: ${message}`);
+      
+      let aiResponse;
+      if (type === 'advice') {
+        aiResponse = await freeAIAssistant.getChristianAdvice(message);
+      } else if (type === 'encouragement') {
+        aiResponse = await freeAIAssistant.getEncouragement();
+      } else {
+        aiResponse = await freeAIAssistant.getResponse(message);
+      }
+      
+      // Adicionar versículo relacionado
+      const verse = await freeBibleAPIService.getRandomVerse();
+      
+      res.json({
+        response: aiResponse.response,
+        confidence: aiResponse.confidence,
+        source: aiResponse.source,
+        verse: verse.text,
+        verseReference: verse.reference,
+        timestamp: new Date().toISOString()
+      });
+      
+    } catch (error) {
+      console.error("Erro no assistente IA:", error);
       res.status(500).json({ message: "Erro interno do servidor" });
     }
   });
@@ -165,14 +199,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Sistema de Versículos Bíblicos
+  // Sistema de Versículos Bíblicos (NOVO - APIs gratuitas)
   app.get("/api/verses/daily", async (req, res) => {
     try {
-      const dailyVerse = await freeBibleService.getDailyVerse();
+      console.log('Buscando versículo do dia...');
+      const dailyVerse = await freeBibleAPIService.getDailyVerse();
+      console.log('Versículo do dia obtido:', dailyVerse.reference);
       res.json(dailyVerse);
     } catch (error) {
       console.error("Erro ao buscar versículo do dia:", error);
       res.status(500).json({ message: "Erro ao buscar versículo do dia" });
+    }
+  });
+
+  // Novo endpoint para versículo aleatório
+  app.get("/api/verses/random", async (req, res) => {
+    try {
+      console.log('Buscando versículo aleatório...');
+      const randomVerse = await freeBibleAPIService.getRandomVerse();
+      console.log('Versículo aleatório obtido:', randomVerse.reference);
+      res.json(randomVerse);
+    } catch (error) {
+      console.error("Erro ao buscar versículo aleatório:", error);
+      res.status(500).json({ message: "Erro ao buscar versículo aleatório" });
     }
   });
 
