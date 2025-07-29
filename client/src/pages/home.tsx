@@ -183,6 +183,47 @@ export default function Home() {
             </Button>
           </div>
         </div>
+        
+        {/* Seção de Teste - TEMPORÁRIA */}
+        <Card className="mb-6 border-2 border-dashed border-blue-300 bg-blue-50">
+          <CardHeader>
+            <CardTitle className="text-blue-800 flex items-center gap-2">
+              <Bot className="h-5 w-5" />
+              🧪 Área de Testes - Funcionalidades
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Link href="/ai-simple">
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                  <Bot className="h-4 w-4 mr-2" />
+                  Testar IA Cristo (Simples)
+                </Button>
+              </Link>
+              <Link href="/certificate-simple">
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
+                  <Gift className="h-4 w-4 mr-2" />
+                  Testar Certificado (Simples)
+                </Button>
+              </Link>
+              <Link href="/ai-prayer">
+                <Button variant="outline" className="w-full">
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  IA Cristo (Interface Completa)
+                </Button>
+              </Link>
+              <Link href="/pix-support">
+                <Button variant="outline" className="w-full">
+                  <Heart className="h-4 w-4 mr-2" />
+                  PIX Support (Interface Completa)
+                </Button>
+              </Link>
+            </div>
+            <p className="text-xs text-blue-600 mt-3">
+              ⚡ Use os botões "Simples" para testar se as APIs estão funcionando. Use os "Completos" para a interface final.
+            </p>
+          </CardContent>
+        </Card>
 
         {/* Daily Verse Card */}
         <Card className="mb-6 bg-gradient-to-r from-purple-500 to-blue-600 border-0 text-white">

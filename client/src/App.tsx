@@ -24,6 +24,8 @@ import AIChatSimple from "@/pages/ai-chat-simple";
 import ContributorsSimple from "@/pages/contributors-simple";
 import TestSimple from "@/pages/test-simple";
 import EmotionSimple from "@/pages/emotion-simple";
+import AISimple from "@/pages/ai-simple";
+import CertificateSimple from "@/pages/certificate-simple";
 import YoutubeVideosImproved from "@/pages/youtube-videos-improved";
 import PixContributors from "@/pages/pix-contributors";
 import VerseOfDay from "@/pages/verse-of-day";
@@ -75,6 +77,8 @@ function Router() {
         <Route path="/sponsors" component={Sponsors} />
         <Route path="/prayer-requests" component={PrayerRequests} />
         <Route path="/ai-prayer" component={AIPrayer} />
+        <Route path="/ai-simple" component={AISimple} />
+        <Route path="/certificate-simple" component={CertificateSimple} />
         <Route path="/ai-chat" component={AIChatSimple} />
         <Route path="/contributors" component={ContributorsSimple} />
         <Route path="/test" component={TestSimple} />
