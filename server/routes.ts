@@ -9,8 +9,9 @@ import {
 } from "@shared/schema";
 import { z } from "zod";
 import { 
-  generateEmotionalGuidance, generatePrayerResponse, generateAssistantResponse
-} from "./free-ai-service";
+  generateEmotionalGuidance, generatePrayerResponse, generateAssistantResponse,
+  generateDevotional
+} from "./advanced-ai-service";
 import { freeBibleService } from "./free-bible-service";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -57,45 +58,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Sistema "Sinto Hoje" - Estados emocionais com IA
-  app.post("/api/emotional-states", async (req, res) => {
+  // Sistema "Sinto Hoje" - Gera devocionais baseados em emoções
+  app.post("/api/emotions/generate-devotional", async (req, res) => {
     try {
-      const data = insertEmotionalStateSchema.parse(req.body);
+      const { emotion, intensity = 5, description } = req.body;
       
-      // Gerar resposta da IA
-      const aiGuidance = await generateEmotionalGuidance(
-        data.emotion,
-        data.intensity,
-        data.description
-      );
+      if (!emotion) {
+        return res.status(400).json({ message: "Emoção é obrigatória" });
+      }
       
-      const emotionalState = await storage.createEmotionalState({
-        ...data,
-        aiResponse: aiGuidance.response,
-        suggestedVerse: aiGuidance.verse,
-        verseReference: aiGuidance.verseReference,
-        personalizedPrayer: aiGuidance.prayer,
-      });
+      // Importar função de geração de devocional emocional
+      const { generateEmotionDevotional } = await import('./emotion-api');
       
-      // Adicionar pontos ao usuário
-      await storage.createUserPoints({
-        userId: data.userId,
-        points: "5",
-        reason: "emotional_guidance_received",
-      });
+      // Gerar devocional personalizado
+      const devotional = await generateEmotionDevotional(emotion);
       
-      res.json(emotionalState);
+      res.json(devotional);
     } catch (error) {
-      console.error("Erro ao criar estado emocional:", error);
-      res.status(500).json({ message: "Erro interno do servidor" });
+      console.error("Erro ao gerar devocional emocional:", error);
+      res.status(500).json({ message: "Erro ao gerar devocional" });
     }
   });
 
-  app.get("/api/emotional-states/:userId", async (req, res) => {
+  // Sistema simplificado de orientação emocional
+  app.post("/api/emotions/guidance", async (req, res) => {
     try {
-      const states = await storage.getUserEmotionalStates(req.params.userId);
-      res.json(states);
+      const { emotion, intensity = 5, description } = req.body;
+      
+      if (!emotion) {
+        return res.status(400).json({ message: "Emoção é obrigatória" });
+      }
+      
+      // Gerar resposta de IA para a emoção
+      const aiGuidance = await generateEmotionalGuidance(emotion, intensity, description);
+      
+      res.json({
+        emotion,
+        intensity,
+        description,
+        response: aiGuidance.response,
+        verse: aiGuidance.verse,
+        reference: aiGuidance.reference,
+        prayer: aiGuidance.prayer,
+        timestamp: new Date().toISOString()
+      });
     } catch (error) {
+      console.error("Erro ao gerar orientação emocional:", error);
       res.status(500).json({ message: "Erro interno do servidor" });
     }
   });

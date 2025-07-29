@@ -52,9 +52,9 @@ export default function EmotionTodayImproved() {
 
   const generateDevotionalMutation = useMutation({
     mutationFn: async (emotion: string) => {
-      const response = await apiRequest("/api/emotion-devotionals", {
+      const response = await apiRequest("/api/emotions/generate-devotional", {
         method: "POST",
-        body: { emotion },
+        body: { emotion, intensity: 5 },
       });
       return response;
     },
