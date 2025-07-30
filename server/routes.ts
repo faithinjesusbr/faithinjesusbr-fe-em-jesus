@@ -931,25 +931,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Nome e email são obrigatórios" });
       }
 
+      console.log(`🙏 Processando pedido de colaborador: ${name}...`);
+
       // Gerar certificado com IA
       const aiResponse = await freeHuggingFaceAIService.generatePrayerResponse(`Oração de gratidão para ${name} que contribuiu com nossa missão`);
       const verse = await freeBibleAPIService.getVerseByTheme("gratidão");
       
-      const contributor = {
-        id: Date.now().toString(),
+      // Criar dados do colaborador para salvar no banco
+      const contributorData = {
         name,
         email,
-        donationAmount: donationAmount || "0",
+        donationAmount: donationAmount || "50",
         contributionType: contributionType || "donation",
         specialMessage: specialMessage || "",
         certificateUrl: "",
         specialVerse: verse.text,
         verseReference: verse.reference,
         isActive: true,
-        createdAt: new Date().toISOString()
       };
 
+      // Salvar no banco de dados
+      const savedContributor = await storage.createContributor(contributorData);
+
+      console.log(`✅ Colaborador salvo no banco: ${savedContributor.id}`);
       console.log(`✅ Certificado gerado para ${name} com oração exclusiva`);
+      
+      // Verificar se foi realmente salvo
+      const allContributors = await storage.getAllContributors();
+      console.log(`📊 Total de colaboradores no banco: ${allContributors.length}`);
       
       const certificate = {
         title: "Certificado de Gratidão",
@@ -960,7 +969,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       
       res.json({
-        contributor,
+        contributor: savedContributor,
         certificate
       });
     } catch (error) {
