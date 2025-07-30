@@ -59,11 +59,14 @@ export default function ContributorsFallback() {
     const xhr = new XMLHttpRequest();
     
     xhr.onreadystatechange = function() {
+      console.log(`🔄 ReadyState: ${xhr.readyState}, Status: ${xhr.status}`);
+      
       if (xhr.readyState === 4) {
         setIsSubmitting(false);
         
-        console.log('📊 Status:', xhr.status);
-        console.log('📋 Resposta:', xhr.responseText);
+        console.log('📊 Final Status:', xhr.status);
+        console.log('📋 Response Text:', xhr.responseText);
+        console.log('📋 Response Headers:', xhr.getAllResponseHeaders());
         
         if (xhr.status >= 200 && xhr.status < 300) {
           try {
@@ -99,8 +102,19 @@ export default function ContributorsFallback() {
       setMessage({ type: 'error', text: 'Erro de conexão com o servidor' });
     };
     
+    console.log('🚀 Enviando requisição para: /api/contributors');
+    console.log('📝 Dados enviados:', JSON.stringify(data, null, 2));
+    
     xhr.open('POST', '/api/contributors', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
+    
+    console.log('📡 Configuração XHR:', {
+      method: 'POST',
+      url: '/api/contributors',
+      headers: { 'Content-Type': 'application/json' },
+      readyState: xhr.readyState
+    });
+    
     xhr.send(JSON.stringify(data));
   };
 
