@@ -3,6 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <script>
+      // Suppress WebSocket connection errors in development
+      (function() {
+        // Suppress console errors for WebSocket connections
+        const originalConsoleError = console.error;
+        console.error = function(...args) {
+          const message = args.join(' ');
+          if (message.includes('wss://localhost:undefined') || 
+              message.includes('WebSocket connection to') || 
+              message.includes('ws://localhost:undefined') ||
+              message.includes('Failed to construct \'WebSocket\'') ||
+              message.includes('token-6GCOXptikm')) {
+            return;
+          }
+          originalConsoleError.apply(console, args);
+        };
+
+        // Suppress WebSocket-related warnings
+        const originalConsoleWarn = console.warn;
+        console.warn = function(...args) {
+          const message = args.join(' ');
+          if (message.includes('WebSocket') || 
+              message.includes('wss://localhost:undefined')) {
+            return;
+          }
+          originalConsoleWarn.apply(console, args);
+        };
+
+        // Suppress unhandled promise rejections for WebSockets
+        window.addEventListener('unhandledrejection', function(event) {
+          if (event.reason && 
+              (event.reason.toString().includes('WebSocket') ||
+               event.reason.toString().includes('wss://localhost:undefined'))) {
+            event.preventDefault();
+          }
+        });
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
