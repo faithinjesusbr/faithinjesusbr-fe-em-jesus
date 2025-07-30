@@ -18,10 +18,21 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-divine-500 to-divine-600 rounded-full flex items-center justify-center">
+            <img 
+              src="/logo.png" 
+              alt="Fé em Jesus BR" 
+              className="w-10 h-10 rounded-full object-cover shadow-md"
+              onError={(e) => {
+                // Fallback para o ícone da cruz se a logo não carregar
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                target.nextElementSibling?.classList.remove('hidden');
+              }}
+            />
+            <div className="w-10 h-10 bg-gradient-to-br from-divine-500 to-divine-600 rounded-full flex items-center justify-center hidden">
               <Cross className="text-white w-5 h-5" />
             </div>
-            <h1 className="text-xl font-bold text-gray-900">Fé em Jesus BR</h1>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-divine-600 to-purple-600 bg-clip-text text-transparent">Fé em Jesus BR</h1>
           </Link>
           
           <div className="relative">
