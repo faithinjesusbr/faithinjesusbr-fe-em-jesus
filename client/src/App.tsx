@@ -21,7 +21,7 @@ import DigitalAssistant from "@/components/digital-assistant";
 import LibraryEbooks from "@/pages/library-ebooks";
 import EmotionTodayImproved from "@/pages/emotion-today-improved";
 import AIChatSimple from "@/pages/ai-chat-simple";
-import ContributorsDirect from "@/pages/contributors-direct";
+import ContributorsServer from "@/pages/contributors-server";
 
 import EmotionSimple from "@/pages/emotion-simple";
 import AISimple from "@/pages/ai-simple";
@@ -80,7 +80,7 @@ function Router() {
         <Route path="/ai-simple" component={AISimple} />
         <Route path="/certificate-simple" component={CertificateSimple} />
         <Route path="/ai-chat" component={AIChatSimple} />
-        <Route path="/contributors" component={ContributorsDirect} />
+        <Route path="/contributors" component={ContributorsServer} />
 
         <Route path="/share" component={SharePage} />
         <Route path="/admin" component={AdminDashboard} />
