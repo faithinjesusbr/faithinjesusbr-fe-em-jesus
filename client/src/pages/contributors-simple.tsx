@@ -56,7 +56,14 @@ export default function ContributorsSimple() {
       return response.json();
     },
     onSuccess: (response) => {
-      setCertificate(response);
+      // O response inclui contributor e certificate
+      setCertificate({
+        name: response.contributor?.name || formData.name,
+        amount: response.contributor?.donationAmount || formData.amount,
+        exclusivePrayer: response.certificate?.aiGeneratedPrayer,
+        exclusiveVerse: response.certificate?.aiGeneratedVerse,
+        verseReference: response.certificate?.verseReference
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/contributors"] });
       toast({
         title: "Cadastro Realizado!",
@@ -89,7 +96,13 @@ export default function ContributorsSimple() {
       });
       return;
     }
-    submitMutation.mutate(formData);
+    submitMutation.mutate({
+      name: formData.name,
+      email: formData.email,
+      donationAmount: formData.amount,
+      contributionType: "donation",
+      specialMessage: formData.description
+    });
   };
 
   if (certificate) {
@@ -189,7 +202,7 @@ export default function ContributorsSimple() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {(contributors || []).slice(0, 6).map((contributor: Contributor) => (
+            {Array.isArray(contributors) ? contributors.slice(0, 6).map((contributor: Contributor) => (
               <Card key={contributor.id} className="border border-purple-200">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-4">
@@ -216,7 +229,7 @@ export default function ContributorsSimple() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            )) : null}
           </div>
         )}
 

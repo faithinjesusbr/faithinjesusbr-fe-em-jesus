@@ -22,7 +22,7 @@ import LibraryEbooks from "@/pages/library-ebooks";
 import EmotionTodayImproved from "@/pages/emotion-today-improved";
 import AIChatSimple from "@/pages/ai-chat-simple";
 import ContributorsSimple from "@/pages/contributors-simple";
-import TestSimple from "@/pages/test-simple";
+
 import EmotionSimple from "@/pages/emotion-simple";
 import AISimple from "@/pages/ai-simple";
 import CertificateSimple from "@/pages/certificate-simple";
@@ -81,7 +81,7 @@ function Router() {
         <Route path="/certificate-simple" component={CertificateSimple} />
         <Route path="/ai-chat" component={AIChatSimple} />
         <Route path="/contributors" component={ContributorsSimple} />
-        <Route path="/test" component={TestSimple} />
+
         <Route path="/share" component={SharePage} />
         <Route path="/admin" component={AdminDashboard} />
         <Route component={NotFound} />
