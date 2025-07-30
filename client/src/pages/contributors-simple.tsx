@@ -48,12 +48,22 @@ export default function ContributorsSimple() {
 
   const submitMutation = useMutation({
     mutationFn: async (data: any) => {
+      console.log('Enviando dados:', data);
       const response = await fetch('/api/contributors', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-      return response.json();
+      
+      console.log('Status da resposta:', response.status);
+      const result = await response.json();
+      console.log('Resposta do servidor:', result);
+      
+      if (!response.ok) {
+        throw new Error(result.message || 'Erro ao processar cadastro');
+      }
+      
+      return result;
     },
     onSuccess: (response) => {
       // O response inclui contributor e certificate
@@ -77,10 +87,11 @@ export default function ContributorsSimple() {
         description: "amem deus abençoe"
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('Erro no cadastro:', error);
       toast({
         title: "Erro",
-        description: "Não foi possível processar seu cadastro. Tente novamente.",
+        description: error.message || "Não foi possível processar seu cadastro. Tente novamente.",
         variant: "destructive",
       });
     },
