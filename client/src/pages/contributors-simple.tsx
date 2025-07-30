@@ -48,13 +48,45 @@ export default function ContributorsSimple() {
 
   const submitMutation = useMutation({
     mutationFn: async (data: any) => {
-      console.log('Enviando dados:', data);
+      console.log('🚀 Enviando dados para cadastro:', data);
       
-      const response = await apiRequest('POST', '/api/contributors', data);
-      const result = await response.json();
-      console.log('Resposta do servidor:', result);
-      
-      return result;
+      try {
+        // Primeiro tenta com apiRequest
+        console.log('📡 Tentando com apiRequest...');
+        const response = await apiRequest('POST', '/api/contributors', data);
+        const result = await response.json();
+        console.log('✅ Sucesso com apiRequest:', result);
+        return result;
+      } catch (apiError) {
+        console.warn('⚠️ apiRequest falhou, tentando fetch direto:', apiError);
+        
+        // Fallback com fetch direto se apiRequest falhar
+        try {
+          const response = await fetch('/api/contributors', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+            credentials: 'include'
+          });
+          
+          console.log('📊 Status do fetch direto:', response.status);
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ Erro no servidor:', errorText);
+            throw new Error(`Erro ${response.status}: ${errorText}`);
+          }
+          
+          const result = await response.json();
+          console.log('✅ Sucesso com fetch direto:', result);
+          return result;
+        } catch (fetchError) {
+          console.error('💥 Erro total na requisição:', fetchError);
+          throw new Error('Falha na comunicação com o servidor. Verifique sua conexão.');
+        }
+      }
     },
     onSuccess: (response) => {
       // O response inclui contributor e certificate
@@ -79,11 +111,26 @@ export default function ContributorsSimple() {
       });
     },
     onError: (error: any) => {
-      console.error('Erro completo no cadastro:', error);
-      console.error('Stack trace:', error.stack);
+      console.error('💥 ERRO FINAL NO CADASTRO:', {
+        error,
+        message: error.message,
+        stack: error.stack,
+        toString: error.toString()
+      });
+      
+      // Mensagem mais específica baseada no tipo de erro
+      let userMessage = "Não foi possível processar seu cadastro.";
+      if (error.message?.includes('conectividade') || error.message?.includes('rede')) {
+        userMessage = "Problema de conexão. Verifique sua internet e tente novamente.";
+      } else if (error.message?.includes('500')) {
+        userMessage = "Erro interno do servidor. Nossa equipe foi notificada.";
+      } else if (error.message?.includes('400')) {
+        userMessage = "Dados inválidos. Verifique se preencheu todos os campos.";
+      }
+      
       toast({
         title: "Erro no Cadastro",
-        description: error.message || "Não foi possível processar seu cadastro. Tente novamente.",
+        description: userMessage,
         variant: "destructive",
       });
     },
