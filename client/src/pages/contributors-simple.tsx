@@ -48,45 +48,30 @@ export default function ContributorsSimple() {
 
   const submitMutation = useMutation({
     mutationFn: async (data: any) => {
-      console.log('🚀 Enviando dados para cadastro:', data);
+      console.log('🚀 INICIANDO CADASTRO:', data);
       
-      try {
-        // Primeiro tenta com apiRequest
-        console.log('📡 Tentando com apiRequest...');
-        const response = await apiRequest('POST', '/api/contributors', data);
-        const result = await response.json();
-        console.log('✅ Sucesso com apiRequest:', result);
-        return result;
-      } catch (apiError) {
-        console.warn('⚠️ apiRequest falhou, tentando fetch direto:', apiError);
-        
-        // Fallback com fetch direto se apiRequest falhar
-        try {
-          const response = await fetch('/api/contributors', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-            credentials: 'include'
-          });
-          
-          console.log('📊 Status do fetch direto:', response.status);
-          
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error('❌ Erro no servidor:', errorText);
-            throw new Error(`Erro ${response.status}: ${errorText}`);
-          }
-          
-          const result = await response.json();
-          console.log('✅ Sucesso com fetch direto:', result);
-          return result;
-        } catch (fetchError) {
-          console.error('💥 Erro total na requisição:', fetchError);
-          throw new Error('Falha na comunicação com o servidor. Verifique sua conexão.');
-        }
+      // Abordagem simplificada - apenas fetch direto
+      const response = await fetch('/api/contributors', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      console.log('📊 Response status:', response.status);
+      console.log('📊 Response ok:', response.ok);
+      
+      const result = await response.json();
+      console.log('📋 Response data:', result);
+      
+      if (!response.ok) {
+        console.error('❌ Resposta não OK:', result);
+        throw new Error(result.message || `Erro ${response.status}`);
       }
+      
+      console.log('✅ CADASTRO REALIZADO COM SUCESSO!');
+      return result;
     },
     onSuccess: (response) => {
       // O response inclui contributor e certificate
