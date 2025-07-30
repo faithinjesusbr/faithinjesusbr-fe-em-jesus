@@ -48,30 +48,89 @@ export default function ContributorsSimple() {
 
   const submitMutation = useMutation({
     mutationFn: async (data: any) => {
-      console.log('🚀 INICIANDO CADASTRO:', data);
+      console.log('🚀 INICIANDO CADASTRO ROBUSTO:', data);
       
-      // Abordagem simplificada - apenas fetch direto
-      const response = await fetch('/api/contributors', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      // Múltiplas tentativas com diferentes abordagens
+      const attempts = [
+        // Tentativa 1: fetch com timeout
+        () => {
+          console.log('🔄 Tentativa 1: Fetch com timeout');
+          return Promise.race([
+            fetch('/api/contributors', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            }),
+            new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Timeout')), 10000)
+            )
+          ]);
         },
-        body: JSON.stringify(data)
-      });
+        
+        // Tentativa 2: fetch com URL completa
+        () => {
+          console.log('🔄 Tentativa 2: Fetch com URL completa');
+          const fullUrl = `${window.location.origin}/api/contributors`;
+          return fetch(fullUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+        },
+        
+        // Tentativa 3: XMLHttpRequest como fallback
+        () => {
+          console.log('🔄 Tentativa 3: XMLHttpRequest');
+          return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/api/contributors', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            
+            xhr.onload = () => {
+              if (xhr.status >= 200 && xhr.status < 300) {
+                resolve({
+                  ok: true,
+                  status: xhr.status,
+                  json: () => Promise.resolve(JSON.parse(xhr.responseText))
+                } as any);
+              } else {
+                reject(new Error(`HTTP ${xhr.status}: ${xhr.responseText}`));
+              }
+            };
+            
+            xhr.onerror = () => reject(new Error('Erro de rede'));
+            xhr.ontimeout = () => reject(new Error('Timeout'));
+            xhr.timeout = 15000;
+            
+            xhr.send(JSON.stringify(data));
+          });
+        }
+      ];
       
-      console.log('📊 Response status:', response.status);
-      console.log('📊 Response ok:', response.ok);
-      
-      const result = await response.json();
-      console.log('📋 Response data:', result);
-      
-      if (!response.ok) {
-        console.error('❌ Resposta não OK:', result);
-        throw new Error(result.message || `Erro ${response.status}`);
+      // Tentar cada abordagem
+      for (let i = 0; i < attempts.length; i++) {
+        try {
+          const response = await attempts[i]() as any;
+          console.log(`✅ Tentativa ${i + 1} bem-sucedida - Status:`, response.status);
+          
+          const result = await response.json();
+          console.log('📋 Dados recebidos:', result);
+          
+          if (!response.ok) {
+            throw new Error(result.message || `Erro ${response.status}`);
+          }
+          
+          console.log('🎉 CADASTRO FINALIZADO COM SUCESSO!');
+          return result;
+          
+        } catch (error) {
+          console.error(`❌ Tentativa ${i + 1} falhou:`, error);
+          if (i === attempts.length - 1) {
+            throw new Error('Todas as tentativas falharam. Verifique sua conexão.');
+          }
+          console.log(`⏭️ Tentando próxima abordagem...`);
+        }
       }
-      
-      console.log('✅ CADASTRO REALIZADO COM SUCESSO!');
-      return result;
     },
     onSuccess: (response) => {
       // O response inclui contributor e certificate
