@@ -103,8 +103,16 @@ export default function SponsorsPage() {
           </div>
         )}
 
-        {filteredSponsors.length === 0 && !isLoading && (
-          <div className="max-w-2xl mx-auto">
+        {(filteredSponsors.length === 0 || !sponsors || sponsors.length === 0) && !isLoading && (
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                Patrocinadores em Destaque
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Conheça nossos parceiros que apoiam esta missão
+              </p>
+            </div>
             <PatrocinadoresRotativos />
           </div>
         )}

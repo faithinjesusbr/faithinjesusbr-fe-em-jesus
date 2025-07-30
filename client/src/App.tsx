@@ -30,6 +30,8 @@ import YoutubeVideosImproved from "@/pages/youtube-videos-improved";
 import PixContributors from "@/pages/pix-contributors";
 import VerseOfDay from "@/pages/verse-of-day";
 import VerseSimple from "@/pages/verse-simple";
+import AdminLogin from "@/pages/admin-login";
+import AdminPanel from "@/pages/admin-panel";
 import { useEffect } from "react";
 
 function Router() {
@@ -84,7 +86,9 @@ function Router() {
         <Route path="/contributors" component={ContributorsOffline} />
 
         <Route path="/share" component={SharePage} />
-        <Route path="/admin" component={AdminDashboard} />
+        <Route path="/admin" component={AdminLogin} />
+        <Route path="/admin-panel" component={AdminPanel} />
+        <Route path="/admin-dashboard" component={AdminDashboard} />
         <Route component={NotFound} />
       </Switch>
       

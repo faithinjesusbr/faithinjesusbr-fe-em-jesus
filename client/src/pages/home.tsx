@@ -31,6 +31,7 @@ import BottomNav from "@/components/bottom-nav";
 import VerseModal from "@/components/verse-modal";
 import PrayerModal from "@/components/prayer-modal";
 import PatrocinadorDoDia from "@/components/PatrocinadorDoDia";
+import PatrocinadoresHomeBonito from "@/components/PatrocinadoresHomeBonito";
 import type { Devotional, Verse } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -228,8 +229,8 @@ export default function Home() {
           </CardContent>
         </Card>
 
-        {/* Rotating Sponsor Component */}
-        <PatrocinadorDoDia />
+        {/* Beautiful Rotating Sponsors Component */}
+        <PatrocinadoresHomeBonito />
 
         {/* Quick Actions */}
         <div className="mb-6">
