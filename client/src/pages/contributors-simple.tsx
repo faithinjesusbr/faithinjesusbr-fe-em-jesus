@@ -49,21 +49,28 @@ export default function ContributorsSimple() {
   const submitMutation = useMutation({
     mutationFn: async (data: any) => {
       console.log('Enviando dados:', data);
-      const response = await fetch('/api/contributors', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
       
-      console.log('Status da resposta:', response.status);
-      const result = await response.json();
-      console.log('Resposta do servidor:', result);
-      
-      if (!response.ok) {
-        throw new Error(result.message || 'Erro ao processar cadastro');
+      try {
+        const response = await fetch('/api/contributors', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        console.log('Status da resposta:', response.status);
+        const result = await response.json();
+        console.log('Resposta do servidor:', result);
+        
+        if (!response.ok) {
+          console.error('Erro no servidor:', result);
+          throw new Error(result.message || 'Erro ao processar cadastro');
+        }
+        
+        return result;
+      } catch (networkError) {
+        console.error('Erro de rede:', networkError);
+        throw new Error('Erro de conectividade. Verifique sua internet.');
       }
-      
-      return result;
     },
     onSuccess: (response) => {
       // O response inclui contributor e certificate
@@ -88,9 +95,10 @@ export default function ContributorsSimple() {
       });
     },
     onError: (error: any) => {
-      console.error('Erro no cadastro:', error);
+      console.error('Erro completo no cadastro:', error);
+      console.error('Stack trace:', error.stack);
       toast({
-        title: "Erro",
+        title: "Erro no Cadastro",
         description: error.message || "Não foi possível processar seu cadastro. Tente novamente.",
         variant: "destructive",
       });
@@ -99,7 +107,11 @@ export default function ContributorsSimple() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email) {
+    
+    console.log('Formulário submetido com dados:', formData);
+    
+    if (!formData.name.trim() || !formData.email.trim()) {
+      console.log('Validação falhou: campos obrigatórios vazios');
       toast({
         title: "Dados Incompletos",
         description: "Por favor, preencha nome e email.",
@@ -107,13 +119,17 @@ export default function ContributorsSimple() {
       });
       return;
     }
-    submitMutation.mutate({
-      name: formData.name,
-      email: formData.email,
-      donationAmount: formData.amount,
+
+    const submitData = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      donationAmount: formData.amount || "50",
       contributionType: "donation",
-      specialMessage: formData.description
-    });
+      specialMessage: formData.description.trim() || "Gratidão a Deus"
+    };
+    
+    console.log('Dados a serem enviados:', submitData);
+    submitMutation.mutate(submitData);
   };
 
   if (certificate) {
