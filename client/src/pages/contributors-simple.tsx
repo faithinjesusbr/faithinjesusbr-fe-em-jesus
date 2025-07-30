@@ -17,7 +17,7 @@ import {
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
 import { useToast } from "@/hooks/use-toast";
-import { queryClient } from "@/lib/queryClient";
+import { queryClient, apiRequest } from "@/lib/queryClient";
 
 interface Contributor {
   id: string;
@@ -50,27 +50,11 @@ export default function ContributorsSimple() {
     mutationFn: async (data: any) => {
       console.log('Enviando dados:', data);
       
-      try {
-        const response = await fetch('/api/contributors', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-        
-        console.log('Status da resposta:', response.status);
-        const result = await response.json();
-        console.log('Resposta do servidor:', result);
-        
-        if (!response.ok) {
-          console.error('Erro no servidor:', result);
-          throw new Error(result.message || 'Erro ao processar cadastro');
-        }
-        
-        return result;
-      } catch (networkError) {
-        console.error('Erro de rede:', networkError);
-        throw new Error('Erro de conectividade. Verifique sua internet.');
-      }
+      const response = await apiRequest('POST', '/api/contributors', data);
+      const result = await response.json();
+      console.log('Resposta do servidor:', result);
+      
+      return result;
     },
     onSuccess: (response) => {
       // O response inclui contributor e certificate
