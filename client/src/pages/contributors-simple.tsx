@@ -46,106 +46,62 @@ export default function ContributorsSimple() {
     queryKey: ["/api/contributors"],
   });
 
-  const submitMutation = useMutation({
-    mutationFn: async (data: any) => {
-      console.log('🚀 INICIANDO CADASTRO ROBUSTO:', data);
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleDirectSubmit = async (data: any) => {
+    setSubmitting(true);
+    
+    try {
+      console.log('🚀 MÉTODO DIRETO - Enviando:', data);
       
-      // Múltiplas tentativas com diferentes abordagens
-      const attempts = [
-        // Tentativa 1: fetch com timeout
-        () => {
-          console.log('🔄 Tentativa 1: Fetch com timeout');
-          return Promise.race([
-            fetch('/api/contributors', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data)
-            }),
-            new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('Timeout')), 10000)
-            )
-          ]);
-        },
+      // Usar apenas XMLHttpRequest que funciona melhor
+      const result = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
         
-        // Tentativa 2: fetch com URL completa
-        () => {
-          console.log('🔄 Tentativa 2: Fetch com URL completa');
-          const fullUrl = `${window.location.origin}/api/contributors`;
-          return fetch(fullUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-          });
-        },
-        
-        // Tentativa 3: XMLHttpRequest como fallback
-        () => {
-          console.log('🔄 Tentativa 3: XMLHttpRequest');
-          return new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', '/api/contributors', true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4) {
+            console.log('📊 XHR Status:', xhr.status);
+            console.log('📋 XHR Response:', xhr.responseText);
             
-            xhr.onload = () => {
-              if (xhr.status >= 200 && xhr.status < 300) {
-                resolve({
-                  ok: true,
-                  status: xhr.status,
-                  json: () => Promise.resolve(JSON.parse(xhr.responseText))
-                } as any);
-              } else {
-                reject(new Error(`HTTP ${xhr.status}: ${xhr.responseText}`));
+            if (xhr.status >= 200 && xhr.status < 300) {
+              try {
+                const data = JSON.parse(xhr.responseText);
+                resolve(data);
+              } catch (e) {
+                reject(new Error('Resposta inválida do servidor'));
               }
-            };
-            
-            xhr.onerror = () => reject(new Error('Erro de rede'));
-            xhr.ontimeout = () => reject(new Error('Timeout'));
-            xhr.timeout = 15000;
-            
-            xhr.send(JSON.stringify(data));
-          });
-        }
-      ];
-      
-      // Tentar cada abordagem
-      for (let i = 0; i < attempts.length; i++) {
-        try {
-          const response = await attempts[i]() as any;
-          console.log(`✅ Tentativa ${i + 1} bem-sucedida - Status:`, response.status);
-          
-          const result = await response.json();
-          console.log('📋 Dados recebidos:', result);
-          
-          if (!response.ok) {
-            throw new Error(result.message || `Erro ${response.status}`);
+            } else {
+              reject(new Error(`Erro ${xhr.status}: ${xhr.responseText}`));
+            }
           }
-          
-          console.log('🎉 CADASTRO FINALIZADO COM SUCESSO!');
-          return result;
-          
-        } catch (error) {
-          console.error(`❌ Tentativa ${i + 1} falhou:`, error);
-          if (i === attempts.length - 1) {
-            throw new Error('Todas as tentativas falharam. Verifique sua conexão.');
-          }
-          console.log(`⏭️ Tentando próxima abordagem...`);
-        }
-      }
-    },
-    onSuccess: (response) => {
-      // O response inclui contributor e certificate
-      setCertificate({
-        name: response.contributor?.name || formData.name,
-        amount: response.contributor?.donationAmount || formData.amount,
-        exclusivePrayer: response.certificate?.aiGeneratedPrayer,
-        exclusiveVerse: response.certificate?.aiGeneratedVerse,
-        verseReference: response.certificate?.verseReference
+        };
+        
+        xhr.onerror = () => {
+          console.error('❌ XHR Error');
+          reject(new Error('Erro de conexão'));
+        };
+        
+        xhr.open('POST', '/api/contributors', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data));
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/contributors"] });
+      
+      console.log('✅ CADASTRO REALIZADO:', result);
+      
+      // Sucesso - atualizar interface
+      setCertificate({
+        name: (result as any).contributor?.name || data.name,
+        amount: (result as any).contributor?.donationAmount || data.donationAmount,
+        exclusivePrayer: (result as any).certificate?.aiGeneratedPrayer,
+        exclusiveVerse: (result as any).certificate?.aiGeneratedVerse,
+        verseReference: (result as any).certificate?.verseReference
+      });
+      
       toast({
         title: "Cadastro Realizado!",
         description: "Seu certificado foi gerado com sucesso.",
       });
+      
       setShowForm(false);
       setFormData({
         name: "",
@@ -153,32 +109,26 @@ export default function ContributorsSimple() {
         amount: "50",
         description: "amem deus abençoe"
       });
-    },
-    onError: (error: any) => {
-      console.error('💥 ERRO FINAL NO CADASTRO:', {
-        error,
-        message: error.message,
-        stack: error.stack,
-        toString: error.toString()
-      });
       
-      // Mensagem mais específica baseada no tipo de erro
-      let userMessage = "Não foi possível processar seu cadastro.";
-      if (error.message?.includes('conectividade') || error.message?.includes('rede')) {
-        userMessage = "Problema de conexão. Verifique sua internet e tente novamente.";
-      } else if (error.message?.includes('500')) {
-        userMessage = "Erro interno do servidor. Nossa equipe foi notificada.";
-      } else if (error.message?.includes('400')) {
-        userMessage = "Dados inválidos. Verifique se preencheu todos os campos.";
-      }
+      // Invalidar cache
+      queryClient.invalidateQueries({ queryKey: ["/api/contributors"] });
       
+    } catch (error: any) {
+      console.error('💥 ERRO FINAL:', error);
       toast({
         title: "Erro no Cadastro",
-        description: userMessage,
+        description: error.message || "Não foi possível processar seu cadastro.",
         variant: "destructive",
       });
-    },
-  });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const submitMutation = {
+    mutate: handleDirectSubmit,
+    isPending: submitting
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
