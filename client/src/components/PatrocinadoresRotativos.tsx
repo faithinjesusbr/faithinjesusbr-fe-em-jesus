@@ -54,6 +54,10 @@ export default function PatrocinadoresRotativos() {
               alt={currentPatrocinador.nome}
               className="w-full max-w-xs md:max-w-sm lg:max-w-md rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 object-contain"
               style={{ maxHeight: '300px' }}
+              onError={(e) => {
+                console.error(`Erro ao carregar imagem: ${currentPatrocinador.imagem}`);
+                (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentPatrocinador.nome)}&background=f3f4f6&color=374151&size=300`;
+              }}
             />
           </a>
         </div>

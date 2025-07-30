@@ -57,7 +57,8 @@ export default function PatrocinadoresHomeBonito() {
                 alt={patrocinador.nome}
                 className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover bg-white p-2 shadow-lg transition-transform duration-300 group-hover:scale-105"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${patrocinador.nome}&background=f3f4f6&color=374151&size=112`;
+                  console.error(`Erro ao carregar imagem: ${patrocinador.imagem}`);
+                  (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(patrocinador.nome)}&background=f3f4f6&color=374151&size=112`;
                 }}
               />
             </div>

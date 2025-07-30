@@ -47,6 +47,10 @@ export default function PatrocinadorDoDia() {
               alt={patrocinador.nome}
               className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-contain bg-white p-1 shadow-md"
               style={{ maxHeight: '5rem' }}
+              onError={(e) => {
+                console.error(`Erro ao carregar imagem: ${patrocinador.imagem}`);
+                (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(patrocinador.nome)}&background=f3f4f6&color=374151&size=80`;
+              }}
             />
           </div>
 

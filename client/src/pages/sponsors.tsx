@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
-import PatrocinadoresRotativos from "@/components/PatrocinadoresRotativos";
+import PatrocinadoresExibicao from "@/components/PatrocinadoresExibicao";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface Sponsor {
@@ -41,7 +41,7 @@ export default function SponsorsPage() {
     queryKey: ["/api/sponsors"],
   });
 
-  const filteredSponsors = sponsors?.filter((sponsor: Sponsor) =>
+  const filteredSponsors = (sponsors as Sponsor[])?.filter((sponsor: Sponsor) =>
     sponsor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     sponsor.description.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
@@ -103,7 +103,7 @@ export default function SponsorsPage() {
           </div>
         )}
 
-        {(filteredSponsors.length === 0 || !sponsors || sponsors.length === 0) && !isLoading && (
+        {(filteredSponsors.length === 0 || !sponsors || (sponsors as Sponsor[])?.length === 0) && !isLoading && (
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">
@@ -113,7 +113,7 @@ export default function SponsorsPage() {
                 Conheça nossos parceiros que apoiam esta missão
               </p>
             </div>
-            <PatrocinadoresRotativos />
+            <PatrocinadoresExibicao variant="sponsors" />
           </div>
         )}
 
@@ -251,8 +251,15 @@ function SponsorCard({ sponsor }: { sponsor: Sponsor }) {
   );
 }
 
+interface Certificate {
+  description?: string;
+  aiGeneratedVerse?: string;
+  verseReference?: string;
+  aiGeneratedPrayer?: string;
+}
+
 function SponsorCertificate({ sponsor }: { sponsor: Sponsor }) {
-  const { data: certificate, isLoading } = useQuery({
+  const { data: certificate, isLoading } = useQuery<Certificate>({
     queryKey: [`/api/sponsors/${sponsor.id}/certificate`],
   });
 
