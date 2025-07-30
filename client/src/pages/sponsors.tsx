@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
+import PatrocinadoresRotativos from "@/components/PatrocinadoresRotativos";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface Sponsor {
@@ -103,14 +104,8 @@ export default function SponsorsPage() {
         )}
 
         {filteredSponsors.length === 0 && !isLoading && (
-          <div className="text-center py-12">
-            <Gift className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">
-              Nenhum patrocinador encontrado
-            </h3>
-            <p className="text-gray-500">
-              Tente ajustar sua busca ou volte mais tarde.
-            </p>
+          <div className="max-w-2xl mx-auto">
+            <PatrocinadoresRotativos />
           </div>
         )}
 

@@ -75,6 +75,7 @@ function Router() {
         <Route path="/verse-of-day" component={VerseSimple} />
         <Route path="/verse-advanced" component={VerseOfDay} />
         <Route path="/sponsors" component={Sponsors} />
+        <Route path="/apoio" component={Sponsors} />
         <Route path="/prayer-requests" component={PrayerRequests} />
         <Route path="/ai-prayer" component={AIPrayer} />
         <Route path="/ai-simple" component={AISimple} />
