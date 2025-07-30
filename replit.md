@@ -99,7 +99,16 @@ The application uses twelve main entities:
 
 ## Recent Changes (July 2025)
 
-### Certificate Registration System Fix (Latest Update - July 30, 2025)
+### Enhanced Sponsor Display System (Latest Update - July 30, 2025)
+- ✅ **Fixed Image Loading**: Moved sponsor images to correct Vite public directory for proper serving
+- ✅ **Modern Sponsor Components**: Created PatrocinadorCard with variants (compact, featured, grid) for different displays
+- ✅ **Interactive Navigation**: Added manual navigation buttons with arrow controls and "Anterior/Próximo" options
+- ✅ **Auto-Rotation with Manual Override**: Maintains 60-second auto-rotation while allowing user manual navigation
+- ✅ **Visual Enhancements**: Implemented loading states, error fallbacks, gradient effects, and smooth animations
+- ✅ **Cross-Page Integration**: Updated both home page (featured display) and sponsors page (grid layout)
+- ✅ **Responsive Design**: Optimized sponsor cards for mobile and desktop with proper image handling
+
+### Certificate Registration System Fix (Previous Update - July 30, 2025)
 - ✅ **Problem Resolved**: Certificate generation now works 100% offline, bypassing all server communication issues
 - ✅ **Offline Certificate Generator**: Complete system that generates personalized certificates with prayers and Bible verses
 - ✅ **No Server Dependencies**: System works entirely in browser with localStorage for history

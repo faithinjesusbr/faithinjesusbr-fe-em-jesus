@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import PatrocinadorCard from './PatrocinadorCard';
 
 interface Patrocinador {
@@ -28,6 +30,7 @@ interface PatrocinadoresExibicaoProps {
   autoRotate?: boolean;
   rotateInterval?: number;
   showIndicators?: boolean;
+  showNavigationButtons?: boolean;
   className?: string;
 }
 
@@ -36,6 +39,7 @@ export default function PatrocinadoresExibicao({
   autoRotate = true,
   rotateInterval = 60000, // 60 segundos
   showIndicators = true,
+  showNavigationButtons = true,
   className = ''
 }: PatrocinadoresExibicaoProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -49,6 +53,16 @@ export default function PatrocinadoresExibicao({
 
     return () => clearInterval(interval);
   }, [autoRotate, rotateInterval]);
+
+  const goToPrevious = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === 0 ? patrocinadores.length - 1 : prevIndex - 1
+    );
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % patrocinadores.length);
+  };
 
   const currentPatrocinador = patrocinadores[currentIndex];
 
@@ -81,10 +95,34 @@ export default function PatrocinadoresExibicao({
   // Para outras variantes, mostra um patrocinador rotativo
   return (
     <div className={`w-full ${className}`}>
-      <PatrocinadorCard 
-        patrocinador={currentPatrocinador} 
-        variant={variant === 'compact' ? 'compact' : variant === 'featured' ? 'featured' : 'home'}
-      />
+      <div className="relative">
+        {/* Botões de navegação */}
+        {showNavigationButtons && patrocinadores.length > 1 && (
+          <>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={goToPrevious}
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg border-purple-200 hover:border-purple-300"
+            >
+              <ChevronLeft className="h-4 w-4 text-purple-600" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={goToNext}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg border-purple-200 hover:border-purple-300"
+            >
+              <ChevronRight className="h-4 w-4 text-purple-600" />
+            </Button>
+          </>
+        )}
+
+        <PatrocinadorCard 
+          patrocinador={currentPatrocinador} 
+          variant={variant === 'compact' ? 'compact' : variant === 'featured' ? 'featured' : 'home'}
+        />
+      </div>
       
       {/* Indicadores de progresso */}
       {showIndicators && patrocinadores.length > 1 && (
@@ -105,9 +143,32 @@ export default function PatrocinadoresExibicao({
       )}
 
       {patrocinadores.length > 1 && (
-        <p className="text-xs text-gray-500 text-center mt-2">
-          Patrocinador {currentIndex + 1} de {patrocinadores.length}
-        </p>
+        <div className="flex justify-center items-center gap-3 mt-2">
+          <p className="text-xs text-gray-500 text-center">
+            Patrocinador {currentIndex + 1} de {patrocinadores.length}
+          </p>
+          {showNavigationButtons && (
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={goToPrevious}
+                className="h-6 px-2 text-xs text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+              >
+                Anterior
+              </Button>
+              <span className="text-gray-300">|</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={goToNext}
+                className="h-6 px-2 text-xs text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+              >
+                Próximo
+              </Button>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
