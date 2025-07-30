@@ -72,12 +72,42 @@ export default function PixContributorsPage() {
 
   const submitContributorMutation = useMutation({
     mutationFn: async (data: any) => {
-      return apiRequest("/api/contributors", {
-        method: "POST",
-        body: data,
+      console.log('📤 Enviando dados do colaborador:', data);
+      
+      // Format data to match server expectations
+      const payload = {
+        name: data.name.trim(),
+        email: data.email.trim(),
+        donationAmount: data.amount || "50",
+        contributionType: data.contributionType || "donation",
+        specialMessage: data.message || "Gratidão a Deus"
+      };
+      
+      console.log('🚀 Payload formatado:', payload);
+      
+      const response = await fetch('/api/contributors', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
       });
+      
+      console.log('📡 Status da resposta:', response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('❌ Erro do servidor:', errorData);
+        throw new Error(`Erro ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      console.log('✅ Resposta recebida:', result);
+      
+      return result;
     },
     onSuccess: (response) => {
+      console.log('🎉 Sucesso na submissão:', response);
       setGeneratedCertificate(response.certificate);
       setShowSuccessModal(true);
       setContributorData({
@@ -93,10 +123,11 @@ export default function PixContributorsPage() {
         description: "Seu certificado personalizado foi gerado com IA.",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('❌ Erro na submissão:', error);
       toast({
         title: "Erro",
-        description: "Não foi possível processar seu cadastro. Tente novamente.",
+        description: error.message || "Não foi possível processar seu cadastro. Tente novamente.",
         variant: "destructive",
       });
     },
@@ -104,14 +135,40 @@ export default function PixContributorsPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contributorData.name || !contributorData.email) {
+    
+    console.log('📝 Dados do formulário antes da validação:', contributorData);
+    
+    // Validate required fields
+    if (!contributorData.name?.trim()) {
       toast({
-        title: "Dados Incompletos",
-        description: "Por favor, preencha pelo menos nome e email.",
+        title: "Nome Obrigatório",
+        description: "Por favor, preencha seu nome completo.",
         variant: "destructive",
       });
       return;
     }
+    
+    if (!contributorData.email?.trim()) {
+      toast({
+        title: "Email Obrigatório", 
+        description: "Por favor, preencha seu email.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(contributorData.email.trim())) {
+      toast({
+        title: "Email Inválido",
+        description: "Por favor, insira um email válido.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    console.log('✅ Validação passou, enviando dados...');
     submitContributorMutation.mutate(contributorData);
   };
 
@@ -344,30 +401,30 @@ export default function PixContributorsPage() {
 
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold text-purple-700">
-                    {contributorData.name}
+                    {generatedCertificate.contributor?.name || "Colaborador"}
                   </h3>
                   
                   <Badge className="px-4 py-2 text-sm bg-purple-100 text-purple-800">
-                    Colaborador: {contributionTypes.find(t => t.id === contributorData.contributionType)?.label}
+                    Colaborador: {contributionTypes.find(t => t.id === (generatedCertificate.contributor?.contributionType || 'donation'))?.label || "💰 Doação Financeira"}
                   </Badge>
 
                   <p className="text-gray-700 leading-relaxed max-w-lg mx-auto">
-                    {generatedCertificate.description}
+                    {generatedCertificate.description || "Reconhecemos com gratidão sua valiosa contribuição em nossa missão de espalhar a Palavra de Deus."}
                   </p>
 
                   <div className="bg-white p-4 rounded-lg border border-purple-200">
                     <p className="text-lg italic text-gray-800 mb-2">
-                      "{generatedCertificate.aiGeneratedVerse}"
+                      "{generatedCertificate.aiGeneratedVerse || generatedCertificate.verse || 'Deus abençoe sua generosidade'}"
                     </p>
                     <p className="text-sm font-semibold text-purple-600">
-                      {generatedCertificate.verseReference}
+                      {generatedCertificate.verseReference || "Versículo Especial"}
                     </p>
                   </div>
 
                   <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
                     <h4 className="font-semibold text-purple-700 mb-2">🙏 Oração de Bênção:</h4>
                     <p className="text-gray-700 leading-relaxed">
-                      {generatedCertificate.aiGeneratedPrayer}
+                      {generatedCertificate.aiGeneratedPrayer || "Oro a Deus por você neste momento. Que o Senhor Jesus, em Sua infinita misericórdia, abençoe abundantemente sua vida e ministério. Em nome de Jesus, amém."}
                     </p>
                   </div>
                 </div>
