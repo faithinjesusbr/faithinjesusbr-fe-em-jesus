@@ -141,6 +141,7 @@ export default function ContributorsServer() {
     event.preventDefault();
     setIsSubmitting(true);
     setStatus("Preparando envio...");
+    setMessage(null); // Clear previous messages
     
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
@@ -149,6 +150,8 @@ export default function ContributorsServer() {
     const email = formData.get('email') as string;
     const amount = formData.get('amount') as string || "50";
     const description = formData.get('description') as string || "Gratidão a Deus";
+    
+    console.log('📝 Dados do formulário:', { name, email, amount, description });
     
     if (!name.trim() || !email.trim()) {
       setMessage({ type: 'error', text: 'Nome e email são obrigatórios' });
@@ -169,6 +172,9 @@ export default function ContributorsServer() {
       
       setStatus("Enviando dados...");
       
+      console.log('🚀 Enviando para:', '/api/contributors');
+      console.log('📤 Dados enviados:', requestData);
+      
       const response = await fetch('/api/contributors', {
         method: 'POST',
         headers: {
@@ -177,11 +183,20 @@ export default function ContributorsServer() {
         body: JSON.stringify(requestData)
       });
       
+      console.log('📡 Resposta HTTP:', response.status, response.statusText);
+      
       setStatus("Processando resposta do servidor...");
       
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Erro de comunicação' }));
-        throw new Error(`Erro ${response.status}: ${errorData.message}`);
+        const errorText = await response.text();
+        console.error('❌ Erro do servidor:', errorText);
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { message: `Erro ${response.status}: ${response.statusText}` };
+        }
+        throw new Error(errorData.message || 'Erro de comunicação');
       }
       
       const result = await response.json();
@@ -319,7 +334,7 @@ export default function ContributorsServer() {
                         Processando...
                       </>
                     ) : (
-                      'Gerar Certificado'
+                      'Cadastrar e Gerar Certificado'
                     )}
                   </Button>
                   <Button 
