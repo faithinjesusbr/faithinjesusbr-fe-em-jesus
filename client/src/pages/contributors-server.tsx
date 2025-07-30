@@ -136,7 +136,7 @@ export default function ContributorsServer() {
     }
   };
 
-  // Método alternativo mais simples
+  // Método que usa fetch para conectar com o servidor
   const handleSimpleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsSubmitting(true);
@@ -145,10 +145,10 @@ export default function ContributorsServer() {
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
     
-    // Simular sucesso com dados locais
     const name = formData.get('name') as string;
     const email = formData.get('email') as string;
     const amount = formData.get('amount') as string || "50";
+    const description = formData.get('description') as string || "Gratidão a Deus";
     
     if (!name.trim() || !email.trim()) {
       setMessage({ type: 'error', text: 'Nome e email são obrigatórios' });
@@ -157,25 +157,51 @@ export default function ContributorsServer() {
     }
     
     try {
-      setStatus("Gerando certificado...");
+      setStatus("Conectando com servidor...");
       
-      // Simular delay do servidor
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const requestData = {
+        name: name.trim(),
+        email: email.trim(),
+        donationAmount: amount,
+        contributionType: "donation",
+        specialMessage: description
+      };
       
-      setCertificate({
-        name: name,
-        amount: amount,
-        exclusivePrayer: "Senhor, abençoe abundantemente a vida de " + name + ". Que Sua paz e alegria estejam sempre presentes em seu coração. Que cada dia seja uma nova oportunidade de crescer em fé e amor. Em nome de Jesus, amém.",
-        exclusiveVerse: "Em tudo dai graças, porque esta é a vontade de Deus em Cristo Jesus para convosco.",
-        verseReference: "1 Tessalonicenses 5:18"
+      setStatus("Enviando dados...");
+      
+      const response = await fetch('/api/contributors', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
       });
       
-      setMessage({ type: 'success', text: 'Certificado gerado com sucesso!' });
+      if (!response.ok) {
+        throw new Error(`Erro do servidor: ${response.status}`);
+      }
+      
+      setStatus("Processando certificado...");
+      
+      const result = await response.json();
+      
+      console.log('✅ Resposta do servidor:', result);
+      
+      setCertificate({
+        name: result.contributor.name,
+        amount: result.contributor.donationAmount,
+        exclusivePrayer: result.certificate.aiGeneratedPrayer,
+        exclusiveVerse: result.certificate.aiGeneratedVerse,
+        verseReference: result.certificate.verseReference
+      });
+      
+      setMessage({ type: 'success', text: result.message || 'Certificado gerado com sucesso!' });
       setShowForm(false);
       form.reset();
       
     } catch (error: any) {
-      setMessage({ type: 'error', text: 'Erro ao gerar certificado' });
+      console.error('❌ Erro ao gerar certificado:', error);
+      setMessage({ type: 'error', text: `Erro: ${error.message}` });
     } finally {
       setIsSubmitting(false);
       setStatus("");
