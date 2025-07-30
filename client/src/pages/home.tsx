@@ -30,6 +30,7 @@ import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
 import VerseModal from "@/components/verse-modal";
 import PrayerModal from "@/components/prayer-modal";
+import PatrocinadorDoDia from "@/components/PatrocinadorDoDia";
 import type { Devotional, Verse } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -138,6 +139,7 @@ export default function Home() {
       });
       // Mesmo com erro, mostrar um versículo de fallback
       setCurrentVerse({
+        id: "fallback-verse",
         text: "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.",
         reference: "João 3:16",
         book: "João",
@@ -226,22 +228,8 @@ export default function Home() {
           </CardContent>
         </Card>
 
-        {/* Sponsor Section */}
-        <Card className="mb-6 bg-gradient-to-r from-orange-400 to-pink-500 border-0 text-white">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                <Gift className="w-4 h-4" />
-              </div>
-              <div className="flex-1">
-                <p className="font-medium">Organizado especialmente para você, servos de muita alegria!</p>
-              </div>
-              <Button className="bg-white/20 hover:bg-white/30 text-white border-0 text-sm px-4">
-                Comparecer
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Rotating Sponsor Component */}
+        <PatrocinadorDoDia />
 
         {/* Quick Actions */}
         <div className="mb-6">
