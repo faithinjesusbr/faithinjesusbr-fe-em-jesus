@@ -572,15 +572,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/devotionals/daily", async (req, res) => {
     try {
       const today = new Date().toISOString().split('T')[0];
-      const devotional = await storage.getDailyDevotional(today);
+      let devotional = await storage.getDailyDevotional(today);
       
+      // If no devotional found for today, create a fallback using AI and Bible API
       if (!devotional) {
-        return res.status(404).json({ message: "Nenhuma devoção encontrada para hoje" });
+        console.log('📖 Gerando devocional do dia automaticamente...');
+        
+        const verse = await freeBibleAPIService.getDailyVerse();
+        const aiResponse = await freeHuggingFaceAIService.generateResponse(
+          `Crie uma reflexão devocional cristã baseada no versículo: ${verse.text} (${verse.reference})`
+        );
+        
+        // Create and save the devotional for today
+        const devotionalData = {
+          title: `Devocional do Dia - ${new Date().toLocaleDateString('pt-BR')}`,
+          content: aiResponse.response,
+          verse: verse.text,
+          reference: verse.reference,
+          date: today,
+          audioUrl: "",
+          duration: "5 min"
+        };
+        
+        devotional = await storage.createDevotional(devotionalData);
+        console.log('✅ Devocional do dia criado:', devotional.title);
       }
       
       res.json(devotional);
     } catch (error) {
-      res.status(500).json({ message: "Erro interno do servidor" });
+      console.error("Erro ao buscar devocional diário:", error);
+      
+      // Ultimate fallback with a static devotional
+      const fallbackDevotional = {
+        title: "Devocional do Dia",
+        content: "Que este dia seja abençoado pelo Senhor. Lembre-se de que Ele tem planos de bem para sua vida e está sempre ao seu lado em cada momento.",
+        verse: "Porque eu sei os planos que tenho para vocês, diz o Senhor, planos de fazê-los prosperar e não de causar dano, planos de dar esperança e um futuro.",
+        reference: "Jeremias 29:11",
+        date: new Date().toISOString().split('T')[0],
+        audioUrl: "",
+        duration: "3 min"
+      };
+      
+      res.json(fallbackDevotional);
     }
   });
 
@@ -933,28 +966,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log(`🙏 Processando pedido de colaborador: ${name}...`);
 
-      // Gerar certificado com IA
-      const aiResponse = await freeHuggingFaceAIService.generatePrayerResponse(`Oração de gratidão para ${name} que contribuiu com nossa missão`);
-      const verse = await freeBibleAPIService.getVerseByTheme("gratidão");
+      // Initialize variables for fallback
+      let aiResponse = null;
+      let verse = null;
+      
+      try {
+        // Try to generate AI response and get verse
+        console.log('🤖 Gerando oração personalizada...');
+        aiResponse = await freeHuggingFaceAIService.generatePrayerResponse(`Oração de gratidão para ${name} que contribuiu com nossa missão`);
+        console.log('✅ Oração IA gerada');
+        
+        console.log('📖 Buscando versículo temático...');
+        verse = await freeBibleAPIService.getVerseByTheme("gratidão");
+        console.log('✅ Versículo obtido:', verse.reference);
+        
+      } catch (aiError) {
+        console.warn('⚠️ Erro na geração de IA, usando fallback:', aiError.message);
+        
+        // Fallback AI response and verse
+        aiResponse = {
+          response: `Senhor, abençoe abundantemente a vida de ${name}. Que Sua paz e alegria estejam sempre presentes em seu coração. Que cada dia seja uma nova oportunidade de crescer em fé e amor. Obrigado por sua generosidade e por contribuir com nossa missão. Em nome de Jesus, amém.`
+        };
+        
+        verse = {
+          text: "Em tudo dai graças, porque esta é a vontade de Deus em Cristo Jesus para convosco.",
+          reference: "1 Tessalonicenses 5:18"
+        };
+      }
       
       // Criar dados do colaborador para salvar no banco
       const contributorData = {
-        name,
-        email,
+        name: name.trim(),
+        email: email.trim(),
         donationAmount: donationAmount || "50",
         contributionType: contributionType || "donation",
-        specialMessage: specialMessage || "",
+        specialMessage: specialMessage || "Gratidão a Deus",
         certificateUrl: "",
         specialVerse: verse.text,
         verseReference: verse.reference,
         isActive: true,
       };
 
-      // Salvar no banco de dados
+      console.log('💾 Salvando colaborador no banco...');
       const savedContributor = await storage.createContributor(contributorData);
 
       console.log(`✅ Colaborador salvo no banco: ${savedContributor.id}`);
-      console.log(`✅ Certificado gerado para ${name} com oração exclusiva`);
       
       // Verificar se foi realmente salvo
       const allContributors = await storage.getAllContributors();
@@ -968,13 +1024,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         verseReference: verse.reference
       };
       
+      console.log('✅ Certificado preparado para envio');
+      
       res.json({
         contributor: savedContributor,
-        certificate
+        certificate,
+        message: "Colaborador cadastrado e certificado gerado com sucesso!"
       });
     } catch (error) {
-      console.error('Erro ao criar colaborador:', error);
-      res.status(500).json({ message: "Erro interno do servidor" });
+      console.error('❌ Erro crítico ao criar colaborador:', error);
+      res.status(500).json({ 
+        message: "Erro interno do servidor", 
+        details: error.message || "Erro desconhecido",
+        timestamp: new Date().toISOString()
+      });
     }
   });
 

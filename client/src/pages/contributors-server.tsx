@@ -177,15 +177,23 @@ export default function ContributorsServer() {
         body: JSON.stringify(requestData)
       });
       
-      if (!response.ok) {
-        throw new Error(`Erro do servidor: ${response.status}`);
-      }
+      setStatus("Processando resposta do servidor...");
       
-      setStatus("Processando certificado...");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Erro de comunicação' }));
+        throw new Error(`Erro ${response.status}: ${errorData.message}`);
+      }
       
       const result = await response.json();
       
       console.log('✅ Resposta do servidor:', result);
+      
+      // Verificar se a resposta tem os dados necessários
+      if (!result.contributor || !result.certificate) {
+        throw new Error('Resposta incompleta do servidor');
+      }
+      
+      setStatus("Montando certificado...");
       
       setCertificate({
         name: result.contributor.name,
