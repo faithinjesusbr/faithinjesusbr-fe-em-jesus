@@ -18,7 +18,9 @@ import {
   Calendar,
   Star,
   Bell,
-  ArrowRight
+  ArrowRight,
+  Download,
+  Smartphone
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,6 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { usePWAInstall } from "@/hooks/use-pwa-install";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
 import VerseModal from "@/components/verse-modal";
@@ -67,6 +70,7 @@ export default function Home() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const { isInstallable, isInstalled, installApp } = usePWAInstall();
 
   // Get current time for greeting
   const getCurrentGreeting = () => {
@@ -173,20 +177,63 @@ export default function Home() {
       <Header />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20 md:pb-8">
-        {/* Welcome Section */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">
-                {getCurrentGreeting()}, {user?.name?.split(' ')[0] || 'Irmão'} ✨
-              </h1>
-              <p className="text-gray-600">{new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        {/* Welcome Section - Enhanced */}
+        <Card className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-100">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Left Column - Greeting */}
+              <div className="flex flex-col justify-center">
+                <div className="animate-pulse">
+                  <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+                    {getCurrentGreeting()}, {user?.name?.split(' ')[0] || 'Irmão'}! ✨
+                  </h1>
+                </div>
+                <p className="text-gray-600 mb-3">
+                  {new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                </p>
+                <p className="text-blue-700 font-medium">
+                  Que Deus abençoe seu dia com paz e alegria! 🙏
+                </p>
+              </div>
+              
+              {/* Right Column - App Promotion */}
+              <div className="bg-white rounded-lg p-4 border border-blue-200 shadow-sm">
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Smartphone className="h-6 w-6 text-white" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">App 100% Gratuito</h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Tenha fé e inspiração sempre à mão. Instale em seu celular para acesso offline!
+                  </p>
+                  
+                  {!isInstalled && isInstallable && (
+                    <Button 
+                      onClick={installApp}
+                      className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      📲 Instalar no meu celular
+                    </Button>
+                  )}
+                  
+                  {isInstalled && (
+                    <div className="text-green-600 font-semibold flex items-center justify-center">
+                      <Star className="h-4 w-4 mr-2" />
+                      App instalado! ✨
+                    </div>
+                  )}
+                  
+                  {!isInstallable && !isInstalled && (
+                    <p className="text-xs text-gray-500">
+                      Abra no Chrome/Safari para instalar
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Bell className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
         
 
 
@@ -409,6 +456,13 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
+        </div>
+        
+        {/* App Slogan */}
+        <div className="text-center py-6 mb-16">
+          <p className="text-sm text-gray-500 italic">
+            Fé em Jesus BR — Inspiração diária para sua vida 💖
+          </p>
         </div>
       </div>
 
