@@ -6,7 +6,8 @@ import {
   prayerRequests, loveCards, libraryCategories, libraryContent,
   devotionalAudios, sponsors, sponsorAds, storeProducts, youtubeVideos,
   notifications, userInteractions, contributors, pointsTransactions,
-  spiritualPlannerEntries, userDevotionals, verseReactions,
+  spiritualPlannerEntries, userDevotionals, verseReactions, userContributions,
+  verseCache, pushSubscriptions, notificationSettings,
   type User, type InsertUser, type Devotional, type InsertDevotional,
   type Verse, type InsertVerse, type Prayer, type InsertPrayer,
   type Emotion, type InsertEmotion, type EmotionDevotional, type InsertEmotionDevotional,
@@ -20,7 +21,9 @@ import {
   type Notification, type InsertNotification, type UserInteraction, type InsertUserInteraction,
   type Contributor, type InsertContributor, type PointsTransaction, type InsertPointsTransaction,
   type SpiritualPlannerEntry, type InsertSpiritualPlannerEntry,
-  type UserDevotional, type InsertUserDevotional, type VerseReaction, type InsertVerseReaction
+  type UserDevotional, type InsertUserDevotional, type VerseReaction, type InsertVerseReaction,
+  type UserContribution, type InsertUserContribution, type VerseCache, type InsertVerseCache,
+  type PushSubscription, type InsertPushSubscription, type NotificationSettings, type InsertNotificationSettings
 } from "@shared/schema";
 
 export interface IStorage {
@@ -124,6 +127,48 @@ export interface IStorage {
   // Verse Reactions
   createVerseReaction(reaction: InsertVerseReaction): Promise<VerseReaction>;
   getUserVerseReaction(userId: string, verseId: string): Promise<VerseReaction | undefined>;
+
+  // User Contributions
+  getAllUserContributions(): Promise<UserContribution[]>;
+  getUserContributions(userId: string): Promise<UserContribution[]>;
+  createUserContribution(contribution: InsertUserContribution): Promise<UserContribution>;
+  updateUserContribution(id: string, updateData: Partial<UserContribution>): Promise<UserContribution | undefined>;
+  deleteUserContribution(id: string): Promise<void>;
+
+  // Verse Cache (Offline Support)
+  getCachedVerse(date: string): Promise<VerseCache | undefined>;
+  setCachedVerse(cache: InsertVerseCache): Promise<VerseCache>;
+  clearOldCache(daysOld: number): Promise<void>;
+
+  // Push Notifications
+  createPushSubscription(subscription: InsertPushSubscription): Promise<PushSubscription>;
+  getUserPushSubscriptions(userId: string): Promise<PushSubscription[]>;
+  deletePushSubscription(id: string): Promise<void>;
+
+  // Notification Settings
+  getUserNotificationSettings(userId: string): Promise<NotificationSettings | undefined>;
+  createOrUpdateNotificationSettings(settings: InsertNotificationSettings): Promise<NotificationSettings>;
+
+  // Admin functionality
+  updateDevotional(id: string, updateData: Partial<Devotional>): Promise<Devotional | undefined>;
+  deleteDevotional(id: string): Promise<void>;
+  updateVerse(id: string, updateData: Partial<Verse>): Promise<Verse | undefined>;
+  deleteVerse(id: string): Promise<void>;
+  updateSponsor(id: string, updateData: Partial<Sponsor>): Promise<Sponsor | undefined>;
+  deleteSponsor(id: string): Promise<void>;
+  getAllUsers(): Promise<User[]>;
+  deleteUser(id: string): Promise<void>;
+  getAllStoreProducts(): Promise<StoreProduct[]>;
+  getFeaturedProducts(): Promise<StoreProduct[]>;
+  getProductsByCategory(category: string): Promise<StoreProduct[]>;
+  getAllYoutubeVideos(): Promise<YoutubeVideo[]>;
+  getFeaturedVideos(): Promise<YoutubeVideo[]>;
+  getVideosByCategory(category: string): Promise<YoutubeVideo[]>;
+  getAllEbooks(): Promise<any[]>;
+  getEbooksByCategory(category: string): Promise<any[]>;
+  updateEbookDownloads(id: string): Promise<void>;
+  getUserTotalPoints(userId: string): Promise<number>;
+  getCertificatesForContributor(contributorId: string): Promise<any[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -545,6 +590,210 @@ export class DatabaseStorage implements IStorage {
     const [result] = await db.select().from(verseReactions)
       .where(and(eq(verseReactions.userId, userId), eq(verseReactions.verseId, verseId)));
     return result;
+  }
+
+  // User Contributions
+  async getAllUserContributions(): Promise<UserContribution[]> {
+    return await db.select().from(userContributions).orderBy(desc(userContributions.createdAt));
+  }
+
+  async getUserContributions(userId: string): Promise<UserContribution[]> {
+    return await db.select().from(userContributions)
+      .where(eq(userContributions.userId, userId))
+      .orderBy(desc(userContributions.createdAt));
+  }
+
+  async createUserContribution(contribution: InsertUserContribution): Promise<UserContribution> {
+    const [result] = await db.insert(userContributions).values(contribution).returning();
+    return result;
+  }
+
+  async updateUserContribution(id: string, updateData: Partial<UserContribution>): Promise<UserContribution | undefined> {
+    const [result] = await db.update(userContributions)
+      .set(updateData)
+      .where(eq(userContributions.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteUserContribution(id: string): Promise<void> {
+    await db.delete(userContributions).where(eq(userContributions.id, id));
+  }
+
+  // Verse Cache (Offline Support)
+  async getCachedVerse(date: string): Promise<VerseCache | undefined> {
+    const [result] = await db.select().from(verseCache).where(eq(verseCache.date, date));
+    return result;
+  }
+
+  async setCachedVerse(cache: InsertVerseCache): Promise<VerseCache> {
+    const [result] = await db.insert(verseCache)
+      .values(cache)
+      .onConflictDoUpdate({
+        target: verseCache.date,
+        set: {
+          verseText: cache.verseText,
+          verseReference: cache.verseReference,
+          cachedAt: new Date()
+        }
+      })
+      .returning();
+    return result;
+  }
+
+  async clearOldCache(daysOld: number): Promise<void> {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - daysOld);
+    await db.delete(verseCache).where(eq(verseCache.cachedAt, cutoffDate.toISOString()));
+  }
+
+  // Push Notifications
+  async createPushSubscription(subscription: InsertPushSubscription): Promise<PushSubscription> {
+    const [result] = await db.insert(pushSubscriptions).values(subscription).returning();
+    return result;
+  }
+
+  async getUserPushSubscriptions(userId: string): Promise<PushSubscription[]> {
+    return await db.select().from(pushSubscriptions)
+      .where(and(eq(pushSubscriptions.userId, userId), eq(pushSubscriptions.isActive, true)));
+  }
+
+  async deletePushSubscription(id: string): Promise<void> {
+    await db.delete(pushSubscriptions).where(eq(pushSubscriptions.id, id));
+  }
+
+  // Notification Settings
+  async getUserNotificationSettings(userId: string): Promise<NotificationSettings | undefined> {
+    const [result] = await db.select().from(notificationSettings)
+      .where(eq(notificationSettings.userId, userId));
+    return result;
+  }
+
+  async createOrUpdateNotificationSettings(settings: InsertNotificationSettings): Promise<NotificationSettings> {
+    const [result] = await db.insert(notificationSettings)
+      .values(settings)
+      .onConflictDoUpdate({
+        target: notificationSettings.userId,
+        set: {
+          dailyVerse: settings.dailyVerse,
+          prayerReminders: settings.prayerReminders,
+          challengeUpdates: settings.challengeUpdates,
+          sponsorMessages: settings.sponsorMessages,
+          preferredTime: settings.preferredTime
+        }
+      })
+      .returning();
+    return result;
+  }
+
+  // Admin functionality
+  async updateDevotional(id: string, updateData: Partial<Devotional>): Promise<Devotional | undefined> {
+    const [result] = await db.update(devotionals)
+      .set(updateData)
+      .where(eq(devotionals.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteDevotional(id: string): Promise<void> {
+    await db.delete(devotionals).where(eq(devotionals.id, id));
+  }
+
+  async updateVerse(id: string, updateData: Partial<Verse>): Promise<Verse | undefined> {
+    const [result] = await db.update(verses)
+      .set(updateData)
+      .where(eq(verses.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteVerse(id: string): Promise<void> {
+    await db.delete(verses).where(eq(verses.id, id));
+  }
+
+  async updateSponsor(id: string, updateData: Partial<Sponsor>): Promise<Sponsor | undefined> {
+    const [result] = await db.update(sponsors)
+      .set(updateData)
+      .where(eq(sponsors.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteSponsor(id: string): Promise<void> {
+    await db.delete(sponsors).where(eq(sponsors.id, id));
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users).orderBy(desc(users.createdAt));
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await db.delete(users).where(eq(users.id, id));
+  }
+
+  async getAllStoreProducts(): Promise<StoreProduct[]> {
+    return await db.select().from(storeProducts)
+      .where(eq(storeProducts.isActive, true))
+      .orderBy(desc(storeProducts.createdAt));
+  }
+
+  async getFeaturedProducts(): Promise<StoreProduct[]> {
+    return await db.select().from(storeProducts)
+      .where(and(eq(storeProducts.isActive, true), eq(storeProducts.featured, true)))
+      .orderBy(desc(storeProducts.createdAt));
+  }
+
+  async getProductsByCategory(category: string): Promise<StoreProduct[]> {
+    return await db.select().from(storeProducts)
+      .where(and(eq(storeProducts.isActive, true), eq(storeProducts.category, category)))
+      .orderBy(desc(storeProducts.createdAt));
+  }
+
+  async getAllYoutubeVideos(): Promise<YoutubeVideo[]> {
+    return await db.select().from(youtubeVideos)
+      .where(eq(youtubeVideos.isActive, true))
+      .orderBy(desc(youtubeVideos.publishedAt));
+  }
+
+  async getFeaturedVideos(): Promise<YoutubeVideo[]> {
+    return await db.select().from(youtubeVideos)
+      .where(and(eq(youtubeVideos.isActive, true), eq(youtubeVideos.featured, true)))
+      .orderBy(desc(youtubeVideos.publishedAt));
+  }
+
+  async getVideosByCategory(category: string): Promise<YoutubeVideo[]> {
+    return await db.select().from(youtubeVideos)
+      .where(and(eq(youtubeVideos.isActive, true), eq(youtubeVideos.category, category)))
+      .orderBy(desc(youtubeVideos.publishedAt));
+  }
+
+  async getAllEbooks(): Promise<any[]> {
+    return await db.select().from(libraryContent).orderBy(desc(libraryContent.createdAt));
+  }
+
+  async getEbooksByCategory(category: string): Promise<any[]> {
+    return await db.select().from(libraryContent)
+      .where(eq(libraryContent.categoryId, category))
+      .orderBy(desc(libraryContent.createdAt));
+  }
+
+  async updateEbookDownloads(id: string): Promise<void> {
+    // This would need to be implemented if we track download counts
+    console.log(`Download tracked for ebook: ${id}`);
+  }
+
+  async getUserTotalPoints(userId: string): Promise<number> {
+    const transactions = await db.select().from(pointsTransactions)
+      .where(eq(pointsTransactions.userId, userId));
+    
+    return transactions.reduce((total, transaction) => {
+      return total + parseInt(transaction.points || "0");
+    }, 0);
+  }
+
+  async getCertificatesForContributor(contributorId: string): Promise<any[]> {
+    // This would need to be implemented with proper certificate table
+    return [];
   }
 }
 

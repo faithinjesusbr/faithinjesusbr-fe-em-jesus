@@ -32,6 +32,12 @@ import VerseOfDay from "@/pages/verse-of-day";
 import VerseSimple from "@/pages/verse-simple";
 import AdminLogin from "@/pages/admin-login";
 import AdminPanel from "@/pages/admin-panel";
+
+// New comprehensive admin and contribution components
+import AdminPanelComplete from "@/pages/admin-panel-complete";
+import UserContributions from "@/pages/user-contributions";
+import VerseOfDayOffline from "@/pages/verse-of-day-offline";
+import NotificationSettings from "@/pages/notification-settings";
 import { useEffect } from "react";
 
 function Router() {
@@ -86,9 +92,18 @@ function Router() {
         <Route path="/contributors" component={ContributorsOffline} />
 
         <Route path="/share" component={SharePage} />
+        
+        {/* Admin Routes */}
         <Route path="/admin" component={AdminLogin} />
         <Route path="/admin-panel" component={AdminPanel} />
         <Route path="/admin-dashboard" component={AdminDashboard} />
+        <Route path="/admin-complete" component={AdminPanelComplete} />
+        
+        {/* User Features */}
+        <Route path="/contributions" component={UserContributions} />
+        <Route path="/verse-offline" component={VerseOfDayOffline} />
+        <Route path="/notifications" component={NotificationSettings} />
+        
         <Route component={NotFound} />
       </Switch>
       

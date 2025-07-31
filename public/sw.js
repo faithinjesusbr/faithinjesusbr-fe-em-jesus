@@ -1,9 +1,11 @@
-const CACHE_NAME = 'fe-em-jesus-v1.0.0';
+const CACHE_NAME = 'fe-em-jesus-v2.0.0';
 const urlsToCache = [
   '/',
   '/manifest.json',
-  '/icon-192x192.png',
-  '/icon-512x512.png',
+  '/logo.png',
+  '/patrocinador1.png',
+  '/patrocinador2.png',
+  '/offline.html',
   // Core CSS and JS files will be added by Vite
 ];
 

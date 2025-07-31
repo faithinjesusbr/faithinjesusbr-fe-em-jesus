@@ -44,8 +44,8 @@ The application follows a full-stack TypeScript architecture with clear separati
 - Protected routes with AuthGuard component
 
 ### Database Schema
-The application uses twelve main entities:
-- **Users**: Authentication and user management
+The application uses an extended comprehensive schema with twenty-five main entities:
+- **Users**: Authentication and user management with admin roles
 - **Devotionals**: Daily spiritual content with title, content, verse, and date
 - **Verses**: Bible verses with book, chapter, verse references
 - **Prayers**: User prayer requests and tracking
@@ -62,6 +62,14 @@ The application uses twelve main entities:
 - **DevotionalAudios**: Audio devotional content
 - **Sponsors**: Partner organizations and ministries
 - **SponsorAds**: Rotating promotional content
+- **UserContributions**: User feedback, suggestions, and testimonials system
+- **VerseCache**: Offline verse caching for PWA functionality
+- **PushSubscriptions**: Push notification management
+- **NotificationSettings**: User notification preferences
+- **VerseReactions**: User interactions with daily verses
+- **StoreProducts**: Digital products and resources
+- **YoutubeVideos**: Embedded video content management
+- **PointsTransactions**: User engagement reward system
 
 ### Advanced Features
 1. **Emotion-Based Devotionals ("Sinto Hoje")**: AI generates personalized devotionals based on user's current emotional state
@@ -73,6 +81,16 @@ The application uses twelve main entities:
 7. **Audio Devotionals**: Spoken devotional content for meditative listening
 8. **Night Mode**: Automatic activation after 21h with calming dark theme and peaceful content
 9. **Sponsor System**: Partner ministry support with certificate generation capabilities
+
+### Comprehensive Administrative System (NEW)
+10. **Complete Admin Panel**: Full CRUD operations for all content types with protected routes
+11. **User Contributions System**: Feedback, suggestions, and testimonials with admin review workflow
+12. **Offline Caching System**: localStorage/IndexedDB integration for verses and app content
+13. **Push Notifications**: Real-time notifications with customizable user preferences
+14. **Admin Dashboard**: Analytics, user management, content moderation, and system monitoring
+15. **Content Management**: Direct editing of devotionals, verses, sponsors, and user data
+16. **Notification Management**: Send targeted notifications to users and manage preferences
+17. **Contribution Review**: Admin interface for reviewing and responding to user feedback
 10. **Rotating Advertisements**: 5-minute rotation cycle for sponsor content without disrupting user experience
 
 ## Data Flow
@@ -153,6 +171,20 @@ The application uses twelve main entities:
 - ✅ **Application Startup**: Resolved all 23 LSP diagnostics and startup errors - app now runs successfully on port 5000
 
 ## Recent Changes (January 2025)
+
+### Comprehensive Administrative System Implementation
+✓ Extended database schema with 25 entities including user contributions and offline caching
+✓ Implemented complete admin panel with full CRUD operations for all content types
+✓ Built user contributions system with feedback, suggestions, and testimonials
+✓ Developed offline caching system using localStorage for verses and app content
+✓ Added push notifications functionality with user permission handling
+✓ Created comprehensive admin dashboard with analytics and user management
+✓ Implemented protected admin routes with session-based authentication
+✓ Enhanced service worker for PWA offline functionality and push notifications
+✓ Added notification settings page with customizable user preferences
+✓ Built contribution review system with admin response capabilities
+
+## Previous Changes (January 2025)
 
 ### Complete UI/UX Modernization Based on Base44 (Latest Update)
 - ✅ **Modern Dashboard**: Redesigned homepage with colorful cards, gradient backgrounds, and modern Layout inspired by Base44 app

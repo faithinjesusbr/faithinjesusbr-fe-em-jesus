@@ -357,6 +357,51 @@ export const verseReactions = pgTable("verse_reactions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Sistema de contribuições dos usuários
+export const userContributions = pgTable("user_contributions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  type: text("type").notNull(), // feedback, suggestion, testimony
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  status: text("status").default("pending"), // pending, reviewed, archived, responded
+  adminResponse: text("admin_response"),
+  respondedAt: timestamp("responded_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Cache offline para versículos do dia
+export const verseCache = pgTable("verse_cache", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  date: text("date").notNull().unique(),
+  verseText: text("verse_text").notNull(),
+  verseReference: text("verse_reference").notNull(),
+  cachedAt: timestamp("cached_at").defaultNow(),
+});
+
+// Sistema de push notifications
+export const pushSubscriptions = pgTable("push_subscriptions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  endpoint: text("endpoint").notNull(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Configurações de notificação do usuário
+export const notificationSettings = pgTable("notification_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().unique(),
+  dailyVerse: boolean("daily_verse").default(true),
+  prayerReminders: boolean("prayer_reminders").default(true),
+  challengeUpdates: boolean("challenge_updates").default(true),
+  sponsorMessages: boolean("sponsor_messages").default(false),
+  preferredTime: text("preferred_time").default("09:00"), // HH:MM format
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
@@ -418,6 +463,14 @@ export type UserDevotional = typeof userDevotionals.$inferSelect;
 export type InsertUserDevotional = typeof userDevotionals.$inferInsert;
 export type VerseReaction = typeof verseReactions.$inferSelect;
 export type InsertVerseReaction = typeof verseReactions.$inferInsert;
+export type UserContribution = typeof userContributions.$inferSelect;
+export type InsertUserContribution = typeof userContributions.$inferInsert;
+export type VerseCache = typeof verseCache.$inferSelect;
+export type InsertVerseCache = typeof verseCache.$inferInsert;
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+export type InsertPushSubscription = typeof pushSubscriptions.$inferInsert;
+export type NotificationSettings = typeof notificationSettings.$inferSelect;
+export type InsertNotificationSettings = typeof notificationSettings.$inferInsert;
 
 // Validation Schemas
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -517,4 +570,43 @@ export const insertVerseSchema = createInsertSchema(verses).pick({
   book: true,
   chapter: true,
   verse: true,
+});
+
+export const insertUserContributionSchema = createInsertSchema(userContributions).pick({
+  userId: true,
+  type: true,
+  title: true,
+  content: true,
+});
+
+export const insertVerseCacheSchema = createInsertSchema(verseCache).pick({
+  date: true,
+  verseText: true,
+  verseReference: true,
+});
+
+export const insertPushSubscriptionSchema = createInsertSchema(pushSubscriptions).pick({
+  userId: true,
+  endpoint: true,
+  p256dh: true,
+  auth: true,
+});
+
+export const insertNotificationSettingsSchema = createInsertSchema(notificationSettings).pick({
+  userId: true,
+  dailyVerse: true,
+  prayerReminders: true,
+  challengeUpdates: true,
+  sponsorMessages: true,
+  preferredTime: true,
+});
+
+export const insertSponsorSchema = createInsertSchema(sponsors).pick({
+  name: true,
+  description: true,
+  logoUrl: true,
+  website: true,
+  instagram: true,
+  facebook: true,
+  whatsapp: true,
 });

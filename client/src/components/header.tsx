@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { User, Settings, LogOut, Cross } from "lucide-react";
+import { User, Settings, LogOut, Cross, MessageSquare, Bell, Shield } from "lucide-react";
 import { Link } from "wouter";
 
 export default function Header() {
@@ -52,14 +52,32 @@ export default function Header() {
                     <p className="text-sm font-medium text-gray-900">{user?.name}</p>
                     <p className="text-xs text-gray-500">{user?.email}</p>
                   </div>
+                  <Link href="/contributions">
+                    <button 
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <MessageSquare className="w-4 h-4 mr-2" />
+                      Contribuições
+                    </button>
+                  </Link>
+                  <Link href="/notifications">
+                    <button 
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <Bell className="w-4 h-4 mr-2" />
+                      Notificações
+                    </button>
+                  </Link>
                   {user?.isAdmin && (
-                    <Link href="/admin">
+                    <Link href="/admin-complete">
                       <button 
                         className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <Settings className="w-4 h-4 mr-2" />
-                        Administração
+                        <Shield className="w-4 h-4 mr-2" />
+                        Painel Admin
                       </button>
                     </Link>
                   )}

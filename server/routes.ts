@@ -3,7 +3,9 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { 
   insertUserSchema, loginSchema, insertDevotionalSchema, insertVerseSchema, insertPrayerSchema,
-  insertAIPrayerRequestSchema, insertPrayerRequestSchema
+  insertAIPrayerRequestSchema, insertPrayerRequestSchema, insertUserContributionSchema,
+  insertVerseCacheSchema, insertPushSubscriptionSchema, insertNotificationSettingsSchema,
+  insertSponsorSchema
 } from "@shared/schema";
 import { z } from "zod";
 import { freeBibleAPIService } from "./free-bible-api-service";
@@ -1657,6 +1659,324 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error generating AI prayer:", error);
       res.status(500).json({ message: "Erro ao gerar oração" });
+    }
+  });
+
+  // ============ ADMIN ROUTES - PROTECTED ============
+  
+  // Middleware to check admin permissions
+  const isAdmin = (req: any, res: any, next: any) => {
+    // In a real app, you'd validate JWT or session
+    // For now, we'll assume the client sends user info in headers
+    const isAdminUser = req.headers['x-user-admin'] === 'true';
+    if (!isAdminUser) {
+      return res.status(403).json({ message: "Acesso negado - apenas administradores" });
+    }
+    next();
+  };
+
+  // Admin Dashboard Stats
+  app.get("/api/admin/dashboard", isAdmin, async (req, res) => {
+    try {
+      const [totalUsers, totalPrayers, totalDevotionals, activeSponsors] = await Promise.all([
+        storage.getAllUsers().then(users => users.length),
+        storage.getAllPrayers().then(prayers => prayers.length),
+        storage.getAllDevotionals().then(devotionals => devotionals.length),
+        storage.getActiveSponsors().then(sponsors => sponsors.length)
+      ]);
+
+      res.json({
+        totalUsers,
+        totalPrayers,
+        totalDevotionals,
+        activeSponsors,
+        recentInteractions: []
+      });
+    } catch (error) {
+      console.error("Erro ao buscar dados do dashboard:", error);
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Admin - Manage Devotionals
+  app.get("/api/admin/devotionals", isAdmin, async (req, res) => {
+    try {
+      const devotionals = await storage.getAllDevotionals();
+      res.json(devotionals);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.put("/api/admin/devotionals/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updateData = insertDevotionalSchema.partial().parse(req.body);
+      const devotional = await storage.updateDevotional(id, updateData);
+      res.json(devotional);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.delete("/api/admin/devotionals/:id", isAdmin, async (req, res) => {
+    try {
+      await storage.deleteDevotional(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Admin - Manage Verses
+  app.get("/api/admin/verses", isAdmin, async (req, res) => {
+    try {
+      const verses = await storage.getAllVerses();
+      res.json(verses);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.put("/api/admin/verses/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updateData = insertVerseSchema.partial().parse(req.body);
+      const verse = await storage.updateVerse(id, updateData);
+      res.json(verse);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.delete("/api/admin/verses/:id", isAdmin, async (req, res) => {
+    try {
+      await storage.deleteVerse(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Admin - Manage Users
+  app.get("/api/admin/users", isAdmin, async (req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      // Remove password from response
+      const safeUsers = users.map(({ password, ...user }) => user);
+      res.json(safeUsers);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.delete("/api/admin/users/:id", isAdmin, async (req, res) => {
+    try {
+      await storage.deleteUser(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Admin - Manage Sponsors
+  app.get("/api/admin/sponsors", isAdmin, async (req, res) => {
+    try {
+      const sponsors = await storage.getAllSponsors();
+      res.json(sponsors);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.post("/api/admin/sponsors", isAdmin, async (req, res) => {
+    try {
+      const sponsorData = insertSponsorSchema.parse(req.body);
+      const sponsor = await storage.createContributor(sponsorData);
+      res.json(sponsor);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.put("/api/admin/sponsors/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updateData = insertSponsorSchema.partial().parse(req.body);
+      const sponsor = await storage.updateSponsor(id, updateData);
+      res.json(sponsor);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  app.delete("/api/admin/sponsors/:id", isAdmin, async (req, res) => {
+    try {
+      await storage.deleteSponsor(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // ============ USER CONTRIBUTIONS SYSTEM ============
+  
+  // Get all contributions (for admin)
+  app.get("/api/admin/contributions", isAdmin, async (req, res) => {
+    try {
+      const contributions = await storage.getAllUserContributions();
+      res.json(contributions);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Update contribution status (admin response)
+  app.put("/api/admin/contributions/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status, adminResponse } = req.body;
+      
+      const updateData: any = { status };
+      if (adminResponse) {
+        updateData.adminResponse = adminResponse;
+        updateData.respondedAt = new Date();
+      }
+      
+      const contribution = await storage.updateUserContribution(id, updateData);
+      res.json(contribution);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Create user contribution
+  app.post("/api/contributions", async (req, res) => {
+    try {
+      const contributionData = insertUserContributionSchema.parse(req.body);
+      const contribution = await storage.createUserContribution(contributionData);
+      res.json(contribution);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Get user contributions
+  app.get("/api/contributions/:userId", async (req, res) => {
+    try {
+      const contributions = await storage.getUserContributions(req.params.userId);
+      res.json(contributions);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // ============ OFFLINE CACHE SYSTEM ============
+  
+  // Get cached verse
+  app.get("/api/verse-cache/:date", async (req, res) => {
+    try {
+      const cached = await storage.getCachedVerse(req.params.date);
+      res.json(cached);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Set verse cache
+  app.post("/api/verse-cache", async (req, res) => {
+    try {
+      const cacheData = insertVerseCacheSchema.parse(req.body);
+      const cached = await storage.setCachedVerse(cacheData);
+      res.json(cached);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // ============ PUSH NOTIFICATIONS SYSTEM ============
+  
+  // Subscribe to push notifications
+  app.post("/api/push-subscribe", async (req, res) => {
+    try {
+      const subscriptionData = insertPushSubscriptionSchema.parse(req.body);
+      const subscription = await storage.createPushSubscription(subscriptionData);
+      res.json(subscription);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Get user push subscriptions
+  app.get("/api/push-subscriptions/:userId", async (req, res) => {
+    try {
+      const subscriptions = await storage.getUserPushSubscriptions(req.params.userId);
+      res.json(subscriptions);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Unsubscribe from push notifications
+  app.delete("/api/push-subscribe/:id", async (req, res) => {
+    try {
+      await storage.deletePushSubscription(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Send push notification (admin only)
+  app.post("/api/admin/send-notification", isAdmin, async (req, res) => {
+    try {
+      const { title, message, userId } = req.body;
+      
+      // Get user's push subscriptions
+      const subscriptions = await storage.getUserPushSubscriptions(userId);
+      
+      // In a real implementation, you would send push notifications here
+      // For now, we'll just log the notification
+      console.log(`Sending notification: ${title} - ${message} to ${subscriptions.length} devices`);
+      
+      res.json({ 
+        success: true, 
+        message: `Notificação enviada para ${subscriptions.length} dispositivos` 
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // ============ NOTIFICATION SETTINGS ============
+  
+  // Get user notification settings
+  app.get("/api/notification-settings/:userId", async (req, res) => {
+    try {
+      const settings = await storage.getUserNotificationSettings(req.params.userId);
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Update notification settings
+  app.post("/api/notification-settings", async (req, res) => {
+    try {
+      const settingsData = insertNotificationSettingsSchema.parse(req.body);
+      const settings = await storage.createOrUpdateNotificationSettings(settingsData);
+      res.json(settings);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
     }
   });
 
