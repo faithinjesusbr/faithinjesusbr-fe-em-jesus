@@ -37,7 +37,7 @@ interface PatrocinadoresExibicaoProps {
 export default function PatrocinadoresExibicao({ 
   variant = 'home',
   autoRotate = true,
-  rotateInterval = 60000, // 60 segundos
+  rotateInterval = 5000, // 5 segundos
   showIndicators = true,
   showNavigationButtons = true,
   className = ''

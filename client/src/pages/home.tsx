@@ -181,12 +181,27 @@ export default function Home() {
         <Card className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-100">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Left Column - Greeting */}
+              {/* Left Column - Logo, Nome e Greeting */}
               <div className="flex flex-col justify-center">
+                <div className="flex items-center gap-3 mb-4">
+                  <img 
+                    src="/logo.png" 
+                    alt="Fé em Jesus BR" 
+                    className="w-12 h-12 rounded-full object-cover shadow-lg"
+                  />
+                  <div>
+                    <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      Fé em Jesus BR
+                    </h1>
+                    <p className="text-sm text-gray-600 italic">
+                      Inspiração diária com amor e fé ✨
+                    </p>
+                  </div>
+                </div>
                 <div className="animate-pulse">
-                  <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-                    {getCurrentGreeting()}, {user?.name?.split(' ')[0] || 'Irmão'}! ✨
-                  </h1>
+                  <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">
+                    {getCurrentGreeting()}, {user?.name?.split(' ')[0] || 'Irmão'}! 
+                  </h2>
                 </div>
                 <p className="text-gray-600 mb-3">
                   {new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
@@ -225,9 +240,16 @@ export default function Home() {
                   )}
                   
                   {!isInstallable && !isInstalled && (
-                    <p className="text-xs text-gray-500">
-                      Abra no Chrome/Safari para instalar
-                    </p>
+                    <Button 
+                      onClick={() => {
+                        // Fallback para instruções de instalação
+                        alert('Para instalar: \n1. No Chrome/Safari: Menu > Instalar app\n2. No celular: Menu > Adicionar à tela inicial');
+                      }}
+                      className="w-full bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 text-white"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      📲 Como Instalar
+                    </Button>
                   )}
                 </div>
               </div>
