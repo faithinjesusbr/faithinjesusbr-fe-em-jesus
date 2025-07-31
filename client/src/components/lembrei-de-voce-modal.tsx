@@ -305,14 +305,14 @@ export default function LembreiDeVoceModal({ isOpen, onClose }: LembreiDeVoceMod
                 </div>
                 
                 {/* Signature */}
-                <div className="text-right">
-                  <p className="text-lg font-semibold">Com carinho,</p>
-                  <p className="text-xl font-bold">{formData.senderName} ❤️</p>
-                </div>
-                
-                {/* Watermark */}
-                <div className="absolute bottom-4 right-4 text-xs opacity-70">
-                  Fé em Jesus BR 🙏
+                <div className="text-right mt-8">
+                  <div className="text-white text-base">
+                    Com carinho,<br />
+                    <strong>{formData.senderName}</strong> ❤️
+                  </div>
+                  <div className="text-sm text-gray-200 opacity-60 italic mt-1">
+                    Fé em Jesus BR
+                  </div>
                 </div>
               </div>
             </div>
