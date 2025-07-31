@@ -31,6 +31,7 @@ import BottomNav from "@/components/bottom-nav";
 import VerseModal from "@/components/verse-modal";
 import PrayerModal from "@/components/prayer-modal";
 import PatrocinadoresExibicao from "@/components/PatrocinadoresExibicao";
+import LembreiDeVoceModal from "@/components/lembrei-de-voce-modal";
 import type { Devotional, Verse } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -60,6 +61,7 @@ function SponsorAd({ ad }: { ad: any }) {
 export default function Home() {
   const [showVerseModal, setShowVerseModal] = useState(false);
   const [showPrayerModal, setShowPrayerModal] = useState(false);
+  const [showLembreiDeVoceModal, setShowLembreiDeVoceModal] = useState(false);
   const [currentVerse, setCurrentVerse] = useState<Verse | null>(null);
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const { toast } = useToast();
@@ -247,6 +249,18 @@ export default function Home() {
               </Button>
             </Link>
           </div>
+          
+          {/* Nova linha com Lembrei de Você em destaque */}
+          <div className="flex gap-3 mb-3">
+            <Button
+              onClick={() => setShowLembreiDeVoceModal(true)}
+              className="w-full bg-gradient-to-r from-red-500 via-pink-500 to-red-600 hover:from-red-600 hover:via-pink-600 hover:to-red-700 text-white shadow-lg"
+            >
+              <Heart className="h-4 w-4 mr-2" />
+              💌 Lembrei de Você
+            </Button>
+          </div>
+          
           <div className="flex gap-3">
             <Link href="/youtube-videos-improved" className="flex-1">
               <Button variant="outline" className="w-full border-red-300 text-red-600 hover:bg-red-50">
@@ -409,6 +423,11 @@ export default function Home() {
       <PrayerModal 
         isOpen={showPrayerModal}
         onClose={() => setShowPrayerModal(false)}
+      />
+      
+      <LembreiDeVoceModal 
+        isOpen={showLembreiDeVoceModal}
+        onClose={() => setShowLembreiDeVoceModal(false)}
       />
     </div>
   );
