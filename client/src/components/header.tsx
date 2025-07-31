@@ -32,7 +32,10 @@ export default function Header() {
             <div className="w-10 h-10 bg-gradient-to-br from-divine-500 to-divine-600 rounded-full flex items-center justify-center hidden">
               <Cross className="text-white w-5 h-5" />
             </div>
-            <h1 className="text-xl font-bold bg-gradient-to-r from-divine-600 to-purple-600 bg-clip-text text-transparent">Fé em Jesus BR</h1>
+            <div>
+              <h1 className="text-xl font-bold bg-gradient-to-r from-divine-600 to-purple-600 bg-clip-text text-transparent">Fé em Jesus BR</h1>
+              <p className="text-xs text-gray-500 italic">Inspiração diária com amor e fé ✨</p>
+            </div>
           </Link>
           
           <div className="relative">
