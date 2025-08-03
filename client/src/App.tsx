@@ -38,6 +38,9 @@ import AdminPanelComplete from "@/pages/admin-panel-complete";
 import UserContributions from "@/pages/user-contributions";
 import VerseOfDayOffline from "@/pages/verse-of-day-offline";
 import NotificationSettings from "@/pages/notification-settings";
+import DailyMission from "@/pages/daily-mission";
+import SupportNetwork from "@/pages/support-network";
+import FaithPoints from "@/pages/faith-points";
 import { useEffect } from "react";
 
 function Router() {
@@ -103,6 +106,11 @@ function Router() {
         <Route path="/contributions" component={UserContributions} />
         <Route path="/verse-offline" component={VerseOfDayOffline} />
         <Route path="/notifications" component={NotificationSettings} />
+        
+        {/* New Spiritual Features */}
+        <Route path="/daily-mission" component={DailyMission} />
+        <Route path="/support-network" component={SupportNetwork} />
+        <Route path="/faith-points" component={FaithPoints} />
         
         <Route component={NotFound} />
       </Switch>

@@ -402,6 +402,80 @@ export const notificationSettings = pgTable("notification_settings", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Missão do Dia - Sistema de desafios espirituais diários
+export const dailyMissions = pgTable("daily_missions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  date: text("date").notNull().unique(), // YYYY-MM-DD
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  type: text("type").notNull(), // "prayer", "share_verse", "help_someone", "read_chapter", etc.
+  reward: text("reward").notNull(), // "star", "heart", "crown", "blessing"
+  points: text("points").default("10"),
+  verse: text("verse"),
+  reference: text("reference"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Progresso das missões do usuário
+export const userMissionProgress = pgTable("user_mission_progress", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  missionId: varchar("mission_id").notNull(),
+  completed: boolean("completed").default(false),
+  completedAt: timestamp("completed_at"),
+  pointsEarned: text("points_earned").default("0"),
+  rewardEarned: text("reward_earned"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Rede de Apoio - Sistema de mensagens de fé e apoio
+export const supportNetwork = pgTable("support_network", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  category: text("category").notNull(), // "prayer_request", "encouragement", "testimony", "help"
+  isAnonymous: boolean("is_anonymous").default(false),
+  status: text("status").default("active"), // "active", "closed", "archived"
+  replies: text("replies").default("0"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Respostas da rede de apoio
+export const supportReplies = pgTable("support_replies", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  supportId: varchar("support_id").notNull(),
+  userId: varchar("user_id").notNull(),
+  message: text("message").notNull(),
+  isAnonymous: boolean("is_anonymous").default(false),
+  verse: text("verse"),
+  reference: text("reference"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Sistema de pontos "Fé em Ação"
+export const faithPoints = pgTable("faith_points", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  action: text("action").notNull(), // "complete_mission", "send_support", "prayer_request", etc.
+  points: text("points").notNull(),
+  description: text("description").notNull(),
+  date: text("date").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Ranking semanal
+export const weeklyRanking = pgTable("weekly_ranking", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  userName: text("user_name").notNull(),
+  weekStart: text("week_start").notNull(), // YYYY-MM-DD (segunda-feira)
+  weekEnd: text("week_end").notNull(), // YYYY-MM-DD (domingo)
+  totalPoints: text("total_points").notNull(),
+  position: text("position").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
@@ -471,6 +545,18 @@ export type PushSubscription = typeof pushSubscriptions.$inferSelect;
 export type InsertPushSubscription = typeof pushSubscriptions.$inferInsert;
 export type NotificationSettings = typeof notificationSettings.$inferSelect;
 export type InsertNotificationSettings = typeof notificationSettings.$inferInsert;
+export type DailyMission = typeof dailyMissions.$inferSelect;
+export type InsertDailyMission = typeof dailyMissions.$inferInsert;
+export type UserMissionProgress = typeof userMissionProgress.$inferSelect;
+export type InsertUserMissionProgress = typeof userMissionProgress.$inferInsert;
+export type SupportNetwork = typeof supportNetwork.$inferSelect;
+export type InsertSupportNetwork = typeof supportNetwork.$inferInsert;
+export type SupportReply = typeof supportReplies.$inferSelect;
+export type InsertSupportReply = typeof supportReplies.$inferInsert;
+export type FaithPoint = typeof faithPoints.$inferSelect;
+export type InsertFaithPoint = typeof faithPoints.$inferInsert;
+export type WeeklyRanking = typeof weeklyRanking.$inferSelect;
+export type InsertWeeklyRanking = typeof weeklyRanking.$inferInsert;
 
 // Validation Schemas
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -599,6 +685,50 @@ export const insertNotificationSettingsSchema = createInsertSchema(notificationS
   challengeUpdates: true,
   sponsorMessages: true,
   preferredTime: true,
+});
+
+export const insertDailyMissionSchema = createInsertSchema(dailyMissions).pick({
+  date: true,
+  title: true,
+  description: true,
+  type: true,
+  reward: true,
+  points: true,
+  verse: true,
+  reference: true,
+});
+
+export const insertUserMissionProgressSchema = createInsertSchema(userMissionProgress).pick({
+  userId: true,
+  missionId: true,
+  completed: true,
+  pointsEarned: true,
+  rewardEarned: true,
+});
+
+export const insertSupportNetworkSchema = createInsertSchema(supportNetwork).pick({
+  userId: true,
+  title: true,
+  message: true,
+  category: true,
+  isAnonymous: true,
+});
+
+export const insertSupportReplySchema = createInsertSchema(supportReplies).pick({
+  supportId: true,
+  userId: true,
+  message: true,
+  isAnonymous: true,
+  verse: true,
+  reference: true,
+});
+
+export const insertFaithPointSchema = createInsertSchema(faithPoints).pick({
+  userId: true,
+  action: true,
+  points: true,
+  description: true,
+  date: true,
 });
 
 export const insertSponsorSchema = createInsertSchema(sponsors).pick({

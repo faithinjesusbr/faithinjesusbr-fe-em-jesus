@@ -5,7 +5,8 @@ import {
   insertUserSchema, loginSchema, insertDevotionalSchema, insertVerseSchema, insertPrayerSchema,
   insertAIPrayerRequestSchema, insertPrayerRequestSchema, insertUserContributionSchema,
   insertVerseCacheSchema, insertPushSubscriptionSchema, insertNotificationSettingsSchema,
-  insertSponsorSchema
+  insertSponsorSchema, insertDailyMissionSchema, insertUserMissionProgressSchema,
+  insertSupportNetworkSchema, insertSupportReplySchema, insertFaithPointSchema
 } from "@shared/schema";
 import { z } from "zod";
 import { freeBibleAPIService } from "./free-bible-api-service";
@@ -1976,6 +1977,280 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
       }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // ============ MISSÃO DO DIA - DAILY MISSIONS ============
+  
+  // Get today's mission
+  app.get("/api/daily-mission/today", async (req, res) => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      let mission = await storage.getDailyMission(today);
+      
+      // If no mission for today, create a new one
+      if (!mission) {
+        const missions = [
+          {
+            title: "Oração pela Manhã",
+            description: "Comece seu dia orando por 5 minutos e entregando suas preocupações a Deus",
+            type: "prayer",
+            reward: "star",
+            points: "10",
+            verse: "Pela manhã, Senhor, tu ouves a minha voz; pela manhã te faço a minha oração e aguardo com esperança.",
+            reference: "Salmos 5:3"
+          },
+          {
+            title: "Compartilhe um Versículo",
+            description: "Compartilhe um versículo bíblico inspirador com alguém hoje",
+            type: "share_verse",
+            reward: "heart",
+            points: "15",
+            verse: "A palavra de Deus é viva, eficaz e mais cortante que qualquer espada de dois gumes.",
+            reference: "Hebreus 4:12"
+          },
+          {
+            title: "Ajude Alguém",
+            description: "Pratique o amor de Cristo ajudando alguém necessitado hoje",
+            type: "help_someone", 
+            reward: "crown",
+            points: "20",
+            verse: "Levem os fardos pesados uns dos outros e, assim, cumpram a lei de Cristo.",
+            reference: "Gálatas 6:2"
+          }
+        ];
+        
+        const randomMission = missions[Math.floor(Math.random() * missions.length)];
+        mission = await storage.createDailyMission({
+          date: today,
+          ...randomMission
+        });
+      }
+      
+      res.json(mission);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Get user's mission progress for today
+  app.get("/api/daily-mission/progress/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const today = new Date().toISOString().split('T')[0];
+      const mission = await storage.getDailyMission(today);
+      
+      if (!mission) {
+        return res.json({ progress: null, mission: null });
+      }
+      
+      const progress = await storage.getUserMissionProgress(userId, mission.id);
+      res.json({ progress, mission });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Complete a mission
+  app.post("/api/daily-mission/complete", async (req, res) => {
+    try {
+      const { userId, missionId } = req.body;
+      
+      // Check if mission progress exists
+      let progress = await storage.getUserMissionProgress(userId, missionId);
+      
+      if (!progress) {
+        // Create progress entry
+        progress = await storage.createUserMissionProgress({
+          userId,
+          missionId,
+          completed: true,
+          pointsEarned: "0",
+          rewardEarned: ""
+        });
+      }
+      
+      // Mark as completed
+      progress = await storage.completeMission(userId, missionId);
+      
+      // Get mission details for points and reward
+      const mission = await storage.getDailyMission(new Date().toISOString().split('T')[0]);
+      if (mission) {
+        // Add faith points
+        await storage.addFaithPoints({
+          userId,
+          action: "complete_mission",
+          points: mission.points || "10",
+          description: `Missão completada: ${mission.title}`,
+          date: new Date().toISOString().split('T')[0]
+        });
+      }
+      
+      res.json(progress);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Get user's completed missions
+  app.get("/api/daily-mission/completed/:userId", async (req, res) => {
+    try {
+      const missions = await storage.getUserCompletedMissions(req.params.userId);
+      res.json(missions);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // ============ REDE DE APOIO - SUPPORT NETWORK ============
+  
+  // Get all support requests
+  app.get("/api/support-network", async (req, res) => {
+    try {
+      const requests = await storage.getAllSupportRequests();
+      res.json(requests);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Create support request
+  app.post("/api/support-network", async (req, res) => {
+    try {
+      const requestData = insertSupportNetworkSchema.parse(req.body);
+      const request = await storage.createSupportRequest(requestData);
+      
+      // Add faith points for creating support request
+      await storage.addFaithPoints({
+        userId: request.userId,
+        action: "create_support_request",
+        points: "5",
+        description: "Pedido de apoio criado",
+        date: new Date().toISOString().split('T')[0]
+      });
+      
+      res.json(request);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Get support request with replies
+  app.get("/api/support-network/:id", async (req, res) => {
+    try {
+      const request = await storage.getSupportRequest(req.params.id);
+      const replies = await storage.getSupportReplies(req.params.id);
+      res.json({ request, replies });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Create support reply
+  app.post("/api/support-network/:id/reply", async (req, res) => {
+    try {
+      const replyData = insertSupportReplySchema.parse({
+        ...req.body,
+        supportId: req.params.id
+      });
+      
+      const reply = await storage.createSupportReply(replyData);
+      
+      // Add faith points for sending support
+      await storage.addFaithPoints({
+        userId: reply.userId,
+        action: "send_support",
+        points: "10",
+        description: "Mensagem de apoio enviada",
+        date: new Date().toISOString().split('T')[0]
+      });
+      
+      res.json(reply);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Get user's support requests
+  app.get("/api/support-network/user/:userId", async (req, res) => {
+    try {
+      const requests = await storage.getUserSupportRequests(req.params.userId);
+      res.json(requests);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // ============ FÉ EM AÇÃO - FAITH POINTS SYSTEM ============
+  
+  // Get user's faith points history
+  app.get("/api/faith-points/:userId", async (req, res) => {
+    try {
+      const points = await storage.getUserFaithPoints(req.params.userId);
+      res.json(points);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Get user's total points
+  app.get("/api/faith-points/total/:userId", async (req, res) => {
+    try {
+      const total = await storage.getUserTotalPoints(req.params.userId);
+      res.json({ total });
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Add faith points (manual - for testing)
+  app.post("/api/faith-points", async (req, res) => {
+    try {
+      const pointsData = insertFaithPointSchema.parse(req.body);
+      const points = await storage.addFaithPoints(pointsData);
+      res.json(points);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Get current week's ranking
+  app.get("/api/faith-points/ranking/current", async (req, res) => {
+    try {
+      const ranking = await storage.getCurrentWeekRanking();
+      res.json(ranking);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Get ranking for specific week
+  app.get("/api/faith-points/ranking/:weekStart", async (req, res) => {
+    try {
+      const ranking = await storage.getWeeklyRanking(req.params.weekStart);
+      res.json(ranking);
+    } catch (error) {
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
+  // Update weekly ranking (admin or cron job)
+  app.post("/api/faith-points/ranking/update", async (req, res) => {
+    try {
+      const { userId, weekStart, weekEnd } = req.body;
+      await storage.updateWeeklyRanking(userId, weekStart, weekEnd);
+      res.json({ success: true });
+    } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor" });
     }
   });

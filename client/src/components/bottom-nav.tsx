@@ -1,12 +1,12 @@
 import { Link, useLocation } from "wouter";
-import { Home, ShoppingBag, Video, BookOpen, Users, MessageCircle } from "lucide-react";
+import { Home, ShoppingBag, Video, BookOpen, Users, MessageCircle, Target, Heart, Star } from "lucide-react";
 
 const navItems = [
   { path: "/", icon: Home, label: "Início" },
-  { path: "/store", icon: ShoppingBag, label: "Loja" },
-  { path: "/videos", icon: Video, label: "Vídeos" },
+  { path: "/daily-mission", icon: Target, label: "Missão" },
+  { path: "/support-network", icon: Heart, label: "Apoio" },
+  { path: "/faith-points", icon: Star, label: "Pontos" },
   { path: "/library", icon: BookOpen, label: "Biblio" },
-  { path: "/sponsors", icon: Users, label: "Apoio" },
   { path: "/prayer-requests", icon: MessageCircle, label: "Oração" },
 ];
 

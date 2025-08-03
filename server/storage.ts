@@ -1,4 +1,4 @@
-import { eq, desc, and, or, asc } from "drizzle-orm";
+import { eq, desc, and, or, asc, sql } from "drizzle-orm";
 import { db } from "./db";
 import {
   users, devotionals, verses, prayers, emotions, emotionDevotionals,
@@ -7,7 +7,8 @@ import {
   devotionalAudios, sponsors, sponsorAds, storeProducts, youtubeVideos,
   notifications, userInteractions, contributors, pointsTransactions,
   spiritualPlannerEntries, userDevotionals, verseReactions, userContributions,
-  verseCache, pushSubscriptions, notificationSettings,
+  verseCache, pushSubscriptions, notificationSettings, dailyMissions,
+  userMissionProgress, supportNetwork, supportReplies, faithPoints, weeklyRanking,
   type User, type InsertUser, type Devotional, type InsertDevotional,
   type Verse, type InsertVerse, type Prayer, type InsertPrayer,
   type Emotion, type InsertEmotion, type EmotionDevotional, type InsertEmotionDevotional,
@@ -23,7 +24,10 @@ import {
   type SpiritualPlannerEntry, type InsertSpiritualPlannerEntry,
   type UserDevotional, type InsertUserDevotional, type VerseReaction, type InsertVerseReaction,
   type UserContribution, type InsertUserContribution, type VerseCache, type InsertVerseCache,
-  type PushSubscription, type InsertPushSubscription, type NotificationSettings, type InsertNotificationSettings
+  type PushSubscription, type InsertPushSubscription, type NotificationSettings, type InsertNotificationSettings,
+  type DailyMission, type InsertDailyMission, type UserMissionProgress, type InsertUserMissionProgress,
+  type SupportNetwork, type InsertSupportNetwork, type SupportReply, type InsertSupportReply,
+  type FaithPoint, type InsertFaithPoint, type WeeklyRanking, type InsertWeeklyRanking
 } from "@shared/schema";
 
 export interface IStorage {
@@ -148,6 +152,37 @@ export interface IStorage {
   // Notification Settings
   getUserNotificationSettings(userId: string): Promise<NotificationSettings | undefined>;
   createOrUpdateNotificationSettings(settings: InsertNotificationSettings): Promise<NotificationSettings>;
+
+  // Daily Missions
+  getDailyMission(date: string): Promise<DailyMission | undefined>;
+  createDailyMission(mission: InsertDailyMission): Promise<DailyMission>;
+  getAllDailyMissions(): Promise<DailyMission[]>;
+  
+  // User Mission Progress
+  getUserMissionProgress(userId: string, missionId: string): Promise<UserMissionProgress | undefined>;
+  createUserMissionProgress(progress: InsertUserMissionProgress): Promise<UserMissionProgress>;
+  completeMission(userId: string, missionId: string): Promise<UserMissionProgress>;
+  getUserCompletedMissions(userId: string): Promise<UserMissionProgress[]>;
+  
+  // Support Network
+  getAllSupportRequests(): Promise<SupportNetwork[]>;
+  getSupportRequest(id: string): Promise<SupportNetwork | undefined>;
+  createSupportRequest(request: InsertSupportNetwork): Promise<SupportNetwork>;
+  getUserSupportRequests(userId: string): Promise<SupportNetwork[]>;
+  
+  // Support Replies
+  getSupportReplies(supportId: string): Promise<SupportReply[]>;
+  createSupportReply(reply: InsertSupportReply): Promise<SupportReply>;
+  
+  // Faith Points
+  getUserFaithPoints(userId: string): Promise<FaithPoint[]>;
+  addFaithPoints(points: InsertFaithPoint): Promise<FaithPoint>;
+  getUserTotalPoints(userId: string): Promise<number>;
+  
+  // Weekly Ranking
+  getWeeklyRanking(weekStart: string): Promise<WeeklyRanking[]>;
+  updateWeeklyRanking(userId: string, weekStart: string, weekEnd: string): Promise<void>;
+  getCurrentWeekRanking(): Promise<WeeklyRanking[]>;
 
   // Admin functionality
   updateDevotional(id: string, updateData: Partial<Devotional>): Promise<Devotional | undefined>;
@@ -644,7 +679,7 @@ export class DatabaseStorage implements IStorage {
   async clearOldCache(daysOld: number): Promise<void> {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - daysOld);
-    await db.delete(verseCache).where(eq(verseCache.cachedAt, cutoffDate.toISOString()));
+    await db.delete(verseCache).where(sql`cached_at < ${cutoffDate}`);
   }
 
   // Push Notifications
@@ -794,6 +829,159 @@ export class DatabaseStorage implements IStorage {
   async getCertificatesForContributor(contributorId: string): Promise<any[]> {
     // This would need to be implemented with proper certificate table
     return [];
+  }
+
+  // Daily Missions
+  async getDailyMission(date: string): Promise<DailyMission | undefined> {
+    const [result] = await db.select().from(dailyMissions).where(eq(dailyMissions.date, date));
+    return result;
+  }
+
+  async createDailyMission(mission: InsertDailyMission): Promise<DailyMission> {
+    const [result] = await db.insert(dailyMissions).values(mission).returning();
+    return result;
+  }
+
+  async getAllDailyMissions(): Promise<DailyMission[]> {
+    return await db.select().from(dailyMissions).orderBy(desc(dailyMissions.date));
+  }
+
+  // User Mission Progress
+  async getUserMissionProgress(userId: string, missionId: string): Promise<UserMissionProgress | undefined> {
+    const [result] = await db.select().from(userMissionProgress)
+      .where(and(eq(userMissionProgress.userId, userId), eq(userMissionProgress.missionId, missionId)));
+    return result;
+  }
+
+  async createUserMissionProgress(progress: InsertUserMissionProgress): Promise<UserMissionProgress> {
+    const [result] = await db.insert(userMissionProgress).values(progress).returning();
+    return result;
+  }
+
+  async completeMission(userId: string, missionId: string): Promise<UserMissionProgress> {
+    const [result] = await db.update(userMissionProgress)
+      .set({ 
+        completed: true, 
+        completedAt: new Date() 
+      })
+      .where(and(eq(userMissionProgress.userId, userId), eq(userMissionProgress.missionId, missionId)))
+      .returning();
+    return result;
+  }
+
+  async getUserCompletedMissions(userId: string): Promise<UserMissionProgress[]> {
+    return await db.select().from(userMissionProgress)
+      .where(and(eq(userMissionProgress.userId, userId), eq(userMissionProgress.completed, true)))
+      .orderBy(desc(userMissionProgress.completedAt));
+  }
+
+  // Support Network
+  async getAllSupportRequests(): Promise<SupportNetwork[]> {
+    return await db.select().from(supportNetwork)
+      .where(eq(supportNetwork.status, "active"))
+      .orderBy(desc(supportNetwork.createdAt));
+  }
+
+  async getSupportRequest(id: string): Promise<SupportNetwork | undefined> {
+    const [result] = await db.select().from(supportNetwork).where(eq(supportNetwork.id, id));
+    return result;
+  }
+
+  async createSupportRequest(request: InsertSupportNetwork): Promise<SupportNetwork> {
+    const [result] = await db.insert(supportNetwork).values(request).returning();
+    return result;
+  }
+
+  async getUserSupportRequests(userId: string): Promise<SupportNetwork[]> {
+    return await db.select().from(supportNetwork)
+      .where(eq(supportNetwork.userId, userId))
+      .orderBy(desc(supportNetwork.createdAt));
+  }
+
+  // Support Replies
+  async getSupportReplies(supportId: string): Promise<SupportReply[]> {
+    return await db.select().from(supportReplies)
+      .where(eq(supportReplies.supportId, supportId))
+      .orderBy(asc(supportReplies.createdAt));
+  }
+
+  async createSupportReply(reply: InsertSupportReply): Promise<SupportReply> {
+    const [result] = await db.insert(supportReplies).values(reply).returning();
+    
+    // Update reply count
+    await db.update(supportNetwork)
+      .set({ replies: sql`CAST(replies AS INTEGER) + 1` })
+      .where(eq(supportNetwork.id, reply.supportId));
+    
+    return result;
+  }
+
+  // Faith Points
+  async getUserFaithPoints(userId: string): Promise<FaithPoint[]> {
+    return await db.select().from(faithPoints)
+      .where(eq(faithPoints.userId, userId))
+      .orderBy(desc(faithPoints.createdAt));
+  }
+
+  async addFaithPoints(points: InsertFaithPoint): Promise<FaithPoint> {
+    const [result] = await db.insert(faithPoints).values(points).returning();
+    
+    // Update user total points
+    await db.update(users)
+      .set({ points: sql`CAST(points AS INTEGER) + ${parseInt(points.points)}` })
+      .where(eq(users.id, points.userId));
+    
+    return result;
+  }
+
+  // Weekly Ranking
+  async getWeeklyRanking(weekStart: string): Promise<WeeklyRanking[]> {
+    return await db.select().from(weeklyRanking)
+      .where(eq(weeklyRanking.weekStart, weekStart))
+      .orderBy(asc(weeklyRanking.position));
+  }
+
+  async updateWeeklyRanking(userId: string, weekStart: string, weekEnd: string): Promise<void> {
+    // Get user points for the week
+    const userPoints = await db.select({ 
+      points: sql<string>`SUM(CAST(points AS INTEGER))`,
+      name: users.name 
+    })
+      .from(faithPoints)
+      .innerJoin(users, eq(users.id, faithPoints.userId))
+      .where(and(
+        eq(faithPoints.userId, userId),
+        sql`date >= ${weekStart}`,
+        sql`date <= ${weekEnd}`
+      ))
+      .groupBy(users.name);
+
+    if (userPoints.length > 0) {
+      const totalPoints = userPoints[0].points || '0';
+      const userName = userPoints[0].name;
+      
+      await db.insert(weeklyRanking)
+        .values({
+          userId,
+          userName,
+          weekStart,
+          weekEnd,
+          totalPoints,
+          position: '0' // Will be updated with actual position later
+        })
+        .onConflictDoUpdate({
+          target: [weeklyRanking.userId, weeklyRanking.weekStart],
+          set: { totalPoints, userName }
+        });
+    }
+  }
+
+  async getCurrentWeekRanking(): Promise<WeeklyRanking[]> {
+    const now = new Date();
+    const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1));
+    const weekStart = startOfWeek.toISOString().split('T')[0];
+    
+    return await this.getWeeklyRanking(weekStart);
   }
 }
 
