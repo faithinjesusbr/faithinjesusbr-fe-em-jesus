@@ -35,7 +35,11 @@ export default function Login() {
         title: "Bem-vindo!",
         description: "Login realizado com sucesso.",
       });
-      setLocation("/");
+      // Use setTimeout to ensure state updates before navigation
+      setTimeout(() => {
+        setLocation("/");
+        window.location.reload(); // Force refresh for mobile compatibility
+      }, 100);
     },
     onError: (error: any) => {
       toast({

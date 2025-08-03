@@ -44,7 +44,7 @@ import FaithPoints from "@/pages/faith-points";
 import { useEffect } from "react";
 
 function Router() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
   // Register service worker for PWA
   useEffect(() => {
@@ -60,6 +60,18 @@ function Router() {
   }, []);
 
 
+
+  // Show loading screen while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-divine-50 to-blue-50">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-divine-600 mx-auto"></div>
+          <p className="text-divine-700 font-medium">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return (

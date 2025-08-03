@@ -34,7 +34,11 @@ export default function Register() {
         title: "Conta criada!",
         description: "Bem-vindo à nossa comunidade de fé.",
       });
-      setLocation("/");
+      // Use setTimeout to ensure state updates before navigation
+      setTimeout(() => {
+        setLocation("/");
+        window.location.reload(); // Force refresh for mobile compatibility
+      }, 100);
     },
     onError: (error: any) => {
       toast({
