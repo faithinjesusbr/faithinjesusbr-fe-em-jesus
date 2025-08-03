@@ -816,3 +816,89 @@
 .z-50 {
   z-index: 50;
 }
+
+/* Extra small screens (phones, 475px and down) */
+@media (max-width: 475px) {
+  .xs\:hidden {
+    display: none !important;
+  }
+  
+  .xs\:inline {
+    display: inline !important;
+  }
+  
+  .xs\:block {
+    display: block !important;
+  }
+  
+  .xs\:flex {
+    display: flex !important;
+  }
+  
+  .xs\:text-xs {
+    font-size: 0.75rem !important;
+  }
+  
+  .xs\:text-sm {
+    font-size: 0.875rem !important;
+  }
+  
+  .xs\:p-2 {
+    padding: 0.5rem !important;
+  }
+  
+  .xs\:px-2 {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  
+  .xs\:gap-2 {
+    gap: 0.5rem !important;
+  }
+  
+  .xs\:h-8 {
+    height: 2rem !important;
+  }
+}
+
+/* PWA mobile improvements */
+@media (display-mode: standalone) and (max-width: 768px) {
+  .bottom-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .header-fixed {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* Mobile responsiveness improvements */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .mobile-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .mobile-text-sm {
+    font-size: 0.875rem;
+  }
+}

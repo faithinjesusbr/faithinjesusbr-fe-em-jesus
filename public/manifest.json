@@ -1,7 +1,7 @@
 {
   "name": "Fé em Jesus BR - Aplicativo Cristão",
   "short_name": "Fé em Jesus BR",
-  "description": "Aplicativo cristão com devocionais diários, orações personalizadas e versículos bíblicos",
+  "description": "App cristão gratuito com devocionais diários, IA espiritual, orações personalizadas e recursos para fortalecer sua fé. Funciona offline!",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1e40af",
@@ -40,37 +40,45 @@
   ],
   "shortcuts": [
     {
-      "name": "Devoção Diária",
-      "short_name": "Devoção",
-      "description": "Acesse rapidamente a devoção do dia",
-      "url": "/",
+      "name": "Versículo do Dia",
+      "short_name": "Versículo",
+      "description": "Leia o versículo bíblico do dia",
+      "url": "/verse-of-day?source=shortcut",
       "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Oração IA",
-      "short_name": "Oração",
-      "description": "Gere uma oração personalizada com IA",
-      "url": "/ai-prayer",
+      "name": "Oração Personalizada",
+      "short_name": "Oração IA",
+      "description": "Receba uma oração personalizada com IA",
+      "url": "/ai-prayer?source=shortcut",
       "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Patrocinadores",
-      "short_name": "Parceiros",
-      "description": "Veja nossos parceiros que mantêm o app gratuito",
-      "url": "/sponsors", 
+      "name": "Contribuir",
+      "short_name": "Doar",
+      "description": "Colabore com a evangelização digital",
+      "url": "/pix-contributors?source=shortcut",
       "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
     }
   ],
   "related_applications": [],
   "prefer_related_applications": false,
   "share_target": {
-    "action": "/prayer-requests",
-    "method": "POST",
-    "enctype": "multipart/form-data",
+    "action": "/prayer-requests?source=share",
+    "method": "GET",
     "params": {
       "title": "title",
-      "text": "description",
+      "text": "text",
       "url": "url"
     }
-  }
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+feemjesus",
+      "url": "/?share=%s"
+    }
+  ]
 }

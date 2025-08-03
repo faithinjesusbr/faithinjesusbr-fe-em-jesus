@@ -177,63 +177,78 @@ export default function Home() {
       <Header />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20 md:pb-8">
-        {/* Welcome Section - Enhanced */}
-        <Card className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-100">
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Welcome Section - Mobile Responsive */}
+        <Card className="mb-4 sm:mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-100">
+          <CardContent className="p-4 sm:p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Left Column - Logo, Nome e Greeting */}
               <div className="flex flex-col justify-center">
-                <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-3 mb-3 sm:mb-4">
                   <img 
                     src="/logo.png" 
                     alt="Fé em Jesus BR" 
-                    className="w-12 h-12 rounded-full object-cover shadow-lg"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shadow-lg"
                   />
                   <div>
-                    <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                       Fé em Jesus BR
                     </h1>
-                    <p className="text-sm text-gray-600 italic">
+                    <p className="text-xs sm:text-sm text-gray-600 italic">
                       Inspiração diária com amor e fé ✨
                     </p>
                   </div>
                 </div>
                 <div className="animate-pulse">
-                  <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-base sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2">
                     {getCurrentGreeting()}, {user?.name?.split(' ')[0] || 'Irmão'}! 
                   </h2>
                 </div>
-                <p className="text-gray-600 mb-3">
-                  {new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3">
+                  <span className="sm:hidden">
+                    {new Date().toLocaleDateString('pt-BR', { 
+                      weekday: 'short', 
+                      year: 'numeric', 
+                      month: 'short', 
+                      day: 'numeric' 
+                    })}
+                  </span>
+                  <span className="hidden sm:inline">
+                    {new Date().toLocaleDateString('pt-BR', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
+                  </span>
                 </p>
-                <p className="text-blue-700 font-medium">
+                <p className="text-sm sm:text-base text-blue-700 font-medium">
                   Que Deus abençoe seu dia com paz e alegria! 🙏
                 </p>
               </div>
               
               {/* Right Column - App Promotion */}
-              <div className="bg-white rounded-lg p-4 border border-blue-200 shadow-sm">
+              <div className="bg-white rounded-lg p-3 sm:p-4 border border-blue-200 shadow-sm">
                 <div className="text-center">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Smartphone className="h-6 w-6 text-white" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                    <Smartphone className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">App 100% Gratuito</h3>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">App 100% Gratuito</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
                     Tenha fé e inspiração sempre à mão. Instale em seu celular para acesso offline!
                   </p>
                   
                   {!isInstalled && isInstallable && (
                     <Button 
                       onClick={installApp}
-                      className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200"
+                      className="w-full text-xs sm:text-sm bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 h-10 sm:h-11"
                     >
-                      <Download className="h-4 w-4 mr-2" />
-                      📲 Instalar no meu celular
+                      <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                      <span className="hidden xs:inline">📲 Instalar no meu </span>celular
                     </Button>
                   )}
                   
                   {isInstalled && (
-                    <div className="text-green-600 font-semibold flex items-center justify-center">
+                    <div className="text-green-600 font-semibold flex items-center justify-center text-sm">
                       <Star className="h-4 w-4 mr-2" />
                       App instalado! ✨
                     </div>
@@ -242,13 +257,12 @@ export default function Home() {
                   {!isInstallable && !isInstalled && (
                     <Button 
                       onClick={() => {
-                        // Fallback para instruções de instalação
-                        alert('Para instalar: \n1. No Chrome/Safari: Menu > Instalar app\n2. No celular: Menu > Adicionar à tela inicial');
+                        alert('Para instalar: \n\n1. No Chrome/Safari: Menu ⋮ > Instalar app\n2. No celular: Menu > Adicionar à tela inicial\n3. iPhone: Compartilhar > Adicionar à Tela de Início');
                       }}
-                      className="w-full bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 text-white"
+                      className="w-full text-xs sm:text-sm bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 text-white h-10 sm:h-11"
                     >
-                      <Download className="h-4 w-4 mr-2" />
-                      📲 Como Instalar
+                      <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                      <span className="hidden xs:inline">📲</span> Como Instalar
                     </Button>
                   )}
                 </div>
@@ -259,41 +273,42 @@ export default function Home() {
         
 
 
-        {/* Daily Verse Card */}
-        <Card className="mb-6 bg-gradient-to-r from-purple-500 to-blue-600 border-0 text-white">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
+        {/* Daily Verse Card - Mobile Responsive */}
+        <Card className="mb-4 sm:mb-6 bg-gradient-to-r from-purple-500 to-blue-600 border-0 text-white">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex items-start sm:items-center justify-between mb-3 sm:mb-4 flex-col sm:flex-row gap-3 sm:gap-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                  <BookOpen className="w-5 h-5" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-full flex items-center justify-center">
+                  <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">Versículo do Dia</h3>
-                  <p className="text-white/80 text-sm">{dailyVerse?.reference || "João 3:16"}</p>
+                  <h3 className="text-sm sm:text-base font-semibold">Versículo do Dia</h3>
+                  <p className="text-white/80 text-xs sm:text-sm">{dailyVerse?.reference || "João 3:16"}</p>
                 </div>
               </div>
               <Button 
                 variant="ghost" 
-                className="text-white hover:bg-white/10"
+                className="text-white hover:bg-white/10 text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4 self-start sm:self-center"
                 onClick={() => {
                   const text = `${dailyVerse?.text || "Versículo do dia"} - ${dailyVerse?.reference || ""}`;
                   const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
                   window.open(whatsappUrl, '_blank');
                 }}
               >
-                Compartilhar
+                <span className="hidden xs:inline">Compartilhar</span>
+                <span className="xs:hidden">📤</span>
               </Button>
             </div>
-            <p className="text-lg leading-relaxed mb-4">
+            <p className="text-sm sm:text-base md:text-lg leading-relaxed mb-3 sm:mb-4">
               {dailyVerse?.text || "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna."}
             </p>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
               <Button 
-                className="bg-white/20 hover:bg-white/30 text-white border-0"
+                className="bg-white/20 hover:bg-white/30 text-white border-0 text-xs sm:text-sm h-8 sm:h-9"
                 onClick={handleGenerateVerse}
               >
-                <Star className="w-4 h-4 mr-2" />
-                Gerar Outro
+                <Star className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="hidden xs:inline">Gerar </span>Outro
               </Button>
             </div>
           </CardContent>
@@ -302,73 +317,75 @@ export default function Home() {
         {/* Beautiful Rotating Sponsors Component */}
         <PatrocinadoresExibicao variant="featured" />
 
-        {/* Quick Actions */}
-        <div className="mb-6">
-          <div className="flex gap-3 mb-3">
+        {/* Quick Actions - Melhorado para Mobile */}
+        <div className="mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-3">
             <Link href="/verse-of-day" className="flex-1">
-              <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700">
+              <Button className="w-full h-12 sm:h-10 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-sm sm:text-base">
                 <BookOpen className="h-4 w-4 mr-2" />
-                Versículo do Dia
+                <span className="hidden xs:inline">Versículo do </span>Dia
               </Button>
             </Link>
             <Link href="/emotion-today-improved" className="flex-1">
-              <Button className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700">
+              <Button className="w-full h-12 sm:h-10 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-sm sm:text-base">
                 <Heart className="h-4 w-4 mr-2" />
-                Como me sinto hoje?
+                <span className="hidden xs:inline">Como me sinto </span>Hoje?
               </Button>
             </Link>
           </div>
           
           {/* Nova linha com Lembrei de Você em destaque */}
-          <div className="flex gap-3 mb-3">
+          <div className="flex mb-3">
             <Button
               onClick={() => setShowLembreiDeVoceModal(true)}
-              className="w-full bg-gradient-to-r from-red-500 via-pink-500 to-red-600 hover:from-red-600 hover:via-pink-600 hover:to-red-700 text-white shadow-lg"
+              className="w-full h-12 sm:h-10 bg-gradient-to-r from-red-500 via-pink-500 to-red-600 hover:from-red-600 hover:via-pink-600 hover:to-red-700 text-white shadow-lg text-sm sm:text-base"
             >
               <Heart className="h-4 w-4 mr-2" />
               💌 Lembrei de Você
             </Button>
           </div>
           
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <Link href="/youtube-videos-improved" className="flex-1">
-              <Button variant="outline" className="w-full border-red-300 text-red-600 hover:bg-red-50">
+              <Button variant="outline" className="w-full h-12 sm:h-10 border-red-300 text-red-600 hover:bg-red-50 text-sm sm:text-base">
                 <Video className="h-4 w-4 mr-2" />
-                Vídeos Cristãos
+                <span className="hidden xs:inline">Vídeos </span>Cristãos
               </Button>
             </Link>
             <Button
               onClick={() => randomVerseMutation.mutate()}
               disabled={randomVerseMutation.isPending}
               variant="outline"
-              className="flex-1 border-purple-300 text-purple-600 hover:bg-purple-50"
+              className="flex-1 h-12 sm:h-10 border-purple-300 text-purple-600 hover:bg-purple-50 text-sm sm:text-base"
             >
               {randomVerseMutation.isPending ? (
                 <>
                   <Sun className="h-4 w-4 mr-2 animate-spin" />
-                  Carregando...
+                  <span className="hidden xs:inline">Carregando...</span>
+                  <span className="xs:hidden">...</span>
                 </>
               ) : (
                 <>
                   <Sun className="h-4 w-4 mr-2" />
-                  Versículo Aleatório
+                  <span className="hidden xs:inline">Versículo </span>Aleatório
                 </>
               )}
             </Button>
           </div>
         </div>
 
-        {/* Main Features Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        {/* Main Features Grid - Responsivo Melhorado */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
           {/* IA Cristo */}
           <Link href="/ai-prayer">
             <Card className="hover:shadow-lg transition-all hover:scale-105 cursor-pointer bg-blue-500 text-white border-0">
-              <CardContent className="p-4 text-center">
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Bot className="text-white w-6 h-6" />
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                  <Bot className="text-white w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
-                <h3 className="text-sm font-semibold mb-1">IA Cristo</h3>
-                <p className="text-xs text-white/80">Conversas espirituais com IA</p>
+                <h3 className="text-xs sm:text-sm font-semibold mb-1">IA Cristo</h3>
+                <p className="text-xs text-white/80 hidden sm:block">Conversas espirituais</p>
+                <p className="text-xs text-white/80 sm:hidden">Chat IA</p>
               </CardContent>
             </Card>
           </Link>
@@ -376,12 +393,13 @@ export default function Home() {
           {/* E-books */}
           <Link href="/library-ebooks">
             <Card className="hover:shadow-lg transition-all hover:scale-105 cursor-pointer bg-green-500 text-white border-0">
-              <CardContent className="p-4 text-center">
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <BookOpen className="text-white w-6 h-6" />
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                  <BookOpen className="text-white w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
-                <h3 className="text-sm font-semibold mb-1">E-books</h3>
-                <p className="text-xs text-white/80">Biblioteca cristã gratuita</p>
+                <h3 className="text-xs sm:text-sm font-semibold mb-1">E-books</h3>
+                <p className="text-xs text-white/80 hidden sm:block">Biblioteca cristã</p>
+                <p className="text-xs text-white/80 sm:hidden">Livros</p>
               </CardContent>
             </Card>
           </Link>
@@ -389,12 +407,13 @@ export default function Home() {
           {/* Orações */}
           <Link href="/prayer-requests">
             <Card className="hover:shadow-lg transition-all hover:scale-105 cursor-pointer bg-red-500 text-white border-0">
-              <CardContent className="p-4 text-center">
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Heart className="text-white w-6 h-6" />
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                  <Heart className="text-white w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
-                <h3 className="text-sm font-semibold mb-1">Orações</h3>
-                <p className="text-xs text-white/80">3 pedidos ativos</p>
+                <h3 className="text-xs sm:text-sm font-semibold mb-1">Orações</h3>
+                <p className="text-xs text-white/80 hidden sm:block">Pedidos ativos</p>
+                <p className="text-xs text-white/80 sm:hidden">Preces</p>
               </CardContent>
             </Card>
           </Link>
@@ -402,12 +421,13 @@ export default function Home() {
           {/* Colaboradores */}
           <Link href="/pix-contributors">
             <Card className="hover:shadow-lg transition-all hover:scale-105 cursor-pointer bg-orange-500 text-white border-0">
-              <CardContent className="p-4 text-center">
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Star className="text-white w-6 h-6" />
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                  <Star className="text-white w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
-                <h3 className="text-sm font-semibold mb-1">Colaborar</h3>
-                <p className="text-xs text-white/80">PIX e contribuições</p>
+                <h3 className="text-xs sm:text-sm font-semibold mb-1">Colaborar</h3>
+                <p className="text-xs text-white/80 hidden sm:block">PIX e doações</p>
+                <p className="text-xs text-white/80 sm:hidden">Doar</p>
               </CardContent>
             </Card>
           </Link>
