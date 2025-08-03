@@ -479,6 +479,8 @@ export const weeklyRanking = pgTable("weekly_ranking", {
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
+
+export type LoginUser = z.infer<typeof loginSchema>;
 export type Devotional = typeof devotionals.$inferSelect;
 export type InsertDevotional = typeof devotionals.$inferInsert;
 export type Verse = typeof verses.$inferSelect;
