@@ -22,38 +22,46 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [currentUser, setCurrentUserState] = useState<User | undefined>(() => {
-    return getCurrentUser() || undefined;
-  });
-
-  const { data: user, isLoading, error } = useQuery({
-    queryKey: ["/api/user"],
-    retry: false,
-    enabled: !!currentUser, // Only fetch if we have a user in localStorage
-  });
+  const [currentUser, setCurrentUserState] = useState<User | undefined>();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      setCurrentUserState(user);
-      setCurrentUser(user);
+    // Initialize auth state from localStorage
+    try {
+      const storedUser = getCurrentUser();
+      if (storedUser) {
+        setCurrentUserState(storedUser);
+      }
+    } catch (error) {
+      console.error('Error loading user from localStorage:', error);
+    } finally {
+      setIsLoading(false);
     }
-  }, [user]);
+  }, []);
 
   const login = (user: User) => {
-    setCurrentUserState(user);
-    setCurrentUser(user);
+    try {
+      setCurrentUserState(user);
+      setCurrentUser(user);
+    } catch (error) {
+      console.error('Error during login:', error);
+    }
   };
 
   const logout = () => {
-    setCurrentUserState(undefined);
-    clearCurrentUser();
+    try {
+      setCurrentUserState(undefined);
+      clearCurrentUser();
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   const authValue: AuthContextType = {
     user: currentUser,
     isLoading,
     isAuthenticated: !!currentUser,
-    error,
+    error: null,
     login,
     logout
   };

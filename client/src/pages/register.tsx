@@ -34,11 +34,10 @@ export default function Register() {
         title: "Conta criada!",
         description: "Bem-vindo à nossa comunidade de fé.",
       });
-      // Use setTimeout to ensure state updates before navigation
+      // For mobile compatibility - force full page reload
       setTimeout(() => {
-        setLocation("/");
-        window.location.reload(); // Force refresh for mobile compatibility
-      }, 100);
+        window.location.href = "/";
+      }, 500);
     },
     onError: (error: any) => {
       toast({

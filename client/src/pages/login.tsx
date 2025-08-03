@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { authApi } from "@/lib/auth";
 import { loginSchema, type LoginUser } from "@shared/schema";
+import { mobileRedirect, debugLog } from "@/lib/mobile-utils";
 
 export default function Login() {
   const [, setLocation] = useLocation();
@@ -30,18 +31,17 @@ export default function Login() {
   const loginMutation = useMutation({
     mutationFn: authApi.login,
     onSuccess: (data) => {
+      debugLog("Login successful", data.user);
       login(data.user);
       toast({
         title: "Bem-vindo!",
         description: "Login realizado com sucesso.",
       });
-      // Use setTimeout to ensure state updates before navigation
-      setTimeout(() => {
-        setLocation("/");
-        window.location.reload(); // Force refresh for mobile compatibility
-      }, 100);
+      debugLog("Redirecting user after login");
+      mobileRedirect("/");
     },
     onError: (error: any) => {
+      debugLog("Login error", error);
       toast({
         title: "Erro no login",
         description: error.message || "Credenciais inválidas",
