@@ -1,79 +1,32 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Video, Search, Play, Clock, Filter } from "lucide-react";
+import { Video, Search, Play, Clock, Filter, Eye, ExternalLink } from "lucide-react";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
+import { faithVideos, videoCategories } from "@/data/faith-videos";
 
 export default function Videos() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
-  // Mock data similar to Base44 images
-  const featuredVideos = [
-    {
-      id: "1",
-      title: "Testemunho de Superação",
-      description: "Uma história real de superação através da fé",
-      duration: "15 min",
-      category: "Testemunho",
-      status: "Sermão",
-      thumbnail: "/api/placeholder/300/180",
-      isNew: false
-    },
-    {
-      id: "2", 
-      title: "O Poder da Oração",
-      description: "Como a oração pode transformar sua vida completamente",
-      duration: "22 min",
-      category: "Ensino",
-      status: "Sermão", 
-      thumbnail: "/api/placeholder/300/180",
-      isNew: false
-    },
-    {
-      id: "3",
-      title: "Ouvindo a Deus",
-      description: "Aprenda a discernir a voz de Deus na sua oração",
-      duration: "18 min", 
-      category: "Devoção",
-      status: "Live",
-      thumbnail: "/api/placeholder/300/180",
-      isNew: true
-    }
-  ];
+  const handleWatchVideo = (video: any) => {
+    const youtubeUrl = `https://www.youtube.com/watch?v=${video.youtubeId}`;
+    window.open(youtubeUrl, '_blank');
+  };
 
-  const otherVideos = [
-    {
-      id: "4",
-      title: "A Força da Oração",
-      description: "Para empoderar sua missão de fé",
-      category: "Ensino",
-      thumbnail: "/api/placeholder/300/180"
-    },
-    {
-      id: "5",
-      title: "Hino da Vitória", 
-      description: "Louvor que toca os céus para vida boa",
-      category: "Louvor",
-      thumbnail: "/api/placeholder/300/180"
-    },
-    {
-      id: "6",
-      title: "Testemento de Cura",
-      description: "Milagre que mudou uma vida e manifestou tudo",
-      category: "Testemunho", 
-      thumbnail: "/api/placeholder/300/180"
-    }
-  ];
+  // Filtrar vídeos do canal @faithinjesusbr
+  const filteredVideos = faithVideos
+    .filter(video => selectedCategory ? video.category === selectedCategory : true)
+    .filter(video =>
+      video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      video.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      video.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
-  const categories = [
-    "Todas as Categorias"
-  ];
+  const categories = videoCategories;
 
   return (
     <div className="min-h-screen bg-gray-50">

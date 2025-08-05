@@ -32,6 +32,8 @@ import VerseOfDay from "@/pages/verse-of-day";
 import VerseSimple from "@/pages/verse-simple";
 import AdminLogin from "@/pages/admin-login";
 import AdminPanel from "@/pages/admin-panel";
+import LibraryEbooksFixed from "@/pages/library-ebooks-fixed";
+import VideosNewFixed from "@/pages/videos-new-fixed";
 
 // New comprehensive admin and contribution components
 import AdminPanelComplete from "@/pages/admin-panel-complete";
@@ -88,9 +90,9 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/store" component={Store} />
-        <Route path="/videos" component={Videos} />
+        <Route path="/videos" component={VideosNewFixed} />
         <Route path="/library" component={Library} />
-        <Route path="/library-ebooks" component={LibraryEbooks} />
+        <Route path="/library-ebooks" component={LibraryEbooksFixed} />
         <Route path="/emotion-today-improved" component={EmotionTodayImproved} />
         <Route path="/emotion-simple" component={EmotionSimple} />
         <Route path="/youtube-videos-improved" component={YoutubeVideosImproved} />

@@ -39,46 +39,24 @@ interface Ebook {
   createdAt: string;
 }
 
+import { gospelBooks } from "@/data/gospel-books";
+
 // E-books reais obtidos da pesquisa
-const REAL_EBOOKS: Ebook[] = [
-  {
-    id: "1",
-    title: "Devocional com Café",
-    author: "Felipe Café",
-    description: "Um livreto devocional para momentos especiais de comunhão com Deus, perfeito para começar o dia em oração e reflexão.",
-    category: "Devocional",
-    imageUrl: "https://felipecafe.com/assets/images/devocional-cover.jpg",
-    pdfUrl: "https://felipecafe.com/assets/download/livreto-devocional.pdf",
-    readOnlineUrl: "https://felipecafe.com/devocional",
-    isReal: true,
-    isFree: true,
-    donationMessage: "Este devocional é gratuito! Se foi uma bênção, considere fazer uma doação para mantermos mais conteúdo gratuito.",
-    downloads: "1247",
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: "2", 
-    title: "O Evangelho na Vida",
-    author: "Tim Keller",
-    description: "Como o evangelho transforma nossa vida cotidiana e nos capacita a viver de acordo com a vontade de Deus.",
-    category: "Crescimento Espiritual",
-    imageUrl: "https://images.gospelmais.com.br/keller-evangelho.jpg",
-    pdfUrl: "https://livros.gospelmais.com/downloads/tim-keller-evangelho-vida.pdf",
-    isReal: true,
-    isFree: true,
-    donationMessage: "Livro disponibilizado gratuitamente pelo autor. Ajude-nos a manter a biblioteca digital ativa!",
-    downloads: "3421",
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: "3",
-    title: "Na Cova dos Leões",
-    author: "Valmir Nascimento",
-    description: "Testemunhos poderosos de fé e coragem em meio às adversidades, mostrando como Deus age em nossas lutas.",
-    category: "Testemunho",
-    imageUrl: "https://images.teologia.promo/cova-leoes.jpg", 
-    pdfUrl: "https://teologia.promo/downloads/na-cova-dos-leoes.pdf",
-    isReal: true,
+const REAL_EBOOKS: Ebook[] = gospelBooks.map(book => ({
+  id: book.id,
+  title: book.title,
+  author: book.author,
+  description: book.description,
+  category: book.category,
+  imageUrl: book.imageUrl,
+  pdfUrl: book.pdfUrl,
+  readOnlineUrl: book.readOnlineUrl,
+  isReal: book.isReal,
+  isFree: book.isFree,
+  donationMessage: "Este e-book é gratuito! Se foi uma bênção, considere fazer uma doação para mantermos mais conteúdo gratuito.",
+  downloads: book.downloads,
+  createdAt: new Date().toISOString()
+}));
     isFree: true,
     donationMessage: "Livro gratuito para edificação da Igreja. Considere uma doação para continuarmos este ministério.",
     downloads: "892",
