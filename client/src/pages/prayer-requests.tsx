@@ -38,12 +38,9 @@ export default function PrayerRequestsPage() {
 
   const submitRequestMutation = useMutation({
     mutationFn: async (requestData: { subject: string; content: string }) => {
-      return apiRequest("/api/prayer-requests", {
-        method: "POST",
-        body: {
-          userId: user?.id,
-          ...requestData,
-        },
+      return apiRequest("/api/prayer-requests", "POST", {
+        userId: user?.id,
+        ...requestData,
       });
     },
     onSuccess: () => {
@@ -179,13 +176,13 @@ export default function PrayerRequestsPage() {
                   <div className="flex justify-center py-4">
                     <Loader2 className="h-6 w-6 animate-spin text-emerald-600" />
                   </div>
-                ) : !requests || requests.length === 0 ? (
+                ) : !requests || (requests as PrayerRequest[]).length === 0 ? (
                   <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
                     Você ainda não tem pedidos. Faça seu primeiro pedido!
                   </p>
                 ) : (
                   <div className="space-y-3 max-h-96 overflow-y-auto">
-                    {requests.map((request: PrayerRequest) => (
+                    {(requests as PrayerRequest[]).map((request: PrayerRequest) => (
                       <div
                         key={request.id}
                         className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"

@@ -3,10 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Book, Download, Search, Star, Gift, ExternalLink } from "lucide-react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { Book, Download, Search, Star, Gift, ExternalLink, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { gospelBooks } from "@/data/gospel-books";
+import { Link } from "wouter";
 
 interface Ebook {
   id: string;
@@ -40,33 +40,9 @@ export default function EbooksPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
 
-  const { data: ebooks = [], isLoading } = useQuery({
-    queryKey: ["/api/ebooks", selectedCategory],
-    queryFn: () => {
-      const url = selectedCategory 
-        ? `/api/ebooks?category=${selectedCategory}`
-        : "/api/ebooks";
-      return apiRequest(url);
-    },
-  });
-
-  const downloadMutation = useMutation({
-    mutationFn: async (ebookId: string) => {
-      return apiRequest(`/api/ebooks/${ebookId}/download`, {
-        method: "POST",
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/ebooks"] });
-    },
-  });
-
   const handleDownload = (ebook: Ebook) => {
     if (ebook.pdfUrl) {
-      // Abrir link para download
       window.open(ebook.pdfUrl, '_blank');
-      downloadMutation.mutate(ebook.id);
-      
       toast({
         title: "Download iniciado!",
         description: `"${ebook.title}" está sendo baixado.`,
@@ -92,14 +68,18 @@ export default function EbooksPage() {
     }
   };
 
-  const filteredEbooks = ebooks.filter((ebook: Ebook) =>
-    ebook.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ebook.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ebook.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filtrar e aplicar categoria aos livros
+  const filteredEbooks = gospelBooks
+    .filter(book => selectedCategory ? book.category === selectedCategory : true)
+    .filter((ebook: Ebook) =>
+      ebook.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ebook.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ebook.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-4">
@@ -154,17 +134,15 @@ export default function EbooksPage() {
       </div>
 
       {/* Ebooks Grid */}
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="animate-pulse">
-              <div className="h-80 bg-gray-200 rounded-lg"></div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredEbooks.map((ebook: Ebook) => (
+      <div className="mb-8">
+        {filteredEbooks.length === 0 ? (
+          <div className="text-center py-12">
+            <Book className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-500">Nenhum e-book encontrado com os filtros selecionados.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredEbooks.map((ebook) => (
             <Card key={ebook.id} className="h-auto overflow-hidden hover:shadow-lg transition-shadow">
               <div className="relative">
                 {ebook.imageUrl ? (
@@ -245,9 +223,20 @@ export default function EbooksPage() {
             </Card>
           ))}
         </div>
-      )}
+        )}
+      </div>
 
-      {filteredEbooks.length === 0 && !isLoading && (
+      {/* Voltar */}
+      <div className="text-center mb-8">
+        <Link href="/">
+          <Button variant="outline" className="text-blue-600 border-blue-300 hover:bg-blue-50">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar ao Início
+          </Button>
+        </Link>
+      </div>
+
+      {filteredEbooks.length === 0 && (
         <div className="text-center py-12">
           <Book className="h-16 w-16 text-gray-300 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-600 mb-2">
