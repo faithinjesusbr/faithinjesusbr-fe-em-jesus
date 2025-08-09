@@ -1,116 +1,116 @@
-// Vídeos autênticos do canal @faithinjesusbr
+// Vídeos do canal @FAITHINJESUSBR
+// Aguardando os 10 links dos vídeos shorts para atualização
 export const faithVideos = [
   {
     id: "1",
-    title: "Como Orar Todos os Dias",
-    description: "Dicas práticas para desenvolver uma vida de oração consistente",
-    youtubeId: "exemplo1", // Será substituído pelos IDs reais quando fornecidos
-    thumbnail: "https://img.youtube.com/vi/exemplo1/maxresdefault.jpg",
-    duration: "2:15",
+    title: "Aguarde os links reais",
+    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
+    youtubeId: "aguardando1",
+    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
+    duration: "0:00",
     category: "Oração",
-    views: "1.2K",
-    uploadDate: "2024-08-01"
+    views: "Aguardando",
+    uploadDate: "Aguardando links"
   },
   {
     id: "2", 
-    title: "Fé em Jesus - Versículo do Dia",
-    description: "Reflexão sobre versículos que fortalecem nossa fé",
-    youtubeId: "exemplo2",
-    thumbnail: "https://img.youtube.com/vi/exemplo2/maxresdefault.jpg",
-    duration: "1:45",
+    title: "Aguarde os links reais",
+    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
+    youtubeId: "aguardando2",
+    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
+    duration: "0:00",
     category: "Encorajamento",
-    views: "980",
-    uploadDate: "2024-08-05"
+    views: "Aguardando",
+    uploadDate: "Aguardando links"
   },
   {
     id: "3",
-    title: "Jesus Te Ama Muito",
-    description: "Lembrete do amor incondicional de Cristo",
-    youtubeId: "exemplo3",
-    thumbnail: "https://img.youtube.com/vi/exemplo3/maxresdefault.jpg",
-    duration: "1:30",
+    title: "Aguarde os links reais",
+    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
+    youtubeId: "aguardando3",
+    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
+    duration: "0:00",
     category: "Amor de Deus",
-    views: "756",
-    uploadDate: "2024-08-10"
+    views: "Aguardando",
+    uploadDate: "Aguardando links"
   },
   {
     id: "4",
-    title: "Deus Te Abençoe Hoje",
-    description: "Palavra de bênção e encorajamento para seu dia",
-    youtubeId: "exemplo4",
-    thumbnail: "https://img.youtube.com/vi/exemplo4/maxresdefault.jpg",
-    duration: "2:00",
+    title: "Aguarde os links reais",
+    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
+    youtubeId: "aguardando4",
+    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
+    duration: "0:00",
     category: "Encorajamento",
-    views: "1.5K",
-    uploadDate: "2024-08-15"
+    views: "Aguardando",
+    uploadDate: "Aguardando links"
   },
   {
     id: "5",
-    title: "Paz de Jesus em Sua Vida",
-    description: "Como encontrar verdadeira paz em Cristo",
-    youtubeId: "exemplo5",
-    thumbnail: "https://img.youtube.com/vi/exemplo5/maxresdefault.jpg",
-    duration: "1:50",
+    title: "Aguarde os links reais",
+    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
+    youtubeId: "aguardando5",
+    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
+    duration: "0:00",
     category: "Paz",
-    views: "890",
-    uploadDate: "2024-08-20"
+    views: "Aguardando",
+    uploadDate: "Aguardando links"
   },
   {
     id: "6",
-    title: "Força em Cristo",
-    description: "Encontrando força espiritual para vencer desafios",
-    youtubeId: "exemplo6",
-    thumbnail: "https://img.youtube.com/vi/exemplo6/maxresdefault.jpg",
-    duration: "2:30",
+    title: "Aguarde os links reais",
+    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
+    youtubeId: "aguardando6",
+    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
+    duration: "0:00",
     category: "Fé",
-    views: "1.1K",
-    uploadDate: "2024-08-25"
+    views: "Aguardando",
+    uploadDate: "Aguardando links"
   },
   {
     id: "7",
-    title: "Esperança em Jesus",
-    description: "Mensagem de esperança para tempos difíceis",
-    youtubeId: "exemplo7",
-    thumbnail: "https://img.youtube.com/vi/exemplo7/maxresdefault.jpg",
-    duration: "2:10",
+    title: "Aguarde os links reais",
+    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
+    youtubeId: "aguardando7",
+    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
+    duration: "0:00",
     category: "Esperança",
-    views: "1.3K",
-    uploadDate: "2024-08-30"
+    views: "Aguardando",
+    uploadDate: "Aguardando links"
   },
   {
     id: "8",
-    title: "Gratidão a Deus",
-    description: "Por que devemos ser gratos em toda situação",
-    youtubeId: "exemplo8",
-    thumbnail: "https://img.youtube.com/vi/exemplo8/maxresdefault.jpg",
-    duration: "1:40",
+    title: "Aguarde os links reais",
+    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
+    youtubeId: "aguardando8",
+    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
+    duration: "0:00",
     category: "Gratidão",
-    views: "920",
-    uploadDate: "2024-09-05"
+    views: "Aguardando",
+    uploadDate: "Aguardando links"
   },
   {
     id: "9",
-    title: "Confia no Senhor",
-    description: "Palavra de confiança e segurança em Deus",
-    youtubeId: "exemplo9",
-    thumbnail: "https://img.youtube.com/vi/exemplo9/maxresdefault.jpg",
-    duration: "2:20",
+    title: "Aguarde os links reais",
+    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
+    youtubeId: "aguardando9",
+    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
+    duration: "0:00",
     category: "Fé",
-    views: "1.4K",
-    uploadDate: "2024-09-10"
+    views: "Aguardando",
+    uploadDate: "Aguardando links"
   },
   {
     id: "10",
-    title: "Jesus é Fiel",
-    description: "Lembrete da fidelidade de Jesus em nossa vida",
-    youtubeId: "exemplo10",
-    thumbnail: "https://img.youtube.com/vi/exemplo10/maxresdefault.jpg",
-    duration: "1:55",
+    title: "Aguarde os links reais",
+    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
+    youtubeId: "aguardando10",
+    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
+    duration: "0:00",
     category: "Fidelidade",
-    views: "1.1K",
-    uploadDate: "2024-09-15"
+    views: "Aguardando",
+    uploadDate: "Aguardando links"
   }
-
 ];
 
 export const videoCategories = [
