@@ -22,6 +22,7 @@ export default function Register() {
     defaultValues: {
       name: "",
       email: "",
+      whatsapp: "",
       password: "",
     },
   });
@@ -99,6 +100,28 @@ export default function Register() {
                           className="rounded-xl focus:ring-2 focus:ring-divine-500"
                         />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="whatsapp"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>WhatsApp (Opcional)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          type="tel" 
+                          placeholder="(11) 99999-9999"
+                          className="rounded-xl focus:ring-2 focus:ring-divine-500"
+                        />
+                      </FormControl>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Para receber mensagens semanais personalizadas
+                      </p>
                       <FormMessage />
                     </FormItem>
                   )}

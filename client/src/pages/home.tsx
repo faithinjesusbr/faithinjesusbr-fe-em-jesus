@@ -31,6 +31,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { usePWAInstall } from "@/hooks/use-pwa-install";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
+import PWAInstall from "@/components/pwa-install";
 import VerseModal from "@/components/verse-modal";
 import PrayerModal from "@/components/prayer-modal";
 import PatrocinadoresExibicao from "@/components/PatrocinadoresExibicao";
@@ -371,6 +372,15 @@ export default function Home() {
                 </>
               )}
             </Button>
+            
+            {/* Admin Link - Only for daviddkoog@gmail.com */}
+            {user?.email === "daviddkoog@gmail.com" && (
+              <Link href="/admin-users" className="flex-1">
+                <Button className="w-full h-12 sm:h-10 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white text-sm sm:text-base">
+                  👨‍💼 Admin
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
 
@@ -508,6 +518,7 @@ export default function Home() {
         </div>
       </div>
 
+      <PWAInstall />
       <BottomNav />
       
       <VerseModal 

@@ -1,84 +1,26 @@
 {
-  "name": "Fé em Jesus BR - Aplicativo Cristão",
-  "short_name": "Fé em Jesus BR",
-  "description": "App cristão gratuito com devocionais diários, IA espiritual, orações personalizadas e recursos para fortalecer sua fé. Funciona offline!",
+  "name": "Fé em Jesus BR",
+  "short_name": "Fé em Jesus",
+  "description": "App de devocionais cristãos com conteúdo inspiracional diário",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1e40af",
-  "theme_color": "#1e40af",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
   "orientation": "portrait",
-  "scope": "/",
+  "categories": ["lifestyle", "health"],
   "lang": "pt-BR",
-  "categories": ["lifestyle", "education", "productivity"],
   "icons": [
     {
-      "src": "/icon-192x192.png",
+      "src": "/logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512x512.png", 
+      "src": "/logo.png", 
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/screenshot-mobile.png",
-      "sizes": "540x720",
-      "type": "image/png",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "/screenshot-desktop.png",
-      "sizes": "1280x800", 
-      "type": "image/png",
-      "form_factor": "wide"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Versículo do Dia",
-      "short_name": "Versículo",
-      "description": "Leia o versículo bíblico do dia",
-      "url": "/verse-of-day?source=shortcut",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Oração Personalizada",
-      "short_name": "Oração IA",
-      "description": "Receba uma oração personalizada com IA",
-      "url": "/ai-prayer?source=shortcut",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Contribuir",
-      "short_name": "Doar",
-      "description": "Colabore com a evangelização digital",
-      "url": "/pix-contributors?source=shortcut",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
-    }
-  ],
-  "related_applications": [],
-  "prefer_related_applications": false,
-  "share_target": {
-    "action": "/prayer-requests?source=share",
-    "method": "GET",
-    "params": {
-      "title": "title",
-      "text": "text",
-      "url": "url"
-    }
-  },
-  "edge_side_panel": {
-    "preferred_width": 400
-  },
-  "protocol_handlers": [
-    {
-      "protocol": "web+feemjesus",
-      "url": "/?share=%s"
     }
   ]
 }

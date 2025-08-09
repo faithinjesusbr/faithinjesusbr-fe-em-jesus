@@ -43,6 +43,7 @@ import NotificationSettings from "@/pages/notification-settings";
 import DailyMission from "@/pages/daily-mission";
 import SupportNetwork from "@/pages/support-network";
 import FaithPoints from "@/pages/faith-points";
+import AdminUsers from "@/pages/admin-users";
 import { useEffect } from "react";
 
 function Router() {
@@ -124,6 +125,7 @@ function Router() {
         {/* New Spiritual Features */}
         <Route path="/daily-mission" component={DailyMission} />
         <Route path="/faith-points" component={FaithPoints} />
+        <Route path="/admin-users" component={AdminUsers} />
         
         <Route component={NotFound} />
       </Switch>

@@ -8,8 +8,11 @@ export const users = pgTable("users", {
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
+  whatsapp: text("whatsapp"),
   isAdmin: boolean("is_admin").default(false),
+  isActive: boolean("is_active").default(true),
   points: text("points").default("0"),
+  lastLoginAt: timestamp("last_login_at"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -565,6 +568,9 @@ export const insertUserSchema = createInsertSchema(users).pick({
   name: true,
   email: true,
   password: true,
+  whatsapp: true,
+}).extend({
+  whatsapp: z.string().optional(),
 });
 
 export const loginSchema = z.object({

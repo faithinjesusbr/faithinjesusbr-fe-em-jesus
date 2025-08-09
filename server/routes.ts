@@ -12,6 +12,7 @@ import { z } from "zod";
 import { freeBibleAPIService } from "./free-bible-api-service";
 import { freeHuggingFaceAIService } from "./free-huggingface-ai-service";
 import { sendPrayerRequest } from "./email-service";
+import adminRoutes from "./admin-routes";
 
 // Import AI functions from the advanced AI service
 async function generateAssistantResponse(message: string) {
@@ -42,6 +43,8 @@ async function generateAssistantResponse(message: string) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Admin routes
+  app.use("/api/admin", adminRoutes);
   // Auth routes
   app.post("/api/auth/login", async (req, res) => {
     try {
