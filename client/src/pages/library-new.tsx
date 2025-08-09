@@ -5,16 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { BookOpen, Search, Download, Play, Filter } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { BookOpen, Search, Download, Play, Filter, Heart, Gift, Copy } from "lucide-react";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
 import BackButton from "@/components/back-button";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Library() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [showDonationModal, setShowDonationModal] = useState(false);
+  const [selectedBook, setSelectedBook] = useState<any>(null);
+  const { toast } = useToast();
 
-  // Livros reais da biblioteca cristã
+  // Livros cristãos com capas otimizadas do Pixabay
   const featuredBooks = [
     {
       id: "1",
@@ -23,7 +28,7 @@ export default function Library() {
       category: "Relacionamentos",
       status: "Gratuito",
       buttonColor: "purple",
-      imageUrl: "https://images-na.ssl-images-amazon.com/images/I/51QQ4KPFK3L._SX331_BO1,204,203,200_.jpg"
+      imageUrl: "https://cdn.pixabay.com/photo/2016/08/03/09/03/heart-1566754_960_720.jpg"
     },
     {
       id: "2",
@@ -32,7 +37,7 @@ export default function Library() {
       category: "Devocional",
       status: "Gratuito",
       buttonColor: "purple",
-      imageUrl: "https://www.paoembrasa.com.br/wp-content/uploads/2020/01/pao-diario-2020-1.jpg"
+      imageUrl: "https://cdn.pixabay.com/photo/2014/09/05/18/32/old-books-436498_960_720.jpg"
     },
     {
       id: "3",
@@ -41,7 +46,7 @@ export default function Library() {
       category: "Clássicos",
       status: "Gratuito", 
       buttonColor: "purple",
-      imageUrl: "https://m.media-amazon.com/images/I/51yXTvSJWOL._SY445_SX342_.jpg"
+      imageUrl: "https://cdn.pixabay.com/photo/2016/07/07/16/46/books-1502484_960_720.jpg"
     },
     {
       id: "4",
@@ -50,7 +55,7 @@ export default function Library() {
       category: "Crescimento",
       status: "Gratuito",
       buttonColor: "purple", 
-      imageUrl: "https://images-na.ssl-images-amazon.com/images/I/41YTGX7WYPL._SX331_BO1,204,203,200_.jpg"
+      imageUrl: "https://cdn.pixabay.com/photo/2015/11/19/21/10/glasses-1052010_960_720.jpg"
     }
   ];
 
@@ -60,20 +65,45 @@ export default function Library() {
       title: "Ouvindo a Deus",
       author: "Joyce Meyer",
       status: "Gratuito",
-      imageUrl: "https://images-na.ssl-images-amazon.com/images/I/41zs4yPZhML._SX331_BO1,204,203,200_.jpg"
+      imageUrl: "https://cdn.pixabay.com/photo/2014/02/27/16/10/flowers-276014_960_720.jpg"
     },
     {
       id: "6", 
       title: "Jesus Calling",
       author: "Sarah Young",
       status: "Gratuito",
-      imageUrl: "https://images-na.ssl-images-amazon.com/images/I/51DT8W+kCkL._SX331_BO1,204,203,200_.jpg"
+      imageUrl: "https://cdn.pixabay.com/photo/2016/11/29/20/22/bible-1871009_960_720.jpg"
     }
   ];
 
   const categories = [
     "Todas as Categorias"
   ];
+
+  const handleBookAction = (book: any) => {
+    setSelectedBook(book);
+    setShowDonationModal(true);
+  };
+
+  const proceedWithBook = () => {
+    if (selectedBook) {
+      // Simula abrir o livro/download
+      toast({
+        title: "📚 Acesso liberado!",
+        description: `Aproveitando "${selectedBook.title}" - que seja uma bênção!`,
+      });
+    }
+    setShowDonationModal(false);
+    setSelectedBook(null);
+  };
+
+  const copyPixKey = () => {
+    navigator.clipboard.writeText("faithinjesuseua@gmail.com");
+    toast({
+      title: "✅ PIX Copiado!",
+      description: "Muito obrigado pelo seu apoio ao ministério.",
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -137,11 +167,18 @@ export default function Library() {
                 <p className="text-xs text-gray-600 mb-2">{book.author}</p>
                 <p className="text-xs text-gray-500 mb-3">{book.category}</p>
                 <div className="space-y-2">
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700 text-xs py-2">
+                  <Button 
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-xs py-2"
+                    onClick={() => handleBookAction(book)}
+                  >
                     <Play className="w-3 h-3 mr-1" />
                     Ler Online
                   </Button>
-                  <Button variant="outline" className="w-full text-xs py-2">
+                  <Button 
+                    variant="outline" 
+                    className="w-full text-xs py-2"
+                    onClick={() => handleBookAction(book)}
+                  >
                     <Download className="w-3 h-3 mr-1" />
                     Download PDF
                   </Button>
@@ -169,11 +206,18 @@ export default function Library() {
                 <h3 className="font-semibold text-gray-900 mb-1">{book.title}</h3>
                 <p className="text-sm text-gray-600 mb-3">{book.author}</p>
                 <div className="space-y-2">
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                  <Button 
+                    className="w-full bg-purple-600 hover:bg-purple-700"
+                    onClick={() => handleBookAction(book)}
+                  >
                     <Play className="w-4 h-4 mr-2" />
                     Ler Online
                   </Button>
-                  <Button variant="outline" className="w-full">
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => handleBookAction(book)}
+                  >
                     <Download className="w-4 h-4 mr-2" />
                     Download PDF
                   </Button>
@@ -201,6 +245,76 @@ export default function Library() {
       </div>
 
       <BottomNav />
+
+      {/* Donation Modal */}
+      <Dialog open={showDonationModal} onOpenChange={setShowDonationModal}>
+        <DialogContent className="max-w-md bg-gradient-to-br from-blue-50 via-white to-purple-50">
+          <DialogHeader className="text-center pb-2">
+            <div className="mx-auto mb-3 w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <BookOpen className="h-8 w-8 text-white" />
+            </div>
+            <DialogTitle className="text-xl text-gray-800">
+              {selectedBook?.title}
+            </DialogTitle>
+            <p className="text-sm text-gray-500 mt-1">por {selectedBook?.author}</p>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+              <div className="flex justify-center mb-3">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <Heart className="h-6 w-6 text-blue-600" />
+                </div>
+              </div>
+              <h3 className="font-medium text-gray-800 mb-2">Conteúdo 100% Gratuito</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Este material é disponibilizado gratuitamente para edificação da Igreja.
+                Se desejar, pode contribuir para mantermos mais conteúdo disponível.
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Gift className="h-5 w-5 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-medium text-green-800 mb-1">Apoie este ministério</h4>
+                  <p className="text-xs text-green-700 mb-2">PIX: faithinjesuseua@gmail.com</p>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={copyPixKey}
+                    className="text-xs border-green-200 text-green-700 hover:bg-green-50 h-8"
+                  >
+                    <Copy className="h-3 w-3 mr-1" />
+                    Copiar PIX
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center pt-2">
+              <Button 
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
+                onClick={proceedWithBook}
+              >
+                <BookOpen className="h-4 w-4 mr-2" />
+                Continuar para o Livro
+              </Button>
+              <button 
+                className="text-xs text-gray-400 hover:text-gray-600 mt-3 block mx-auto"
+                onClick={() => {
+                  setShowDonationModal(false);
+                  setSelectedBook(null);
+                }}
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

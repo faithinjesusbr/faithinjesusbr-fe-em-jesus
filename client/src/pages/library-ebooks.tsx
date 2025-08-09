@@ -78,7 +78,7 @@ export default function LibraryEbooksPage() {
     return matchesSearch && matchesCategory;
   });
 
-  const categories = [...new Set(ebooks.map(book => book.category))];
+  const categories = Array.from(new Set(ebooks.map(book => book.category)));
 
   const handleDownload = (ebook: Ebook) => {
     setSelectedEbook(ebook);
