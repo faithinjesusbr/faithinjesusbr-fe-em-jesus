@@ -110,7 +110,7 @@ export default function Register() {
                   name="whatsapp"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>WhatsApp (Opcional)</FormLabel>
+                      <FormLabel>WhatsApp</FormLabel>
                       <FormControl>
                         <Input 
                           {...field} 

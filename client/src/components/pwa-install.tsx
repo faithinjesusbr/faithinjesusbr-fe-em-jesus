@@ -90,13 +90,23 @@ export default function PWAInstall() {
         <DialogContent className="max-w-sm mx-auto">
           <DialogHeader>
             <DialogTitle className="text-center text-xl">
-              📱 Instalar Fé em Jesus
+              📱 Instalar Fé em Jesus BR
             </DialogTitle>
           </DialogHeader>
           
           <div className="text-center py-6">
-            <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-divine-500 to-divine-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <Smartphone className="h-10 w-10 text-white" />
+            <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <img 
+                src="/logo.png" 
+                alt="Fé em Jesus BR"
+                className="w-12 h-12 rounded-lg object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  target.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+              <Smartphone className="h-10 w-10 text-white hidden" />
             </div>
             
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
