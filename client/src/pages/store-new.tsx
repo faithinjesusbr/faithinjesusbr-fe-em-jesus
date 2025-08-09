@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ShoppingBag, Search, Star, ExternalLink, Filter } from "lucide-react";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
+import BackButton from "@/components/back-button";
 
 export default function Store() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -70,6 +71,9 @@ export default function Store() {
       <Header />
       
       <div className="max-w-6xl mx-auto px-4 py-6 pb-20">
+        <div className="mb-6">
+          <BackButton />
+        </div>
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <ShoppingBag className="w-8 h-8 text-white" />

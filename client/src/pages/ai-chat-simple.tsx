@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Bot, User, Send, BookOpen, Heart } from "lucide-react";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
+import BackButton from "@/components/back-button";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -92,6 +93,9 @@ export default function AIChatSimple() {
       <Header />
       
       <div className="max-w-4xl mx-auto px-4 py-8 pb-20 md:pb-8">
+        <div className="mb-6">
+          <BackButton />
+        </div>
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
             IA Cristo - Assistente Espiritual

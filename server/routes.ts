@@ -11,6 +11,7 @@ import {
 import { z } from "zod";
 import { freeBibleAPIService } from "./free-bible-api-service";
 import { freeHuggingFaceAIService } from "./free-huggingface-ai-service";
+import { sendPrayerRequest } from "./email-service";
 
 // Import AI functions from the advanced AI service
 async function generateAssistantResponse(message: string) {
@@ -533,8 +534,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const data = insertPrayerRequestSchema.parse(req.body);
       const request = await storage.createPrayerRequest(data);
+      
+      // Enviar email para faithinjesuseua@gmail.com
+      try {
+        const user = await storage.getUserById(data.userId);
+        await sendPrayerRequest(
+          data.subject,
+          data.content,
+          user?.email,
+          user?.name
+        );
+        console.log('Email de pedido de oração enviado com sucesso');
+      } catch (emailError) {
+        console.error('Erro ao enviar email do pedido de oração:', emailError);
+        // Não falha a requisição se o email não for enviado
+      }
+      
       res.json(request);
     } catch (error) {
+      console.error('Erro no endpoint de pedidos de oração:', error);
       res.status(500).json({ message: "Erro interno do servidor" });
     }
   });

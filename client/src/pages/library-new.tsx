@@ -8,12 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { BookOpen, Search, Download, Play, Filter } from "lucide-react";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
+import BackButton from "@/components/back-button";
 
 export default function Library() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  // Mock data similar to Base44 images
+  // Livros reais da biblioteca cristã
   const featuredBooks = [
     {
       id: "1",
@@ -22,7 +23,7 @@ export default function Library() {
       category: "Relacionamentos",
       status: "Gratuito",
       buttonColor: "purple",
-      imageUrl: "/api/placeholder/150/200"
+      imageUrl: "https://images-na.ssl-images-amazon.com/images/I/51QQ4KPFK3L._SX331_BO1,204,203,200_.jpg"
     },
     {
       id: "2",
@@ -31,7 +32,7 @@ export default function Library() {
       category: "Devocional",
       status: "Gratuito",
       buttonColor: "purple",
-      imageUrl: "/api/placeholder/150/200"
+      imageUrl: "https://www.paoembrasa.com.br/wp-content/uploads/2020/01/pao-diario-2020-1.jpg"
     },
     {
       id: "3",
@@ -40,7 +41,7 @@ export default function Library() {
       category: "Clássicos",
       status: "Gratuito", 
       buttonColor: "purple",
-      imageUrl: "/api/placeholder/150/200"
+      imageUrl: "https://m.media-amazon.com/images/I/51yXTvSJWOL._SY445_SX342_.jpg"
     },
     {
       id: "4",
@@ -49,7 +50,7 @@ export default function Library() {
       category: "Crescimento",
       status: "Gratuito",
       buttonColor: "purple", 
-      imageUrl: "/api/placeholder/150/200"
+      imageUrl: "https://images-na.ssl-images-amazon.com/images/I/41YTGX7WYPL._SX331_BO1,204,203,200_.jpg"
     }
   ];
 
@@ -59,14 +60,14 @@ export default function Library() {
       title: "Ouvindo a Deus",
       author: "Joyce Meyer",
       status: "Gratuito",
-      imageUrl: "/api/placeholder/150/200"
+      imageUrl: "https://images-na.ssl-images-amazon.com/images/I/41zs4yPZhML._SX331_BO1,204,203,200_.jpg"
     },
     {
       id: "6", 
-      title: "Tudo Sobre",
-      author: "Vários Autores",
+      title: "Jesus Calling",
+      author: "Sarah Young",
       status: "Gratuito",
-      imageUrl: "/api/placeholder/150/200"
+      imageUrl: "https://images-na.ssl-images-amazon.com/images/I/51DT8W+kCkL._SX331_BO1,204,203,200_.jpg"
     }
   ];
 
@@ -79,6 +80,9 @@ export default function Library() {
       <Header />
       
       <div className="max-w-6xl mx-auto px-4 py-6 pb-20">
+        <div className="mb-6">
+          <BackButton />
+        </div>
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <BookOpen className="w-8 h-8 text-white" />

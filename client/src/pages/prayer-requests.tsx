@@ -11,6 +11,7 @@ import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
+import BackButton from "@/components/back-button";
 
 interface PrayerRequest {
   id: string;
@@ -51,7 +52,7 @@ export default function PrayerRequestsPage() {
       });
       toast({
         title: "Pedido enviado!",
-        description: "Seu pedido de oração foi recebido. Em breve você receberá uma resposta.",
+        description: "Seu pedido de oração foi enviado para nosso email e será respondido em breve.",
       });
     },
     onError: () => {
@@ -87,6 +88,9 @@ export default function PrayerRequestsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-950 dark:to-teal-950 p-4">
       <div className="max-w-6xl mx-auto">
+        <div className="mb-6">
+          <BackButton />
+        </div>
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-emerald-800 dark:text-emerald-200 mb-2">
             Pedidos de Oração
@@ -106,7 +110,7 @@ export default function PrayerRequestsPage() {
                   Novo Pedido de Oração
                 </CardTitle>
                 <CardDescription>
-                  Compartilhe sua necessidade de oração. Nossa equipe responderá com uma oração personalizada.
+                  Compartilhe sua necessidade de oração. Seus pedidos são enviados diretamente para nosso email e respondidos pessoalmente.
                 </CardDescription>
               </CardHeader>
               <CardContent>

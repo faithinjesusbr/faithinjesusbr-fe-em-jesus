@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
+import BackButton from "@/components/back-button";
 import PatrocinadoresExibicao from "@/components/PatrocinadoresExibicao";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -51,6 +52,9 @@ export default function SponsorsPage() {
       <Header />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20 md:pb-8">
+        <div className="mb-6">
+          <BackButton />
+        </div>
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
             Nossos Patrocinadores

@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
+import BackButton from "@/components/back-button";
 import { useToast } from "@/hooks/use-toast";
 
 interface Ebook {

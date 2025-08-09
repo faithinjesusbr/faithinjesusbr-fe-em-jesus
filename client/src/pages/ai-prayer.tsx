@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
+import BackButton from "@/components/back-button";
 
 interface AssistantResponse {
   response: string;
@@ -116,25 +117,10 @@ export default function AIPrayerPage() {
       <Header />
       <div className="container mx-auto px-4 py-8 max-w-4xl pt-20 pb-20">
         {/* Header */}
+        <div className="mb-6">
+          <BackButton />
+        </div>
         <div className="text-center mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <Button
-              variant="ghost"
-              onClick={() => setLocation('/')}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => setLocation('/')}
-              className="flex items-center gap-2"
-            >
-              <Home className="h-4 w-4" />
-              Início
-            </Button>
-          </div>
           
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="p-3 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full">

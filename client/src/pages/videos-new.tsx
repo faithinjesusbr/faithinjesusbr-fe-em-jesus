@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Video, Search, Play, Clock, Filter, Eye, ExternalLink } from "lucide-react";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
+import BackButton from "@/components/back-button";
 import { faithVideos, videoCategories } from "@/data/faith-videos";
 
 export default function Videos() {
@@ -33,12 +34,15 @@ export default function Videos() {
       <Header />
       
       <div className="max-w-6xl mx-auto px-4 py-6 pb-20">
+        <div className="mb-6">
+          <BackButton />
+        </div>
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <Video className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Vídeos Cristãos</h1>
-          <p className="text-gray-600">Assista sermões, testemunhos e ensinamentos que edificam sua fé</p>
+          <p className="text-gray-600">Canal @faithinjesusbr - Mensagens que edificam sua fé</p>
         </div>
 
         {/* Search and Filters */}
