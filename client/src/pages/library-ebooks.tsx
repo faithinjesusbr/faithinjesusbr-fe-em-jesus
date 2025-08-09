@@ -58,54 +58,6 @@ const REAL_EBOOKS: Ebook[] = gospelBooks.map(book => ({
   downloads: book.downloads,
   createdAt: new Date().toISOString()
 }));
-    isFree: true,
-    donationMessage: "Livro gratuito para edificação da Igreja. Considere uma doação para continuarmos este ministério.",
-    downloads: "892",
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: "4",
-    title: "Quero Nascer de Novo",
-    author: "Ministério Seara Ágape",
-    description: "Guia prático para adolescentes sobre salvação, batismo e vida cristã. Linguagem jovem e contemporânea.",
-    category: "Juventude",
-    imageUrl: "https://www.searaagape.com.br/images/nascer-novo-teen.jpg",
-    pdfUrl: "https://www.searaagape.com.br/downloads/quero-nascer-de-novo.pdf",
-    isReal: true,
-    isFree: true,
-    donationMessage: "Recurso gratuito para jovens. Sua doação nos ajuda a alcançar mais vidas!",
-    downloads: "567",
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: "5",
-    title: "Dicionário Bíblico Baker",
-    author: "Tremper Longman III",
-    description: "Referência essencial com definições, contextos históricos e explicações teológicas para estudos bíblicos profundos.",
-    category: "Estudo Bíblico",
-    imageUrl: "https://images.gospelmais.com.br/dicionario-baker.jpg",
-    pdfUrl: "https://livros.gospelmais.com/downloads/dicionario-biblico-baker.pdf",
-    isReal: true,
-    isFree: true,
-    donationMessage: "Obra de referência gratuita. Ajude-nos a disponibilizar mais recursos de qualidade!",
-    downloads: "2105",
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: "6",
-    title: "Jesus para Crianças",
-    author: "Ministério Seara Ágape",
-    description: "Histórias bíblicas ilustradas e atividades para ensinar as crianças sobre o amor de Jesus de forma lúdica.",
-    category: "Infantil",
-    imageUrl: "https://www.searaagape.com.br/images/jesus-criancas.jpg",
-    pdfUrl: "https://www.searaagape.com.br/downloads/jesus-para-criancas.pdf",
-    isReal: true,
-    isFree: true,
-    donationMessage: "Conteúdo infantil gratuito. Suas doações mantêm estes recursos disponíveis para famílias!",
-    downloads: "1834",
-    createdAt: new Date().toISOString()
-  }
-];
 
 export default function LibraryEbooksPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -126,7 +78,7 @@ export default function LibraryEbooksPage() {
     return matchesSearch && matchesCategory;
   });
 
-  const categories = ["Devocional", "Crescimento Espiritual", "Testemunho", "Juventude", "Estudo Bíblico", "Infantil"];
+  const categories = [...new Set(ebooks.map(book => book.category))];
 
   const handleDownload = (ebook: Ebook) => {
     setSelectedEbook(ebook);
@@ -137,8 +89,8 @@ export default function LibraryEbooksPage() {
     if (selectedEbook?.pdfUrl) {
       window.open(selectedEbook.pdfUrl, '_blank');
       toast({
-        title: "Download Iniciado",
-        description: `${selectedEbook.title} está sendo baixado.`,
+        title: "📚 Download iniciado!",
+        description: "Que Deus o abençoe através desta leitura.",
       });
     }
     setShowDonationModal(false);
@@ -154,8 +106,8 @@ export default function LibraryEbooksPage() {
     if (selectedEbook?.readOnlineUrl || selectedEbook?.pdfUrl) {
       window.open(selectedEbook.readOnlineUrl || selectedEbook.pdfUrl, '_blank');
       toast({
-        title: "Abrindo Livro",
-        description: `${selectedEbook.title} está sendo aberto.`,
+        title: "📖 Boa leitura!",
+        description: "Que este conteúdo seja uma bênção para sua vida.",
       });
     }
     setShowDonationModal(false);
@@ -165,8 +117,8 @@ export default function LibraryEbooksPage() {
   const copyPixKey = () => {
     navigator.clipboard.writeText("faithinjesuseua@gmail.com");
     toast({
-      title: "PIX Copiado!",
-      description: "Chave PIX copiada para área de transferência.",
+      title: "✅ PIX Copiado!",
+      description: "Muito obrigado pelo seu apoio ao ministério.",
     });
   };
 
@@ -365,56 +317,69 @@ export default function LibraryEbooksPage() {
 
       {/* Donation Modal */}
       <Dialog open={showDonationModal} onOpenChange={setShowDonationModal}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-center">
-              📚 {selectedEbook?.title}
+        <DialogContent className="max-w-md bg-gradient-to-br from-blue-50 via-white to-purple-50">
+          <DialogHeader className="text-center pb-2">
+            <div className="mx-auto mb-3 w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <BookOpen className="h-8 w-8 text-white" />
+            </div>
+            <DialogTitle className="text-xl text-gray-800">
+              {selectedEbook?.title}
             </DialogTitle>
+            <p className="text-sm text-gray-500 mt-1">por {selectedEbook?.author}</p>
           </DialogHeader>
+          
           <div className="space-y-4">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <AlertCircle className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <p className="text-sm text-gray-700">
-                {selectedEbook?.donationMessage}
+            <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+              <div className="flex justify-center mb-3">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <Heart className="h-6 w-6 text-blue-600" />
+                </div>
+              </div>
+              <h3 className="font-medium text-gray-800 mb-2">Conteúdo 100% Gratuito</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Este material é disponibilizado gratuitamente para edificação da Igreja.
+                Se desejar, pode contribuir para mantermos mais conteúdo disponível.
               </p>
             </div>
 
-            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-              <h4 className="font-semibold text-green-800 mb-2 flex items-center">
-                <Gift className="h-4 w-4 mr-2" />
-                Apoie nosso ministério
-              </h4>
-              <p className="text-sm text-green-700 mb-3">
-                PIX: faithinjesuseua@gmail.com
-              </p>
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Gift className="h-5 w-5 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-medium text-green-800 mb-1">Apoie este ministério</h4>
+                  <p className="text-xs text-green-700 mb-2">PIX: faithinjesuseua@gmail.com</p>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={copyPixKey}
+                    className="text-xs border-green-200 text-green-700 hover:bg-green-50 h-8"
+                  >
+                    <Copy className="h-3 w-3 mr-1" />
+                    Copiar PIX
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center pt-2">
               <Button 
-                size="sm" 
-                variant="outline"
-                onClick={copyPixKey}
-                className="w-full border-green-300 text-green-700 hover:bg-green-100"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
+                onClick={selectedEbook?.pdfUrl ? proceedWithDownload : proceedWithReadOnline}
               >
-                <Copy className="h-4 w-4 mr-2" />
-                Copiar Chave PIX
+                <BookOpen className="h-4 w-4 mr-2" />
+                Continuar para o Livro
               </Button>
-            </div>
-
-            <div className="flex gap-3">
-              <Button 
-                variant="outline" 
-                className="flex-1"
+              <button 
+                className="text-xs text-gray-400 hover:text-gray-600 mt-3 block mx-auto"
                 onClick={() => {
                   setShowDonationModal(false);
                   setSelectedEbook(null);
                 }}
               >
                 Fechar
-              </Button>
-              <Button 
-                className="flex-1 bg-blue-600 hover:bg-blue-700"
-                onClick={selectedEbook?.pdfUrl ? proceedWithDownload : proceedWithReadOnline}
-              >
-                Continuar
-              </Button>
+              </button>
             </div>
           </div>
         </DialogContent>
