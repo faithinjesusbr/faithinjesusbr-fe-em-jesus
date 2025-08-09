@@ -6,6 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Star, Heart, Crown, Award, Clock, CheckCircle2 } from "lucide-react";
+import Header from "@/components/header";
+import BottomNav from "@/components/bottom-nav";
+import BackButton from "@/components/back-button";
 
 interface DailyMission {
   id: string;

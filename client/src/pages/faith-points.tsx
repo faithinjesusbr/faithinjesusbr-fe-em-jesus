@@ -5,6 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
 import { Star, Trophy, Award, TrendingUp, Calendar, Users, Crown, Medal, Target } from "lucide-react";
+import Header from "@/components/header";
+import BottomNav from "@/components/bottom-nav";
+import BackButton from "@/components/back-button";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 

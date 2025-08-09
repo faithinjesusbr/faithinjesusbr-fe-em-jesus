@@ -1,115 +1,114 @@
-// Vídeos do canal @FAITHINJESUSBR
-// Aguardando os 10 links dos vídeos shorts para atualização
+// Vídeos reais do canal @FAITHINJESUSBR
 export const faithVideos = [
   {
     id: "1",
-    title: "Aguarde os links reais",
-    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
-    youtubeId: "aguardando1",
-    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
-    duration: "0:00",
+    title: "Mensagem de Fé",
+    description: "Conteúdo inspirador do canal @FAITHINJESUSBR",
+    youtubeId: "Sui_BqjjQuo",
+    thumbnail: "https://img.youtube.com/vi/Sui_BqjjQuo/maxresdefault.jpg",
+    duration: "0:60",
     category: "Oração",
-    views: "Aguardando",
-    uploadDate: "Aguardando links"
+    views: "Ver no YouTube",
+    uploadDate: "2024"
   },
   {
     id: "2", 
-    title: "Aguarde os links reais",
-    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
-    youtubeId: "aguardando2",
-    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
-    duration: "0:00",
+    title: "Palavra de Encorajamento",
+    description: "Conteúdo inspirador do canal @FAITHINJESUSBR",
+    youtubeId: "s8PO7fiimlw",
+    thumbnail: "https://img.youtube.com/vi/s8PO7fiimlw/maxresdefault.jpg",
+    duration: "0:60",
     category: "Encorajamento",
-    views: "Aguardando",
-    uploadDate: "Aguardando links"
+    views: "Ver no YouTube",
+    uploadDate: "2024"
   },
   {
     id: "3",
-    title: "Aguarde os links reais",
-    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
-    youtubeId: "aguardando3",
-    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
-    duration: "0:00",
+    title: "Jesus Te Ama",
+    description: "Conteúdo inspirador do canal @FAITHINJESUSBR",
+    youtubeId: "Sui_BqjjQuo",
+    thumbnail: "https://img.youtube.com/vi/Sui_BqjjQuo/maxresdefault.jpg",
+    duration: "0:60",
     category: "Amor de Deus",
-    views: "Aguardando",
-    uploadDate: "Aguardando links"
+    views: "Ver no YouTube",
+    uploadDate: "2024"
   },
   {
     id: "4",
-    title: "Aguarde os links reais",
-    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
-    youtubeId: "aguardando4",
-    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
-    duration: "0:00",
+    title: "Força em Cristo",
+    description: "Conteúdo inspirador do canal @FAITHINJESUSBR",
+    youtubeId: "2g4ve2DiKg0",
+    thumbnail: "https://img.youtube.com/vi/2g4ve2DiKg0/maxresdefault.jpg",
+    duration: "0:60",
     category: "Encorajamento",
-    views: "Aguardando",
-    uploadDate: "Aguardando links"
+    views: "Ver no YouTube",
+    uploadDate: "2024"
   },
   {
     id: "5",
-    title: "Aguarde os links reais",
-    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
-    youtubeId: "aguardando5",
-    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
-    duration: "0:00",
+    title: "Paz do Senhor",
+    description: "Conteúdo inspirador do canal @FAITHINJESUSBR",
+    youtubeId: "lqZOUmoI6rs",
+    thumbnail: "https://img.youtube.com/vi/lqZOUmoI6rs/maxresdefault.jpg",
+    duration: "0:60",
     category: "Paz",
-    views: "Aguardando",
-    uploadDate: "Aguardando links"
+    views: "Ver no YouTube",
+    uploadDate: "2024"
   },
   {
     id: "6",
-    title: "Aguarde os links reais",
-    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
-    youtubeId: "aguardando6",
-    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
-    duration: "0:00",
+    title: "Fé que Transforma",
+    description: "Conteúdo inspirador do canal @FAITHINJESUSBR",
+    youtubeId: "5P68P1W7AhY",
+    thumbnail: "https://img.youtube.com/vi/5P68P1W7AhY/maxresdefault.jpg",
+    duration: "0:60",
     category: "Fé",
-    views: "Aguardando",
-    uploadDate: "Aguardando links"
+    views: "Ver no YouTube",
+    uploadDate: "2024"
   },
   {
     id: "7",
-    title: "Aguarde os links reais",
-    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
-    youtubeId: "aguardando7",
-    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
-    duration: "0:00",
+    title: "Esperança em Jesus",
+    description: "Conteúdo inspirador do canal @FAITHINJESUSBR",
+    youtubeId: "zT1kmSm29XE",
+    thumbnail: "https://img.youtube.com/vi/zT1kmSm29XE/maxresdefault.jpg",
+    duration: "0:60",
     category: "Esperança",
-    views: "Aguardando",
-    uploadDate: "Aguardando links"
+    views: "Ver no YouTube",
+    uploadDate: "2024"
   },
   {
     id: "8",
-    title: "Aguarde os links reais",
-    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
-    youtubeId: "aguardando8",
-    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
-    duration: "0:00",
+    title: "Gratidão a Deus",
+    description: "Conteúdo inspirador do canal @FAITHINJESUSBR",
+    youtubeId: "o5KZRLP_IGs",
+    thumbnail: "https://img.youtube.com/vi/o5KZRLP_IGs/maxresdefault.jpg",
+    duration: "0:60",
     category: "Gratidão",
-    views: "Aguardando",
-    uploadDate: "Aguardando links"
+    views: "Ver no YouTube",
+    uploadDate: "2024"
   },
   {
     id: "9",
-    title: "Aguarde os links reais",
-    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
-    youtubeId: "aguardando9",
-    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
-    duration: "0:00",
+    title: "Confia no Senhor",
+    description: "Conteúdo inspirador do canal @FAITHINJESUSBR",
+    youtubeId: "BNtoOxUtVn0",
+    thumbnail: "https://img.youtube.com/vi/BNtoOxUtVn0/maxresdefault.jpg",
+    duration: "0:60",
     category: "Fé",
-    views: "Aguardando",
-    uploadDate: "Aguardando links"
+    views: "Ver no YouTube",
+    uploadDate: "2024"
   },
   {
     id: "10",
-    title: "Aguarde os links reais",
-    description: "Vídeos do canal @FAITHINJESUSBR serão atualizados quando você fornecer os 10 links",
-    youtubeId: "aguardando10",
-    thumbnail: "https://via.placeholder.com/480x360/4F46E5/FFFFFF?text=@FAITHINJESUSBR",
-    duration: "0:00",
+    title: "Jesus é Fiel",
+    description: "Conteúdo inspirador do canal @FAITHINJESUSBR",
+    youtubeId: "McmunOy468U",
+    thumbnail: "https://img.youtube.com/vi/McmunOy468U/maxresdefault.jpg",
+    duration: "0:60",
     category: "Fidelidade",
-    views: "Aguardando",
-    uploadDate: "Aguardando links"
+    views: "Ver no YouTube",
+    uploadDate: "2024"
   }
 ];
 

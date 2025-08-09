@@ -123,7 +123,6 @@ function Router() {
         
         {/* New Spiritual Features */}
         <Route path="/daily-mission" component={DailyMission} />
-        <Route path="/support-network" component={SupportNetwork} />
         <Route path="/faith-points" component={FaithPoints} />
         
         <Route component={NotFound} />

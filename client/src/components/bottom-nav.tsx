@@ -4,7 +4,7 @@ import { Home, ShoppingBag, Video, BookOpen, Users, MessageCircle, Target, Heart
 const navItems = [
   { path: "/", icon: Home, label: "Início" },
   { path: "/daily-mission", icon: Target, label: "Missão" },
-  { path: "/support-network", icon: Heart, label: "Apoio" },
+  { path: "/sponsors", icon: Heart, label: "Apoio" },
   { path: "/faith-points", icon: Star, label: "Pontos" },
   { path: "/library", icon: BookOpen, label: "Biblio" },
   { path: "/prayer-requests", icon: MessageCircle, label: "Oração" },
