@@ -19,7 +19,7 @@ export default function Library() {
   const [selectedBook, setSelectedBook] = useState<any>(null);
   const { toast } = useToast();
 
-  // Livros cristãos com capas otimizadas do Pixabay
+  // Livros cristãos com capas confiáveis do Pixabay
   const featuredBooks = [
     {
       id: "1",
@@ -28,7 +28,7 @@ export default function Library() {
       category: "Relacionamentos",
       status: "Gratuito",
       buttonColor: "purple",
-      imageUrl: "https://cdn.pixabay.com/photo/2016/08/03/09/03/heart-1566754_960_720.jpg"
+      imageUrl: "https://cdn.pixabay.com/photo/2017/02/14/03/03/heart-2066036_640.jpg"
     },
     {
       id: "2",
@@ -37,7 +37,7 @@ export default function Library() {
       category: "Devocional",
       status: "Gratuito",
       buttonColor: "purple",
-      imageUrl: "https://cdn.pixabay.com/photo/2014/09/05/18/32/old-books-436498_960_720.jpg"
+      imageUrl: "https://cdn.pixabay.com/photo/2017/07/31/11/21/people-2557396_640.jpg"
     },
     {
       id: "3",
@@ -46,7 +46,7 @@ export default function Library() {
       category: "Clássicos",
       status: "Gratuito", 
       buttonColor: "purple",
-      imageUrl: "https://cdn.pixabay.com/photo/2016/07/07/16/46/books-1502484_960_720.jpg"
+      imageUrl: "https://cdn.pixabay.com/photo/2016/11/29/20/22/bible-1871009_640.jpg"
     },
     {
       id: "4",
@@ -55,7 +55,7 @@ export default function Library() {
       category: "Crescimento",
       status: "Gratuito",
       buttonColor: "purple", 
-      imageUrl: "https://cdn.pixabay.com/photo/2015/11/19/21/10/glasses-1052010_960_720.jpg"
+      imageUrl: "https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832_640.jpg"
     }
   ];
 
@@ -65,14 +65,14 @@ export default function Library() {
       title: "Ouvindo a Deus",
       author: "Joyce Meyer",
       status: "Gratuito",
-      imageUrl: "https://cdn.pixabay.com/photo/2014/02/27/16/10/flowers-276014_960_720.jpg"
+      imageUrl: "https://cdn.pixabay.com/photo/2016/11/21/16/21/church-1846667_640.jpg"
     },
     {
       id: "6", 
       title: "Jesus Calling",
       author: "Sarah Young",
       status: "Gratuito",
-      imageUrl: "https://cdn.pixabay.com/photo/2016/11/29/20/22/bible-1871009_960_720.jpg"
+      imageUrl: "https://cdn.pixabay.com/photo/2017/05/11/11/15/workplace-2303851_640.jpg"
     }
   ];
 
