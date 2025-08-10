@@ -313,7 +313,7 @@ export default function LibraryEbooksPage() {
               </div>
               <h3 className="font-medium text-gray-800 mb-2">Conteúdo 100% Gratuito</h3>
               <p className="text-sm text-gray-600 leading-relaxed">
-                Este material é disponibilizado gratuitamente para edificação da Igreja.
+                Este material é disponibilizado gratuitamente para edificação do projeto.
                 Se desejar, pode contribuir para mantermos mais conteúdo disponível.
               </p>
             </div>
@@ -324,7 +324,7 @@ export default function LibraryEbooksPage() {
                   <Gift className="h-5 w-5 text-green-600" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-medium text-green-800 mb-1">Apoie este ministério</h4>
+                  <h4 className="font-medium text-green-800 mb-1">Apoie este projeto</h4>
                   <p className="text-xs text-green-700 mb-2">PIX: faithinjesuseua@gmail.com</p>
                   <Button 
                     size="sm" 

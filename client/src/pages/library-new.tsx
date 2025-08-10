@@ -19,7 +19,7 @@ export default function Library() {
   const [selectedBook, setSelectedBook] = useState<any>(null);
   const { toast } = useToast();
 
-  // Livros cristãos com capas confiáveis do Pixabay
+  // Livros cristãos com capas testadas e funcionais
   const featuredBooks = [
     {
       id: "1",
@@ -28,7 +28,7 @@ export default function Library() {
       category: "Relacionamentos",
       status: "Gratuito",
       buttonColor: "purple",
-      imageUrl: "https://cdn.pixabay.com/photo/2017/02/14/03/03/heart-2066036_640.jpg"
+      imageUrl: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400&h=600&fit=crop"
     },
     {
       id: "2",
@@ -37,7 +37,7 @@ export default function Library() {
       category: "Devocional",
       status: "Gratuito",
       buttonColor: "purple",
-      imageUrl: "https://cdn.pixabay.com/photo/2017/07/31/11/21/people-2557396_640.jpg"
+      imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop"
     },
     {
       id: "3",
@@ -46,7 +46,7 @@ export default function Library() {
       category: "Clássicos",
       status: "Gratuito", 
       buttonColor: "purple",
-      imageUrl: "https://cdn.pixabay.com/photo/2016/11/29/20/22/bible-1871009_640.jpg"
+      imageUrl: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop"
     },
     {
       id: "4",
@@ -55,7 +55,7 @@ export default function Library() {
       category: "Crescimento",
       status: "Gratuito",
       buttonColor: "purple", 
-      imageUrl: "https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832_640.jpg"
+      imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=600&fit=crop"
     }
   ];
 
@@ -65,14 +65,14 @@ export default function Library() {
       title: "Ouvindo a Deus",
       author: "Joyce Meyer",
       status: "Gratuito",
-      imageUrl: "https://cdn.pixabay.com/photo/2016/11/21/16/21/church-1846667_640.jpg"
+      imageUrl: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=600&fit=crop"
     },
     {
       id: "6", 
       title: "Jesus Calling",
       author: "Sarah Young",
       status: "Gratuito",
-      imageUrl: "https://cdn.pixabay.com/photo/2017/05/11/11/15/workplace-2303851_640.jpg"
+      imageUrl: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop"
     }
   ];
 
@@ -268,7 +268,7 @@ export default function Library() {
               </div>
               <h3 className="font-medium text-gray-800 mb-2">Conteúdo 100% Gratuito</h3>
               <p className="text-sm text-gray-600 leading-relaxed">
-                Este material é disponibilizado gratuitamente para edificação da Igreja.
+                Este material é disponibilizado gratuitamente para edificação do projeto.
                 Se desejar, pode contribuir para mantermos mais conteúdo disponível.
               </p>
             </div>
@@ -279,7 +279,7 @@ export default function Library() {
                   <Gift className="h-5 w-5 text-green-600" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-medium text-green-800 mb-1">Apoie este ministério</h4>
+                  <h4 className="font-medium text-green-800 mb-1">Apoie este projeto</h4>
                   <p className="text-xs text-green-700 mb-2">PIX: faithinjesuseua@gmail.com</p>
                   <Button 
                     size="sm" 
