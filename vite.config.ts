@@ -3,15 +3,14 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig({
-  // o app está dentro de /client
   root: path.resolve(__dirname, 'client'),
   plugins: [react()],
   resolve: {
     alias: [
-      // aliases normais
       { find: '@', replacement: path.resolve(__dirname, 'client/src') },
       { find: '@components', replacement: path.resolve(__dirname, 'client/src/components') },
-      // 👇 pega QUALQUER import que comece com "/@"
+      { find: '@shared', replacement: path.resolve(__dirname, 'shared') },
+      // pega qualquer import que comece com "/@..."
       { find: /^\/@/, replacement: path.resolve(__dirname, 'client/src') + '/' },
     ],
   },
