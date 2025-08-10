@@ -7,13 +7,13 @@ export default defineConfig({
   root: path.resolve(__dirname, 'client'),
   plugins: [react()],
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, 'client/src'),
-      '@components': path.resolve(__dirname, 'client/src/components'),
-      // captura imports que começam com "/@..."
-      '/@': path.resolve(__dirname, 'client/src'),
-      '/@components': path.resolve(__dirname, 'client/src/components'),
-    },
+    alias: [
+      // aliases normais
+      { find: '@', replacement: path.resolve(__dirname, 'client/src') },
+      { find: '@components', replacement: path.resolve(__dirname, 'client/src/components') },
+      // 👇 pega QUALQUER import que comece com "/@"
+      { find: /^\/@/, replacement: path.resolve(__dirname, 'client/src') + '/' },
+    ],
   },
   build: {
     outDir: path.resolve(__dirname, 'client/dist'),
