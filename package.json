@@ -114,3 +114,10 @@
     "bufferutil": "^4.0.8"
   }
 }
+{
+  "scripts": {
+    "build": "vite build",
+    "start": "node --loader tsx server/start.ts",
+    "postinstall": "npm run build"
+  }
+}
