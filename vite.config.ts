@@ -1,28 +1,24 @@
-// vite.config.ts
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import { fileURLToPath } from "url";
-import { dirname, resolve } from "node:path";
+// vite.config.ts (na raiz do repo)
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// __dirname no ESM:
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
-  root: resolve(__dirname, "client"),
+  root: path.resolve(__dirname, 'client'),
   plugins: [react()],
   resolve: {
-    alias: [
-      { find: "@", replacement: resolve(__dirname, "client/src") },
-      { find: "@components", replacement: resolve(__dirname, "client/src/components") },
-      { find: "@shared", replacement: resolve(__dirname, "shared") },
-      { find: /^\/@\//, replacement: resolve(__dirname, "client/src") + "/" },
-    ],
+    alias: {
+      '@': path.resolve(__dirname, 'client/src'),
+      '@components': path.resolve(__dirname, 'client/src/components'),
+      '@shared': path.resolve(__dirname, 'shared'),
+    },
   },
   build: {
-    // 👉 o servidor procura por server/public
-    outDir: resolve(__dirname, "server/public"),
+    outDir: path.resolve(__dirname, 'server/public'), // <- é isso que o servidor espera
     emptyOutDir: true,
   },
-  server: { port: 5173 },
-  preview: { port: 4173 },
-});
+})
