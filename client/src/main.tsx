@@ -1,4 +1,3 @@
-import { TooltipProvider } from "@/components/ui/tooltip"
 import React from "react";
 import { createRoot } from "react-dom/client";
 
