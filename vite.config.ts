@@ -8,7 +8,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default defineConfig({
-  // raiz do front
   root: resolve(__dirname, "client"),
   plugins: [react()],
   resolve: {
@@ -16,12 +15,12 @@ export default defineConfig({
       { find: "@", replacement: resolve(__dirname, "client/src") },
       { find: "@components", replacement: resolve(__dirname, "client/src/components") },
       { find: "@shared", replacement: resolve(__dirname, "shared") },
-      // mantém suporte a imports que começam com "/@/..."
       { find: /^\/@\//, replacement: resolve(__dirname, "client/src") + "/" },
     ],
   },
   build: {
-    outDir: resolve(__dirname, "client/dist"),
+    // 👉 o servidor procura por server/public
+    outDir: resolve(__dirname, "server/public"),
     emptyOutDir: true,
   },
   server: { port: 5173 },
