@@ -62,7 +62,8 @@
     "tsx": "^4.19.1",
     "zod": "^3.23.8",
     "wouter": "^2.11.0",
-    "date-fns": "^2.30.0"
+    "date-fns": "^2.30.0",
+    "html2canvas": "^1.4.1"
     
   },
   "devDependencies": {
