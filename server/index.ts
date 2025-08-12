@@ -1,79 +1,41 @@
+// server/index.ts
+import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import { registerRoutes } from "./routes"; // se no seu projeto for export default, troque para: import registerRoutes from "./routes";
+
+// __dirname em ESM/TSX
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
+// Middlewares básicos
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use((req, res, next) => {
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+// Health check simples
+app.get("/health", (_req, res) => res.status(200).send("ok"));
 
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
+// Rotas da API
+try {
+  registerRoutes?.(app as any);
+} catch (err) {
+  console.warn("Não consegui registrar as rotas de ./routes:", err);
+}
 
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
+// Em produção, servir os arquivos do Vite (client/dist)
+if (process.env.NODE_ENV === "production") {
+  const distDir = path.resolve(__dirname, "../client/dist");
+  const indexHtml = path.join(distDir, "index.html");
 
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
+  // arquivos estáticos gerados pelo Vite
+  app.use(express.static(distDir));
 
-      log(logLine);
-    }
+  // SPA fallback: qualquer rota que não comece com /api volta pro index.html
+  app.get(/^(?!\/api).*/, (_req, res) => {
+    res.sendFile(indexHtml);
   });
+}
 
-  next();
-});
-
-(async () => {
-  // Import and run seed function
-  const { seedDatabase } = await import("./seed-data");
-  await seedDatabase();
-  
-  const server = await registerRoutes(app);
-
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
-  });
-
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
-
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || '5000', 10);
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-  });
-})();
 export default app;
